@@ -1,15 +1,30 @@
 name: realm
 version: '0.1'
 main: com.krishcpatel.realm.core.Core
-api-version: '1.21'
+api-version: '1.21.11'
 
 commands:
   realm:
-    description: Realm core command
-    usage: /realm <reload>
-    aliases: [rcore, r]
+    description: Realm core command.
+    usage: /realm reload
+  balance:
+    description: Shows your balance.
+    usage: /balance
+    aliases: [bal]
+  pay:
+    description: Pay another player.
+    usage: /pay <player> <amount>
+  eco:
+    description: Economy admin commands.
+    usage: /eco <give|take|set> <player> <amount>
+  ledger:
+    description: View recent ledger entries for a player.
+    usage: /ledger <player> [n]
 
 permissions:
   realm.admin:
-    description: Admin permission for realm commands
+    default: op
+  realm.economy.admin:
+    default: op
+  realm.economy.ledger:
     default: op

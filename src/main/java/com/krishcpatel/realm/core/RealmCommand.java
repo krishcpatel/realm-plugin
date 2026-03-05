@@ -6,10 +6,20 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
+/**
+ * Handles the {@code /realm} command.
+ *
+ * <p>Currently supports administrative actions such as {@code /realm reload}.</p>
+ */
 public class RealmCommand implements CommandExecutor {
 
     private final Core plugin;
 
+    /**
+     * Creates a command handler for the given plugin instance.
+     *
+     * @param plugin owning plugin
+     */
     public RealmCommand(Core plugin) {
         this.plugin = plugin;
     }

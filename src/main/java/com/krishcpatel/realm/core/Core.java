@@ -1,19 +1,49 @@
 package com.krishcpatel.realm.core;
 
+import com.krishcpatel.realm.economy.EconomyModule;
 import org.bukkit.ChatColor;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
+/**
+ * Main entry point for the Realm plugin.
+ *
+ * <p>This class initializes core systems such as:</p>
+ * <ul>
+ *   <li>Configuration loading</li>
+ *   <li>Database connection</li>
+ *   <li>Event bus</li>
+ *   <li>Module lifecycle management</li>
+ * </ul>
+ */
 public final class Core extends JavaPlugin {
+    /**
+     * Creates the Realm plugin instance.
+     *
+     * <p>Called automatically by the Paper/Bukkit server when the plugin loads.</p>
+     */
+    public Core() {
+        super();
+    }
 
+    /**
+     * Shared plugin logger.
+     *
+     * <p>This logger writes to the Minecraft server console with the
+     * plugin prefix. It is provided as a convenience so modules can log
+     * messages without repeatedly calling {@link JavaPlugin#getLogger()}.</p>
+     */
     public Logger logger = getLogger();
 
     private DatabaseManager database;
     private ConfigManager configManager;
     private PlayerRepository playerRepo;
     private EventSystem eventSystem;
+
+    private final List<Module> modules = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -22,7 +52,10 @@ public final class Core extends JavaPlugin {
         database = new DatabaseManager(this);
         configManager = new ConfigManager(this);
         playerRepo = new PlayerRepository(database, this);
-        this.eventSystem = new EventSystem(this);
+        eventSystem = new EventSystem(this);
+
+        // create modules
+        modules.add(new EconomyModule(this));
 
         try {
             database.connect();
@@ -34,27 +67,58 @@ public final class Core extends JavaPlugin {
             return;
         }
 
+        // load config
         configManager.loadAll();
 
+        // load realm command
         getCommand("realm").setExecutor(new RealmCommand(this));
 
+        // load event system and subscribe to player upserted to db event
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(this, playerRepo), this);
 
         eventSystem.subscribe(
                 PlayerUpsertedEvent.class,
                 evt -> logger.info("Player upserted: " + evt.username())
         );
+
+        // enable modules
+        for (Module module : modules) {
+            try {
+                module.enable();
+            } catch (Exception e) {
+                getLogger().severe("Failed to enable module");
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
     public void onDisable() {
         logger.info("onDisable");
 
+        // disable modules
+        for (Module module : modules) {
+            try {
+                module.disable();
+            } catch (Exception e) {
+                getLogger().severe("Failed to enable module");
+                e.printStackTrace();
+            }
+        }
+
         if (database != null) {
             database.close();
         }
     }
 
+    /**
+     * Reloads Realm configuration and re-applies any runtime settings.
+     *
+     * <p>This is invoked by {@code /realm reload}. Keep this method fast and safe
+     * for use while the server is running.</p>
+     *
+     * @throws Exception if reload fails
+     */
     public void reloadRealm() throws Exception {
         configManager.loadAll();
 
@@ -62,32 +126,67 @@ public final class Core extends JavaPlugin {
         logger.info("Debug: " + debug);
 
         eventSystem.clearAll();
+
+        for (Module module : modules) {
+            module.reload();
+        }
     }
 
+    /**
+     * Returns a formatted message from {@code messages.yml} including prefix and color codes.
+     *
+     * @param key message key in {@code messages.yml}
+     * @return formatted message
+     */
     public String msg(String key) {
         String prefix = configManager.messages().getString("prefix", "&7[&6Realm&7]&r ");
         String val = configManager.messages().getString(key, "&cMissing message: " + key);
         return ChatColor.translateAlternateColorCodes('&', prefix + val);
     }
 
+    /**
+     * Logs a debug message if {@code debug: true} is enabled in {@code config.yml}.
+     *
+     * @param msg debug message
+     */
     public void debug(String msg) {
         if (getConfig().getBoolean("debug", false)) {
             getLogger().info("[DEBUG] " + msg);
         }
     }
 
+    /**
+     * Returns the active database manager.
+     *
+     * @return database manager
+     */
     public DatabaseManager getDatabase() {
         return database;
     }
 
+    /**
+     * Returns the active configuration manager.
+     *
+     * @return configuration manager
+     */
     public ConfigManager getConfigManager() {
         return configManager;
     }
 
+    /**
+     * Convenience accessor for the loaded {@code config.yml}.
+     *
+     * @return plugin configuration
+     */
     public org.bukkit.configuration.file.FileConfiguration config() {
         return configManager.config();
     }
 
+    /**
+     * Returns the internal event bus used to publish and subscribe to {@link RealmEvent}s.
+     *
+     * @return event system
+     */
     public EventSystem events() {
         return eventSystem;
     }
