@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.krishcpatel.realm.core"},{"l":"com.krishcpatel.realm.economy"}];updateSearchResults();
