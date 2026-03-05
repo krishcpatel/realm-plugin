@@ -1,0 +1,15 @@
+name: realm
+version: '0.1'
+main: com.krishcpatel.realm.core.Core
+api-version: '1.21'
+
+commands:
+  realm:
+    description: Realm core command
+    usage: /realm <reload>
+    aliases: [rcore, r]
+
+permissions:
+  realm.admin:
+    description: Admin permission for realm commands
+    default: op
