@@ -18,7 +18,8 @@ public class EconomyModule implements Module {
     private EconomyRepository economyRepo;
     private LedgerRepository ledgerRepo;
     private TransactionManager tx;
-    private EconomyManager manager;
+    private BankNoteRepository bankNoteRepo;
+    private BankNoteManager bankNoteManager;
 
     /**
      * Creates the economy module for the given core plugin.
@@ -38,13 +39,23 @@ public class EconomyModule implements Module {
         ledgerRepo = new LedgerRepository(core.getDatabase());
         ledgerRepo.initSchema();
 
-        manager = new EconomyManager(economyRepo);
+        bankNoteRepo = new BankNoteRepository(core.getDatabase());
+        bankNoteRepo.initSchema();
+
         tx = new TransactionManager(core, core.getDatabase(), economyRepo, ledgerRepo);
+        bankNoteManager = new BankNoteManager(core, core.getDatabase(), economyRepo, ledgerRepo, bankNoteRepo);
+
+        core.getServer().getPluginManager().registerEvents(
+                new BankNoteInteractListener(core, bankNoteManager),
+                core
+        );
 
         core.getCommand("balance").setExecutor(new BalanceCommand(core, economyRepo));
         core.getCommand("pay").setExecutor(new PayCommand(core, tx));
         core.getCommand("eco").setExecutor(new EconomyAdminCommand(core, tx));
         core.getCommand("ledger").setExecutor(new LedgerCommand(core, ledgerRepo));
+        core.getCommand("withdraw").setExecutor(new WithdrawCommand(core, bankNoteManager));
+        core.getCommand("redeem").setExecutor(new RedeemCommand(core, bankNoteManager));
 
         core.getLogger().info("[economy] enabled");
 

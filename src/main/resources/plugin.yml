@@ -5,20 +5,26 @@ api-version: '1.21.11'
 
 commands:
   realm:
-    description: Realm core command.
+    description: Realm core command
     usage: /realm reload
   balance:
-    description: Shows your balance.
+    description: Check your bank balance
     usage: /balance
     aliases: [bal]
+  withdraw:
+    description: Withdraw a bank note
+    usage: /withdraw <amount>
+  redeem:
+    description: Redeem the bank note in your hand
+    usage: /redeem
   pay:
-    description: Pay another player.
+    description: Pay another player
     usage: /pay <player> <amount>
   eco:
-    description: Economy admin commands.
+    description: Economy admin commands
     usage: /eco <give|take|set> <player> <amount>
   ledger:
-    description: View recent ledger entries for a player.
+    description: View recent ledger entries
     usage: /ledger <player> [n]
 
 permissions:
