@@ -50,6 +50,11 @@ public class EconomyModule implements Module {
                 core
         );
 
+        if (!core.config().getBoolean("modules.economy", true)) {
+            core.getLogger().info("[economy] module disabled in config.");
+            return;
+        }
+
         core.getCommand("balance").setExecutor(new BalanceCommand(core, economyRepo));
         core.getCommand("pay").setExecutor(new PayCommand(core, tx));
         core.getCommand("eco").setExecutor(new EconomyAdminCommand(core, tx));
@@ -81,13 +86,14 @@ public class EconomyModule implements Module {
                     + " actor=" + evt.actor());
 
             // 2) simple “large tx” alert (config-driven later)
-            long largeThreshold = core.config().getLong("economy.large-transaction-threshold", 50_000);
-            if (evt.amount() >= largeThreshold) {
+            long threshold = core.config().getLong("economy.ledger.large-transaction-threshold", 50000L);
+            boolean logLarge = core.config().getBoolean("economy.ledger.log-large-transactions", true);
+
+            if (logLarge && evt.amount() >= threshold) {
                 core.getLogger().warning("[economy] LARGE TX #" + evt.ledgerId()
                         + " $" + evt.amount()
                         + " type=" + evt.type()
-                        + " src=" + evt.source()
-                        + " actor=" + evt.actor());
+                        + " source=" + evt.source());
             }
 
             // 3) sanity checks (these help catch bugs fast)

@@ -1,5 +1,47 @@
+plugin:
+  debug: true
+
 database:
   type: sqlite
-  file: database.db
+  sqlite:
+    file: database.db
 
-debug: false
+modules:
+  economy: true
+  teams: false
+  jobs: false
+  shops: false
+  plots: false
+
+economy:
+  starting-balance: 0
+
+  payments:
+    enabled: true
+    min-amount: 1
+    max-amount: 1000000
+
+  withdraw:
+    enabled: true
+    min-amount: 1
+    max-amount: 1000000
+
+  redeem:
+    enabled: true
+    command-enabled: true
+    right-click-enabled: true
+    require-sneak: true
+
+  bank-notes:
+    item-material: PAPER
+    note-name: "&6Bank Note &7- &e$%amount%"
+    lore:
+      - "&7Value: &e$%amount%"
+      - "&7Redeem with &f/redeem"
+      - "&8ID: %short_id%"
+
+  ledger:
+    enabled: true
+    max-query-limit: 50
+    large-transaction-threshold: 50000
+    log-large-transactions: true

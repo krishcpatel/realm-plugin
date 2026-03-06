@@ -44,6 +44,16 @@ public final class PayCommand implements CommandExecutor {
 
         OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
 
+        if ((!target.isOnline() && !target.hasPlayedBefore()) || target.getName() == null) {
+            player.sendMessage(color("&cThat player does not exist or has never joined the server."));
+            return true;
+        }
+
+        if (player.getUniqueId().equals(target.getUniqueId())) {
+            player.sendMessage(color("&cYou cannot pay yourself."));
+            return true;
+        }
+
         long amount;
         try {
             amount = Long.parseLong(args[1]);

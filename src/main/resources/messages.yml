@@ -1,3 +1,48 @@
 prefix: "&7[&6Realm&7]&r "
-reloaded: "&aReloaded Realm config."
-no-permission: "&cYou don’t have permission."
+
+general:
+  player-only: "&cOnly players can use this command."
+  no-permission: "&cYou do not have permission."
+  invalid-number: "&cThat amount must be a number."
+  invalid-amount: "&cThat amount is invalid."
+  command-failed: "&cSomething went wrong. Check console."
+  reload-success: "&aRealm configuration reloaded."
+
+balance:
+  self: "&7Bank Balance: &a$%balance%"
+
+pay:
+  usage: "&7Usage: &f/pay <player> <amount>"
+  disabled: "&cPayments are currently disabled."
+  self-pay: "&cYou cannot pay yourself."
+  success-sender: "&aPaid &f$%amount% &ato &f%target%&a."
+  success-target: "&aYou received &f$%amount% &afrom &f%sender%&a."
+  failed: "&cPayment failed: &f%reason%"
+  not-found: "&cThat player does not exist or has never joined the server."
+
+withdraw:
+  usage: "&7Usage: &f/withdraw <amount>"
+  disabled: "&cBank note withdrawal is currently disabled."
+  success: "&aCreated bank note worth &f$%amount%&a."
+  failed: "&cWithdraw failed: &f%reason%"
+
+redeem:
+  usage: "&7Usage: &f/redeem"
+  disabled: "&cRedeeming bank notes is currently disabled."
+  success: "&aBank note redeemed successfully."
+  failed: "&cRedeem failed: &f%reason%"
+  not-note: "&cYou must hold a valid bank note."
+
+bank-notes:
+  right-click-disabled: "&cRight-click redemption is disabled."
+  sneak-required: "&cYou must sneak to redeem this note."
+
+economy-admin:
+  usage: "&7Usage: &f/eco <give|take|set> <player> <amount>"
+  success: "&aEconomy action completed successfully."
+  failed: "&cEconomy action failed: &f%reason%"
+
+ledger:
+  usage: "&7Usage: &f/ledger <player> [limit]"
+  header: "&7--- &fLedger for &e%player% &7(last %limit%) ---"
+  empty: "&7No ledger entries found."

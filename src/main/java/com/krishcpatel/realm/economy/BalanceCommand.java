@@ -7,6 +7,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Map;
+
 /**
  * Command executor for {@code /bal} and {@code /balance}.
  *
@@ -31,7 +33,7 @@ public class BalanceCommand implements CommandExecutor {
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(color("&cOnly players can use this command."));
+            sender.sendMessage(core.msg("general.player-only"));
             return true;
         }
 
@@ -39,23 +41,22 @@ public class BalanceCommand implements CommandExecutor {
         core.getServer().getScheduler().runTaskAsynchronously(core, () -> {
             try {
                 String uuid = player.getUniqueId().toString();
-
-                // Ensure account exists (safe even if it already exists)
                 repo.ensureAccount(uuid);
+                long balance = repo.getBalance(uuid);
 
-                long bal = repo.getBalance(uuid);
-
-                core.getServer().getScheduler().runTask(core, () -> {
-                    player.sendMessage(color("&7Balance: &a$" + bal));
-                });
+                core.getServer().getScheduler().runTask(core, () ->
+                        player.sendMessage(core.msg("balance.self", Map.of(
+                                "%balance%", String.valueOf(balance)
+                        )))
+                );
 
             } catch (Exception e) {
-                core.getLogger().severe("[economy] Failed to read balance for " + player.getName());
+                core.getLogger().severe("[economy] Failed to get balance for " + player.getName());
                 e.printStackTrace();
 
-                core.getServer().getScheduler().runTask(core, () -> {
-                    player.sendMessage(color("&cFailed to load your balance. Check console."));
-                });
+                core.getServer().getScheduler().runTask(core, () ->
+                        player.sendMessage(core.msg("general.command-failed"))
+                );
             }
         });
 

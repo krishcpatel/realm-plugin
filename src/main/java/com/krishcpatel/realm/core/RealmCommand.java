@@ -40,7 +40,7 @@ public class RealmCommand implements CommandExecutor {
 
             try {
                 plugin.reloadRealm();
-                sender.sendMessage(plugin.msg("reloaded"));
+                sender.sendMessage(plugin.msg("general.reload-success"));
             } catch (Exception e) {
                 sender.sendMessage(color("&cReload failed. Check console."));
                 e.printStackTrace();

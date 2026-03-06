@@ -20,6 +20,10 @@ import java.io.File;
 public class ConfigManager {
     private final JavaPlugin plugin;
 
+    private FileConfiguration config;
+    private FileConfiguration messages;
+    private File messagesFile;
+
     /**
      * Creates a new configuration manager for the given plugin.
      *
@@ -28,10 +32,6 @@ public class ConfigManager {
     public ConfigManager(JavaPlugin plugin) {
         this.plugin = plugin;
     }
-
-    private FileConfiguration config;
-    private FileConfiguration messages;
-    private File messagesFile;
 
     /**
      * Loads (or reloads) {@code config.yml} and {@code messages.yml} from the plugin data folder.

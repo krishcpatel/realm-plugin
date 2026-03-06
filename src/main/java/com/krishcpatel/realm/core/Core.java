@@ -2,10 +2,12 @@ package com.krishcpatel.realm.core;
 
 import com.krishcpatel.realm.economy.EconomyModule;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -122,7 +124,7 @@ public final class Core extends JavaPlugin {
     public void reloadRealm() throws Exception {
         configManager.loadAll();
 
-        boolean debug = config().getBoolean("debug", false);
+        boolean debug = config().getBoolean("plugin.debug", false);
         logger.info("Debug: " + debug);
 
         eventSystem.clearAll();
@@ -133,15 +135,39 @@ public final class Core extends JavaPlugin {
     }
 
     /**
-     * Returns a formatted message from {@code messages.yml} including prefix and color codes.
+     * Retrieves a formatted message from {@code messages.yml}.
      *
-     * @param key message key in {@code messages.yml}
-     * @return formatted message
+     * <p>The configured plugin prefix is automatically prepended and
+     * Minecraft color codes using {@code &} are translated.</p>
+     *
+     * <p>Placeholders in the message such as {@code %amount%} or
+     * {@code %player%} will be replaced using the provided map.</p>
+     *
+     * @param key message key inside {@code messages.yml}
+     * @param placeholders placeholder replacements
+     * @return formatted and colorized message
+     */
+    public String msg(String key, Map<String, String> placeholders) {
+        String prefix = messages().getString("prefix", "");
+        String raw = messages().getString(key, "&cMissing message: " + key);
+
+        String full = prefix + raw;
+        for (Map.Entry<String, String> entry : placeholders.entrySet()) {
+            full = full.replace(entry.getKey(), entry.getValue());
+        }
+
+        return ChatColor.translateAlternateColorCodes('&', full);
+    }
+
+    /**
+     * Retrieves a formatted message from {@code messages.yml}
+     * without any placeholder replacements.
+     *
+     * @param key message key inside {@code messages.yml}
+     * @return formatted and colorized message
      */
     public String msg(String key) {
-        String prefix = configManager.messages().getString("prefix", "&7[&6Realm&7]&r ");
-        String val = configManager.messages().getString(key, "&cMissing message: " + key);
-        return ChatColor.translateAlternateColorCodes('&', prefix + val);
+        return msg(key, Map.of());
     }
 
     /**
@@ -164,6 +190,7 @@ public final class Core extends JavaPlugin {
         return database;
     }
 
+
     /**
      * Returns the active configuration manager.
      *
@@ -178,8 +205,20 @@ public final class Core extends JavaPlugin {
      *
      * @return plugin configuration
      */
-    public org.bukkit.configuration.file.FileConfiguration config() {
+    public FileConfiguration config() {
         return configManager.config();
+    }
+
+    /**
+     * Returns the loaded {@code messages.yml} configuration.
+     *
+     * <p>This file contains all player-facing text such as
+     * command responses and error messages.</p>
+     *
+     * @return messages configuration
+     */
+    public FileConfiguration messages() {
+        return configManager.messages();
     }
 
     /**

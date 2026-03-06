@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.inventory.EquipmentSlot;
 
 /**
- * Listener that allows players to redeem bank notes by shift-right-clicking
+ * Listener that allows players to redeem banknotes by shift-right-clicking
  * while holding them.
  */
 public final class BankNoteInteractListener implements Listener {
@@ -26,11 +27,11 @@ public final class BankNoteInteractListener implements Listener {
     private final Set<UUID> redeeming = ConcurrentHashMap.newKeySet();
 
     /**
-     * Creates a listener that allows players to redeem bank notes
+     * Creates a listener that allows players to redeem banknotes
      * by shift-right-clicking while holding them.
      *
      * @param core plugin instance used for scheduling and logging
-     * @param notes bank note manager used to validate and redeem notes
+     * @param notes banknote manager used to validate and redeem notes
      */
     public BankNoteInteractListener(Core core, BankNoteManager notes) {
         this.core = core;
@@ -38,7 +39,7 @@ public final class BankNoteInteractListener implements Listener {
     }
 
     /**
-     * Handles player interaction for redeeming bank notes by shift-right-clicking.
+     * Handles player interaction for redeeming banknotes by shift-right-clicking.
      *
      * @param event player interaction event
      */
@@ -54,10 +55,15 @@ public final class BankNoteInteractListener implements Listener {
             return;
         }
 
+        if (!core.config().getBoolean("economy.redeem.enabled", true)
+                || !core.config().getBoolean("economy.redeem.right-click-enabled", true)) {
+            return;
+        }
+
         Player player = event.getPlayer();
 
-        // Safer than plain right-click so players don't redeem by accident
-        if (!player.isSneaking()) {
+        boolean requireSneak = core.config().getBoolean("economy.redeem.require-sneak", true);
+        if (requireSneak && !player.isSneaking()) {
             return;
         }
 
@@ -81,11 +87,13 @@ public final class BankNoteInteractListener implements Listener {
                 core.getServer().getScheduler().runTask(core, () -> {
                     try {
                         if (!result.success()) {
-                            player.sendMessage(color("&cRedeem failed: &f" + result.message()));
+                            player.sendMessage(core.msg("redeem.failed", Map.of(
+                                    "%reason%", result.message()
+                            )));
                             return;
                         }
 
-                        player.sendMessage(color("&aBank note redeemed successfully."));
+                        player.sendMessage(core.msg("redeem.success"));
                         player.updateInventory();
                     } finally {
                         redeeming.remove(uuid);
@@ -98,7 +106,7 @@ public final class BankNoteInteractListener implements Listener {
 
                 core.getServer().getScheduler().runTask(core, () -> {
                     try {
-                        player.sendMessage(color("&cRedeem failed. Check console."));
+                        player.sendMessage(core.msg("general.command-failed"));
                     } finally {
                         redeeming.remove(uuid);
                     }

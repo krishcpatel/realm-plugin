@@ -7,6 +7,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Map;
+
 /**
  * Handles the {@code /withdraw <amount>} command.
  *
@@ -22,7 +24,7 @@ public final class WithdrawCommand implements CommandExecutor {
      * Creates a withdraw command executor.
      *
      * @param core plugin instance used for scheduling and logging
-     * @param notes bank note manager used to issue notes
+     * @param notes banknote manager used to issue notes
      */
     public WithdrawCommand(Core core, BankNoteManager notes) {
         this.core = core;
@@ -32,12 +34,17 @@ public final class WithdrawCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(color("&cOnly players can use this command."));
+            sender.sendMessage(core.msg("general.player-only"));
+            return true;
+        }
+
+        if (!core.config().getBoolean("economy.withdraw.enabled", true)) {
+            player.sendMessage(core.msg("withdraw.disabled"));
             return true;
         }
 
         if (args.length != 1) {
-            player.sendMessage(color("&7Usage: &f/withdraw <amount>"));
+            player.sendMessage(core.msg("withdraw.usage"));
             return true;
         }
 
@@ -45,7 +52,15 @@ public final class WithdrawCommand implements CommandExecutor {
         try {
             amount = Long.parseLong(args[0]);
         } catch (NumberFormatException e) {
-            player.sendMessage(color("&cAmount must be a number."));
+            player.sendMessage(core.msg("general.invalid-number"));
+            return true;
+        }
+
+        long min = core.config().getLong("economy.withdraw.min-amount", 1L);
+        long max = core.config().getLong("economy.withdraw.max-amount", 1_000_000L);
+
+        if (amount < min || amount > max) {
+            player.sendMessage(core.msg("general.invalid-amount"));
             return true;
         }
 
@@ -60,11 +75,15 @@ public final class WithdrawCommand implements CommandExecutor {
 
                 core.getServer().getScheduler().runTask(core, () -> {
                     if (!result.success()) {
-                        player.sendMessage(color("&cWithdraw failed: &f" + result.message()));
+                        player.sendMessage(core.msg("withdraw.failed", Map.of(
+                                "%reason%", result.message()
+                        )));
                         return;
                     }
 
-                    player.sendMessage(color("&aCreated bank note worth &f$" + amount + "&a."));
+                    player.sendMessage(core.msg("withdraw.success", Map.of(
+                            "%amount%", String.valueOf(amount)
+                    )));
                 });
 
             } catch (Exception e) {
@@ -72,7 +91,7 @@ public final class WithdrawCommand implements CommandExecutor {
                 e.printStackTrace();
 
                 core.getServer().getScheduler().runTask(core, () ->
-                        player.sendMessage(color("&cWithdraw failed. Check console."))
+                        player.sendMessage(core.msg("general.command-failed"))
                 );
             }
         });

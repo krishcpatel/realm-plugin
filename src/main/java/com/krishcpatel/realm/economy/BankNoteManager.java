@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Handles issuing and redeeming physical bank notes.
+ * Handles issuing and redeeming physical banknotes.
  *
  * <p>This manager coordinates bank balance changes, note persistence,
  * ledger recording, and item creation/validation.</p>
@@ -130,13 +130,13 @@ public final class BankNoteManager {
     }
 
     /**
-     * Redeems the bank note currently held in the player's main hand.
+     * Redeems the banknote currently held in the player's main hand.
      *
      * <p>The note is validated, marked as redeemed in the database,
      * and the corresponding amount is added back to the player's bank
      * balance. A ledger entry is also recorded.</p>
      *
-     * @param player player redeeming the bank note
+     * @param player player redeeming the banknote
      * @return result describing whether the redemption succeeded
      * @throws SQLException if a database operation fails
      */
@@ -219,10 +219,10 @@ public final class BankNoteManager {
     }
 
     /**
-     * Checks whether the provided item is a valid bank note item.
+     * Checks whether the provided item is a valid banknote item.
      *
      * @param item item to test
-     * @return true if the item is a bank note
+     * @return true if the item is a banknote
      */
     public boolean isBankNote(ItemStack item) {
         if (item == null || item.getType() == Material.AIR) return false;
@@ -233,10 +233,10 @@ public final class BankNoteManager {
     }
 
     /**
-     * Returns the unique bank note id stored in the item metadata.
+     * Returns the unique banknote id stored in the item metadata.
      *
-     * @param item bank note item
-     * @return note id, or null if the item is not a valid bank note
+     * @param item banknote item
+     * @return note id, or null if the item is not a valid banknote
      */
     public String getNoteId(ItemStack item) {
         if (!isBankNote(item)) return null;
@@ -244,17 +244,28 @@ public final class BankNoteManager {
     }
 
     private ItemStack createNoteItem(String noteId, long amount) {
-        ItemStack item = new ItemStack(Material.PAPER, 1);
+        String materialName = core.config().getString("economy.bank-notes.item-material", "PAPER");
+        Material material = Material.matchMaterial(materialName);
+        if (material == null) {
+            material = Material.PAPER;
+        }
+
+        ItemStack item = new ItemStack(material, 1);
         ItemMeta meta = item.getItemMeta();
 
-        meta.setDisplayName(color("&6Bank Note &7- &e$" + amount));
-        meta.setLore(List.of(
-                color("&7Value: &e$" + amount),
-                color("&7Redeem with &f/redeem"),
-                color("&8ID: " + noteId.substring(0, 8))
-        ));
+        String displayName = core.config().getString("economy.bank-notes.note-name", "&6Bank Note &7- &e$%amount%");
+        displayName = displayName.replace("%amount%", String.valueOf(amount));
 
+        List<String> lore = core.config().getStringList("economy.bank-notes.lore").stream()
+                .map(line -> line
+                        .replace("%amount%", String.valueOf(amount))
+                        .replace("%short_id%", noteId.substring(0, 8)))
+                .toList();
+
+        meta.setDisplayName(color(displayName));
+        meta.setLore(lore.stream().map(this::color).toList());
         meta.getPersistentDataContainer().set(noteIdKey, PersistentDataType.STRING, noteId);
+
         item.setItemMeta(meta);
         return item;
     }
