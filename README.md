@@ -6,6 +6,8 @@ Realm is designed around a **clean modular architecture** where the core infrast
 
 The plugin focuses on **transaction safety, extensibility, and server economy stability**.
 
+Java Documentation can be found here: https://krishcpatel.github.io/realm-plugin/javadoc/
+
 ---
 
 # Current Features
