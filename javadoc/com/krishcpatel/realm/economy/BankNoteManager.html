@@ -91,7 +91,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">BankNoteManager</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Handles issuing and redeeming physical bank notes.
+<div class="block">Handles issuing and redeeming physical banknotes.
 
  <p>This manager coordinates bank balance changes, note persistence,
  ledger recording, and item creation/validation.</p></div>
@@ -131,12 +131,12 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getNoteId(org.bukkit.inventory.ItemStack)" class="member-name-link">getNoteId</a><wbr>(org.bukkit.inventory.ItemStack&nbsp;item)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the unique bank note id stored in the item metadata.</div>
+<div class="block">Returns the unique banknote id stored in the item metadata.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isBankNote(org.bukkit.inventory.ItemStack)" class="member-name-link">isBankNote</a><wbr>(org.bukkit.inventory.ItemStack&nbsp;item)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Checks whether the provided item is a valid bank note item.</div>
+<div class="block">Checks whether the provided item is a valid banknote item.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="TransactionResult.html" title="class in com.krishcpatel.realm.economy">TransactionResult</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#issueNote(org.bukkit.entity.Player,long)" class="member-name-link">issueNote</a><wbr>(org.bukkit.entity.Player&nbsp;player,
@@ -147,7 +147,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="TransactionResult.html" title="class in com.krishcpatel.realm.economy">TransactionResult</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#redeemHeldNote(org.bukkit.entity.Player)" class="member-name-link">redeemHeldNote</a><wbr>(org.bukkit.entity.Player&nbsp;player)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Redeems the bank note currently held in the player's main hand.</div>
+<div class="block">Redeems the banknote currently held in the player's main hand.</div>
 </div>
 </div>
 </div>
@@ -216,14 +216,14 @@ loadScripts(document, 'script');</script>
 <h3>redeemHeldNote</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="TransactionResult.html" title="class in com.krishcpatel.realm.economy">TransactionResult</a></span>&nbsp;<span class="element-name">redeemHeldNote</span><wbr><span class="parameters">(org.bukkit.entity.Player&nbsp;player)</span>
                                  throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/SQLException.html" title="class or interface in java.sql" class="external-link">SQLException</a></span></div>
-<div class="block">Redeems the bank note currently held in the player's main hand.
+<div class="block">Redeems the banknote currently held in the player's main hand.
 
  <p>The note is validated, marked as redeemed in the database,
  and the corresponding amount is added back to the player's bank
  balance. A ledger entry is also recorded.</p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>player</code> - player redeeming the bank note</dd>
+<dd><code>player</code> - player redeeming the banknote</dd>
 <dt>Returns:</dt>
 <dd>result describing whether the redemption succeeded</dd>
 <dt>Throws:</dt>
@@ -235,12 +235,12 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="isBankNote(org.bukkit.inventory.ItemStack)">
 <h3>isBankNote</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isBankNote</span><wbr><span class="parameters">(org.bukkit.inventory.ItemStack&nbsp;item)</span></div>
-<div class="block">Checks whether the provided item is a valid bank note item.</div>
+<div class="block">Checks whether the provided item is a valid banknote item.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>item</code> - item to test</dd>
 <dt>Returns:</dt>
-<dd>true if the item is a bank note</dd>
+<dd>true if the item is a banknote</dd>
 </dl>
 </section>
 </li>
@@ -248,12 +248,12 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getNoteId(org.bukkit.inventory.ItemStack)">
 <h3>getNoteId</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getNoteId</span><wbr><span class="parameters">(org.bukkit.inventory.ItemStack&nbsp;item)</span></div>
-<div class="block">Returns the unique bank note id stored in the item metadata.</div>
+<div class="block">Returns the unique banknote id stored in the item metadata.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>item</code> - bank note item</dd>
+<dd><code>item</code> - banknote item</dd>
 <dt>Returns:</dt>
-<dd>note id, or null if the item is not a valid bank note</dd>
+<dd>note id, or null if the item is not a valid banknote</dd>
 </dl>
 </section>
 </li>

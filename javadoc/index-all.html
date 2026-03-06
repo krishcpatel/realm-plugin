@@ -97,17 +97,17 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/krishcpatel/realm/economy/BankNoteInteractListener.html" class="type-name-link" title="class in com.krishcpatel.realm.economy">BankNoteInteractListener</a> - Class in <a href="com/krishcpatel/realm/economy/package-summary.html">com.krishcpatel.realm.economy</a></dt>
 <dd>
-<div class="block">Listener that allows players to redeem bank notes by shift-right-clicking
+<div class="block">Listener that allows players to redeem banknotes by shift-right-clicking
  while holding them.</div>
 </dd>
 <dt><a href="com/krishcpatel/realm/economy/BankNoteInteractListener.html#%3Cinit%3E(com.krishcpatel.realm.core.Core,com.krishcpatel.realm.economy.BankNoteManager)" class="member-name-link">BankNoteInteractListener(Core, BankNoteManager)</a> - Constructor for class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteInteractListener.html" title="class in com.krishcpatel.realm.economy">BankNoteInteractListener</a></dt>
 <dd>
-<div class="block">Creates a listener that allows players to redeem bank notes
+<div class="block">Creates a listener that allows players to redeem banknotes
  by shift-right-clicking while holding them.</div>
 </dd>
 <dt><a href="com/krishcpatel/realm/economy/BankNoteManager.html" class="type-name-link" title="class in com.krishcpatel.realm.economy">BankNoteManager</a> - Class in <a href="com/krishcpatel/realm/economy/package-summary.html">com.krishcpatel.realm.economy</a></dt>
 <dd>
-<div class="block">Handles issuing and redeeming physical bank notes.</div>
+<div class="block">Handles issuing and redeeming physical banknotes.</div>
 </dd>
 <dt><a href="com/krishcpatel/realm/economy/BankNoteManager.html#%3Cinit%3E(com.krishcpatel.realm.core.Core,com.krishcpatel.realm.core.DatabaseManager,com.krishcpatel.realm.economy.EconomyRepository,com.krishcpatel.realm.economy.LedgerRepository,com.krishcpatel.realm.economy.BankNoteRepository)" class="member-name-link">BankNoteManager(Core, DatabaseManager, EconomyRepository, LedgerRepository, BankNoteRepository)</a> - Constructor for class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteManager.html" title="class in com.krishcpatel.realm.economy">BankNoteManager</a></dt>
 <dd>
@@ -318,7 +318,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/krishcpatel/realm/economy/BankNoteManager.html#getNoteId(org.bukkit.inventory.ItemStack)" class="member-name-link">getNoteId(ItemStack)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteManager.html" title="class in com.krishcpatel.realm.economy">BankNoteManager</a></dt>
 <dd>
-<div class="block">Returns the unique bank note id stored in the item metadata.</div>
+<div class="block">Returns the unique banknote id stored in the item metadata.</div>
 </dd>
 <dt><a href="com/krishcpatel/realm/economy/LedgerRepository.html#getRecentForPlayer(java.sql.Connection,java.lang.String,int)" class="member-name-link">getRecentForPlayer(Connection, String, int)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/LedgerRepository.html" title="class in com.krishcpatel.realm.economy">LedgerRepository</a></dt>
 <dd>
@@ -368,7 +368,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/krishcpatel/realm/economy/BankNoteManager.html#isBankNote(org.bukkit.inventory.ItemStack)" class="member-name-link">isBankNote(ItemStack)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteManager.html" title="class in com.krishcpatel.realm.economy">BankNoteManager</a></dt>
 <dd>
-<div class="block">Checks whether the provided item is a valid bank note item.</div>
+<div class="block">Checks whether the provided item is a valid banknote item.</div>
 </dd>
 <dt><a href="com/krishcpatel/realm/economy/BankNoteRecord.html#issuedAt()" class="member-name-link">issuedAt()</a> - Method in record class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteRecord.html" title="class in com.krishcpatel.realm.economy">BankNoteRecord</a></dt>
 <dd>
@@ -455,6 +455,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the loaded <code>messages.yml</code>.</div>
 </dd>
+<dt><a href="com/krishcpatel/realm/core/Core.html#messages()" class="member-name-link">messages()</a> - Method in class com.krishcpatel.realm.core.<a href="com/krishcpatel/realm/core/Core.html" title="class in com.krishcpatel.realm.core">Core</a></dt>
+<dd>
+<div class="block">Returns the loaded <code>messages.yml</code> configuration.</div>
+</dd>
 <dt><a href="com/krishcpatel/realm/economy/TransactionManager.html#mint(java.lang.String,long,com.krishcpatel.realm.economy.MoneySource,java.lang.String,java.lang.String,java.lang.String)" class="member-name-link">mint(String, long, MoneySource, String, String, String)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/TransactionManager.html" title="class in com.krishcpatel.realm.economy">TransactionManager</a></dt>
 <dd>
 <div class="block">Mints currency into a player's account (creates money).</div>
@@ -469,7 +473,12 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/krishcpatel/realm/core/Core.html#msg(java.lang.String)" class="member-name-link">msg(String)</a> - Method in class com.krishcpatel.realm.core.<a href="com/krishcpatel/realm/core/Core.html" title="class in com.krishcpatel.realm.core">Core</a></dt>
 <dd>
-<div class="block">Returns a formatted message from <code>messages.yml</code> including prefix and color codes.</div>
+<div class="block">Retrieves a formatted message from <code>messages.yml</code>
+ without any placeholder replacements.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/core/Core.html#msg(java.lang.String,java.util.Map)" class="member-name-link">msg(String, Map&lt;String, String&gt;)</a> - Method in class com.krishcpatel.realm.core.<a href="com/krishcpatel/realm/core/Core.html" title="class in com.krishcpatel.realm.core">Core</a></dt>
+<dd>
+<div class="block">Retrieves a formatted message from <code>messages.yml</code>.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:N">N</h2>
@@ -509,7 +518,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/krishcpatel/realm/economy/BankNoteInteractListener.html#onInteract(org.bukkit.event.player.PlayerInteractEvent)" class="member-name-link">onInteract(PlayerInteractEvent)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteInteractListener.html" title="class in com.krishcpatel.realm.economy">BankNoteInteractListener</a></dt>
 <dd>
-<div class="block">Handles player interaction for redeeming bank notes by shift-right-clicking.</div>
+<div class="block">Handles player interaction for redeeming banknotes by shift-right-clicking.</div>
 </dd>
 <dt><a href="com/krishcpatel/realm/core/PlayerJoinListener.html#onJoin(org.bukkit.event.player.PlayerJoinEvent)" class="member-name-link">onJoin(PlayerJoinEvent)</a> - Method in class com.krishcpatel.realm.core.<a href="com/krishcpatel/realm/core/PlayerJoinListener.html" title="class in com.krishcpatel.realm.core">PlayerJoinListener</a></dt>
 <dd>
@@ -615,7 +624,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/krishcpatel/realm/economy/BankNoteManager.html#redeemHeldNote(org.bukkit.entity.Player)" class="member-name-link">redeemHeldNote(Player)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteManager.html" title="class in com.krishcpatel.realm.economy">BankNoteManager</a></dt>
 <dd>
-<div class="block">Redeems the bank note currently held in the player's main hand.</div>
+<div class="block">Redeems the banknote currently held in the player's main hand.</div>
 </dd>
 <dt><a href="com/krishcpatel/realm/economy/LedgerEntry.html#reference()" class="member-name-link">reference()</a> - Method in record class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/LedgerEntry.html" title="class in com.krishcpatel.realm.economy">LedgerEntry</a></dt>
 <dd>

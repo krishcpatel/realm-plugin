@@ -179,10 +179,22 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the active database manager.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#msg(java.lang.String)" class="member-name-link">msg</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>org.bukkit.configuration.file.FileConfiguration</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#messages()" class="member-name-link">messages</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns a formatted message from <code>messages.yml</code> including prefix and color codes.</div>
+<div class="block">Returns the loaded <code>messages.yml</code> configuration.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#msg(java.lang.String)" class="member-name-link">msg</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Retrieves a formatted message from <code>messages.yml</code>
+ without any placeholder replacements.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#msg(java.lang.String,java.util.Map)" class="member-name-link">msg</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;placeholders)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Retrieves a formatted message from <code>messages.yml</code>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onDisable()" class="member-name-link">onDisable</a>()</code></div>
@@ -297,15 +309,37 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="msg(java.lang.String,java.util.Map)">
+<h3>msg</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">msg</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;placeholders)</span></div>
+<div class="block">Retrieves a formatted message from <code>messages.yml</code>.
+
+ <p>The configured plugin prefix is automatically prepended and
+ Minecraft color codes using <code>&amp;</code> are translated.</p>
+
+ <p>Placeholders in the message such as <code>%amount%</code> or
+ <code>%player%</code> will be replaced using the provided map.</p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>key</code> - message key inside <code>messages.yml</code></dd>
+<dd><code>placeholders</code> - placeholder replacements</dd>
+<dt>Returns:</dt>
+<dd>formatted and colorized message</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="msg(java.lang.String)">
 <h3>msg</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">msg</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key)</span></div>
-<div class="block">Returns a formatted message from <code>messages.yml</code> including prefix and color codes.</div>
+<div class="block">Retrieves a formatted message from <code>messages.yml</code>
+ without any placeholder replacements.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>key</code> - message key in <code>messages.yml</code></dd>
+<dd><code>key</code> - message key inside <code>messages.yml</code></dd>
 <dt>Returns:</dt>
-<dd>formatted message</dd>
+<dd>formatted and colorized message</dd>
 </dl>
 </section>
 </li>
@@ -350,6 +384,20 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>plugin configuration</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="messages()">
+<h3>messages</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">org.bukkit.configuration.file.FileConfiguration</span>&nbsp;<span class="element-name">messages</span>()</div>
+<div class="block">Returns the loaded <code>messages.yml</code> configuration.
+
+ <p>This file contains all player-facing text such as
+ command responses and error messages.</p></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>messages configuration</dd>
 </dl>
 </section>
 </li>
