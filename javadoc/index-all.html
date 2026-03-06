@@ -49,7 +49,7 @@ loadScripts(document, 'script');</script>
 <div class="header">
 <h1>Index</h1>
 </div>
-<a href="#I:A">A</a>&nbsp;<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:J">J</a>&nbsp;<a href="#I:L">L</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<a href="#I:V">V</a>&nbsp;<a href="#I:W">W</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a>
+<a href="#I:A">A</a>&nbsp;<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:J">J</a>&nbsp;<a href="#I:L">L</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:N">N</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<a href="#I:V">V</a>&nbsp;<a href="#I:W">W</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a>
 <h2 class="title" id="I:A">A</h2>
 <dl class="index">
 <dt><a href="com/krishcpatel/realm/economy/LedgerEntry.html#actor()" class="member-name-link">actor()</a> - Method in record class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/LedgerEntry.html" title="class in com.krishcpatel.realm.economy">LedgerEntry</a></dt>
@@ -62,11 +62,19 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/krishcpatel/realm/economy/EconomyRepository.html#addBalance(java.lang.String,long)" class="member-name-link">addBalance(String, long)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/EconomyRepository.html" title="class in com.krishcpatel.realm.economy">EconomyRepository</a></dt>
 <dd>
-<div class="block">Adds an amount to a player's balance (may be negative).</div>
+<div class="block">Adds money to a player's bank balance.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/economy/EconomyRepository.html#addBalance(java.sql.Connection,java.lang.String,long)" class="member-name-link">addBalance(Connection, String, long)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/EconomyRepository.html" title="class in com.krishcpatel.realm.economy">EconomyRepository</a></dt>
+<dd>
+<div class="block">Adds money to the account using the provided connection.</div>
 </dd>
 <dt><a href="com/krishcpatel/realm/economy/MoneySource.html#ADMIN" class="member-name-link">ADMIN</a> - Enum constant in enum class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/MoneySource.html" title="enum class in com.krishcpatel.realm.economy">MoneySource</a></dt>
 <dd>
 <div class="block">Admin-created changes such as /eco give, /eco take, /eco set.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/economy/BankNoteRecord.html#amount()" class="member-name-link">amount()</a> - Method in record class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteRecord.html" title="class in com.krishcpatel.realm.economy">BankNoteRecord</a></dt>
+<dd>
+<div class="block">Returns the value of the <a href="./com/krishcpatel/realm/economy/BankNoteRecord.html#param-amount"><code>amount</code></a> record component.</div>
 </dd>
 <dt><a href="com/krishcpatel/realm/economy/LedgerEntry.html#amount()" class="member-name-link">amount()</a> - Method in record class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/LedgerEntry.html" title="class in com.krishcpatel.realm.economy">LedgerEntry</a></dt>
 <dd>
@@ -86,6 +94,40 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/krishcpatel/realm/economy/BalanceCommand.html#%3Cinit%3E(com.krishcpatel.realm.core.Core,com.krishcpatel.realm.economy.EconomyRepository)" class="member-name-link">BalanceCommand(Core, EconomyRepository)</a> - Constructor for class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BalanceCommand.html" title="class in com.krishcpatel.realm.economy">BalanceCommand</a></dt>
 <dd>
 <div class="block">Creates a balance command executor.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/economy/BankNoteInteractListener.html" class="type-name-link" title="class in com.krishcpatel.realm.economy">BankNoteInteractListener</a> - Class in <a href="com/krishcpatel/realm/economy/package-summary.html">com.krishcpatel.realm.economy</a></dt>
+<dd>
+<div class="block">Listener that allows players to redeem bank notes by shift-right-clicking
+ while holding them.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/economy/BankNoteInteractListener.html#%3Cinit%3E(com.krishcpatel.realm.core.Core,com.krishcpatel.realm.economy.BankNoteManager)" class="member-name-link">BankNoteInteractListener(Core, BankNoteManager)</a> - Constructor for class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteInteractListener.html" title="class in com.krishcpatel.realm.economy">BankNoteInteractListener</a></dt>
+<dd>
+<div class="block">Creates a listener that allows players to redeem bank notes
+ by shift-right-clicking while holding them.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/economy/BankNoteManager.html" class="type-name-link" title="class in com.krishcpatel.realm.economy">BankNoteManager</a> - Class in <a href="com/krishcpatel/realm/economy/package-summary.html">com.krishcpatel.realm.economy</a></dt>
+<dd>
+<div class="block">Handles issuing and redeeming physical bank notes.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/economy/BankNoteManager.html#%3Cinit%3E(com.krishcpatel.realm.core.Core,com.krishcpatel.realm.core.DatabaseManager,com.krishcpatel.realm.economy.EconomyRepository,com.krishcpatel.realm.economy.LedgerRepository,com.krishcpatel.realm.economy.BankNoteRepository)" class="member-name-link">BankNoteManager(Core, DatabaseManager, EconomyRepository, LedgerRepository, BankNoteRepository)</a> - Constructor for class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteManager.html" title="class in com.krishcpatel.realm.economy">BankNoteManager</a></dt>
+<dd>
+<div class="block">Creates a bank note manager.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/economy/BankNoteRecord.html" class="type-name-link" title="class in com.krishcpatel.realm.economy">BankNoteRecord</a> - Record Class in <a href="com/krishcpatel/realm/economy/package-summary.html">com.krishcpatel.realm.economy</a></dt>
+<dd>
+<div class="block">Immutable banknote database record.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/economy/BankNoteRecord.html#%3Cinit%3E(java.lang.String,long,long,java.lang.String,boolean,long,java.lang.String)" class="member-name-link">BankNoteRecord(String, long, long, String, boolean, long, String)</a> - Constructor for record class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteRecord.html" title="class in com.krishcpatel.realm.economy">BankNoteRecord</a></dt>
+<dd>
+<div class="block">Creates an instance of a <code>BankNoteRecord</code> record class.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/economy/BankNoteRepository.html" class="type-name-link" title="class in com.krishcpatel.realm.economy">BankNoteRepository</a> - Class in <a href="com/krishcpatel/realm/economy/package-summary.html">com.krishcpatel.realm.economy</a></dt>
+<dd>
+<div class="block">Repository responsible for persistence of bank notes.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/economy/BankNoteRepository.html#%3Cinit%3E(com.krishcpatel.realm.core.DatabaseManager)" class="member-name-link">BankNoteRepository(DatabaseManager)</a> - Constructor for class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteRepository.html" title="class in com.krishcpatel.realm.economy">BankNoteRepository</a></dt>
+<dd>
+<div class="block">Creates a new bank note repository.</div>
 </dd>
 <dt><a href="com/krishcpatel/realm/economy/TransactionManager.html#burn(java.lang.String,long,com.krishcpatel.realm.economy.MoneySource,java.lang.String,java.lang.String,java.lang.String)" class="member-name-link">burn(String, long, MoneySource, String, String, String)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/TransactionManager.html" title="class in com.krishcpatel.realm.economy">TransactionManager</a></dt>
 <dd>
@@ -161,10 +203,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Logs a debug message if <code>debug: true</code> is enabled in <code>config.yml</code>.</div>
 </dd>
-<dt><a href="com/krishcpatel/realm/economy/EconomyManager.html#deposit(java.lang.String,long)" class="member-name-link">deposit(String, long)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/EconomyManager.html" title="class in com.krishcpatel.realm.economy">EconomyManager</a></dt>
-<dd>
-<div class="block">Deposits currency into the player's balance.</div>
-</dd>
 <dt><a href="com/krishcpatel/realm/core/Module.html#disable()" class="member-name-link">disable()</a> - Method in interface com.krishcpatel.realm.core.<a href="com/krishcpatel/realm/core/Module.html" title="interface in com.krishcpatel.realm.core">Module</a></dt>
 <dd>
 <div class="block">Disables the module and releases any resources registered in <a href="com/krishcpatel/realm/core/Module.html#enable()"><code>Module.enable()</code></a>.</div>
@@ -181,14 +219,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/krishcpatel/realm/economy/EconomyAdminCommand.html#%3Cinit%3E(com.krishcpatel.realm.core.Core,com.krishcpatel.realm.economy.TransactionManager)" class="member-name-link">EconomyAdminCommand(Core, TransactionManager)</a> - Constructor for class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/EconomyAdminCommand.html" title="class in com.krishcpatel.realm.economy">EconomyAdminCommand</a></dt>
 <dd>
 <div class="block">Creates an admin economy command executor.</div>
-</dd>
-<dt><a href="com/krishcpatel/realm/economy/EconomyManager.html" class="type-name-link" title="class in com.krishcpatel.realm.economy">EconomyManager</a> - Class in <a href="com/krishcpatel/realm/economy/package-summary.html">com.krishcpatel.realm.economy</a></dt>
-<dd>
-<div class="block">Economy business logic layer.</div>
-</dd>
-<dt><a href="com/krishcpatel/realm/economy/EconomyManager.html#%3Cinit%3E(com.krishcpatel.realm.economy.EconomyRepository)" class="member-name-link">EconomyManager(EconomyRepository)</a> - Constructor for class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/EconomyManager.html" title="class in com.krishcpatel.realm.economy">EconomyManager</a></dt>
-<dd>
-<div class="block">Creates an economy manager using the given repository.</div>
 </dd>
 <dt><a href="com/krishcpatel/realm/economy/EconomyModule.html" class="type-name-link" title="class in com.krishcpatel.realm.economy">EconomyModule</a> - Class in <a href="com/krishcpatel/realm/economy/package-summary.html">com.krishcpatel.realm.economy</a></dt>
 <dd>
@@ -214,7 +244,15 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/krishcpatel/realm/economy/EconomyRepository.html#ensureAccount(java.lang.String)" class="member-name-link">ensureAccount(String)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/EconomyRepository.html" title="class in com.krishcpatel.realm.economy">EconomyRepository</a></dt>
 <dd>
-<div class="block">Ensures a wallet row exists for this player.</div>
+<div class="block">Ensures an account exists for the given player.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/economy/EconomyRepository.html#ensureAccount(java.sql.Connection,java.lang.String)" class="member-name-link">ensureAccount(Connection, String)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/EconomyRepository.html" title="class in com.krishcpatel.realm.economy">EconomyRepository</a></dt>
+<dd>
+<div class="block">Ensures an account exists for the given player using the provided connection.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/economy/BankNoteRecord.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteRecord.html" title="class in com.krishcpatel.realm.economy">BankNoteRecord</a></dt>
+<dd>
+<div class="block">Indicates whether some other object is "equal to" this one.</div>
 </dd>
 <dt><a href="com/krishcpatel/realm/economy/LedgerEntry.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/LedgerEntry.html" title="class in com.krishcpatel.realm.economy">LedgerEntry</a></dt>
 <dd>
@@ -247,6 +285,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates a failure result.</div>
 </dd>
+<dt><a href="com/krishcpatel/realm/economy/BankNoteRepository.html#findById(java.sql.Connection,java.lang.String)" class="member-name-link">findById(Connection, String)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteRepository.html" title="class in com.krishcpatel.realm.economy">BankNoteRepository</a></dt>
+<dd>
+<div class="block">Finds a bank note by id.</div>
+</dd>
 <dt><a href="com/krishcpatel/realm/economy/LedgerEntry.html#fromUuid()" class="member-name-link">fromUuid()</a> - Method in record class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/LedgerEntry.html" title="class in com.krishcpatel.realm.economy">LedgerEntry</a></dt>
 <dd>
 <div class="block">Returns the value of the <a href="./com/krishcpatel/realm/economy/LedgerEntry.html#param-fromUuid"><code>fromUuid</code></a> record component.</div>
@@ -258,10 +300,6 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:G">G</h2>
 <dl class="index">
-<dt><a href="com/krishcpatel/realm/economy/EconomyManager.html#getBalance(java.lang.String)" class="member-name-link">getBalance(String)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/EconomyManager.html" title="class in com.krishcpatel.realm.economy">EconomyManager</a></dt>
-<dd>
-<div class="block">Returns the player's current balance.</div>
-</dd>
 <dt><a href="com/krishcpatel/realm/economy/EconomyRepository.html#getBalance(java.lang.String)" class="member-name-link">getBalance(String)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/EconomyRepository.html" title="class in com.krishcpatel.realm.economy">EconomyRepository</a></dt>
 <dd>
 <div class="block">Returns a player's current balance.</div>
@@ -278,6 +316,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the active database manager.</div>
 </dd>
+<dt><a href="com/krishcpatel/realm/economy/BankNoteManager.html#getNoteId(org.bukkit.inventory.ItemStack)" class="member-name-link">getNoteId(ItemStack)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteManager.html" title="class in com.krishcpatel.realm.economy">BankNoteManager</a></dt>
+<dd>
+<div class="block">Returns the unique bank note id stored in the item metadata.</div>
+</dd>
 <dt><a href="com/krishcpatel/realm/economy/LedgerRepository.html#getRecentForPlayer(java.sql.Connection,java.lang.String,int)" class="member-name-link">getRecentForPlayer(Connection, String, int)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/LedgerRepository.html" title="class in com.krishcpatel.realm.economy">LedgerRepository</a></dt>
 <dd>
 <div class="block">Returns the most recent ledger entries for a player.</div>
@@ -285,6 +327,10 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:H">H</h2>
 <dl class="index">
+<dt><a href="com/krishcpatel/realm/economy/BankNoteRecord.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteRecord.html" title="class in com.krishcpatel.realm.economy">BankNoteRecord</a></dt>
+<dd>
+<div class="block">Returns a hash code value for this object.</div>
+</dd>
 <dt><a href="com/krishcpatel/realm/economy/LedgerEntry.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/LedgerEntry.html" title="class in com.krishcpatel.realm.economy">LedgerEntry</a></dt>
 <dd>
 <div class="block">Returns a hash code value for this object.</div>
@@ -300,6 +346,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the value of the <a href="./com/krishcpatel/realm/economy/LedgerEntry.html#param-id"><code>id</code></a> record component.</div>
 </dd>
+<dt><a href="com/krishcpatel/realm/economy/BankNoteRepository.html#initSchema()" class="member-name-link">initSchema()</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteRepository.html" title="class in com.krishcpatel.realm.economy">BankNoteRepository</a></dt>
+<dd>
+<div class="block">Creates the bank note table if it does not already exist.</div>
+</dd>
 <dt><a href="com/krishcpatel/realm/economy/EconomyRepository.html#initSchema()" class="member-name-link">initSchema()</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/EconomyRepository.html" title="class in com.krishcpatel.realm.economy">EconomyRepository</a></dt>
 <dd>
 <div class="block">Initializes economy accounts for players</div>
@@ -311,6 +361,26 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/krishcpatel/realm/economy/LedgerRepository.html#insertLedgerRow(java.sql.Connection,long,java.lang.String,long,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String)" class="member-name-link">insertLedgerRow(Connection, long, String, long, String, String, String, String, String, String)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/LedgerRepository.html" title="class in com.krishcpatel.realm.economy">LedgerRepository</a></dt>
 <dd>
 <div class="block">Inserts a single row into <code>economy_ledger</code>.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/economy/BankNoteRepository.html#insertNote(java.sql.Connection,java.lang.String,long,long,java.lang.String)" class="member-name-link">insertNote(Connection, String, long, long, String)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteRepository.html" title="class in com.krishcpatel.realm.economy">BankNoteRepository</a></dt>
+<dd>
+<div class="block">Inserts a newly issued bank note into the database.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/economy/BankNoteManager.html#isBankNote(org.bukkit.inventory.ItemStack)" class="member-name-link">isBankNote(ItemStack)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteManager.html" title="class in com.krishcpatel.realm.economy">BankNoteManager</a></dt>
+<dd>
+<div class="block">Checks whether the provided item is a valid bank note item.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/economy/BankNoteRecord.html#issuedAt()" class="member-name-link">issuedAt()</a> - Method in record class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteRecord.html" title="class in com.krishcpatel.realm.economy">BankNoteRecord</a></dt>
+<dd>
+<div class="block">Returns the value of the <a href="./com/krishcpatel/realm/economy/BankNoteRecord.html#param-issuedAt"><code>issuedAt</code></a> record component.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/economy/BankNoteRecord.html#issuedBy()" class="member-name-link">issuedBy()</a> - Method in record class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteRecord.html" title="class in com.krishcpatel.realm.economy">BankNoteRecord</a></dt>
+<dd>
+<div class="block">Returns the value of the <a href="./com/krishcpatel/realm/economy/BankNoteRecord.html#param-issuedBy"><code>issuedBy</code></a> record component.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/economy/BankNoteManager.html#issueNote(org.bukkit.entity.Player,long)" class="member-name-link">issueNote(Player, long)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteManager.html" title="class in com.krishcpatel.realm.economy">BankNoteManager</a></dt>
+<dd>
+<div class="block">Withdraws money from a player's bank balance and creates a physical bank note.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:J">J</h2>
@@ -373,6 +443,10 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:M">M</h2>
 <dl class="index">
+<dt><a href="com/krishcpatel/realm/economy/BankNoteRepository.html#markRedeemed(java.sql.Connection,java.lang.String,long,java.lang.String)" class="member-name-link">markRedeemed(Connection, String, long, String)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteRepository.html" title="class in com.krishcpatel.realm.economy">BankNoteRepository</a></dt>
+<dd>
+<div class="block">Marks a bank note as redeemed if it has not already been redeemed.</div>
+</dd>
 <dt><a href="com/krishcpatel/realm/economy/TransactionResult.html#message()" class="member-name-link">message()</a> - Method in record class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/TransactionResult.html" title="class in com.krishcpatel.realm.economy">TransactionResult</a></dt>
 <dd>
 <div class="block">Returns the value of the <a href="./com/krishcpatel/realm/economy/TransactionResult.html#param-message"><code>message</code></a> record component.</div>
@@ -398,6 +472,13 @@ loadScripts(document, 'script');</script>
 <div class="block">Returns a formatted message from <code>messages.yml</code> including prefix and color codes.</div>
 </dd>
 </dl>
+<h2 class="title" id="I:N">N</h2>
+<dl class="index">
+<dt><a href="com/krishcpatel/realm/economy/BankNoteRecord.html#noteId()" class="member-name-link">noteId()</a> - Method in record class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteRecord.html" title="class in com.krishcpatel.realm.economy">BankNoteRecord</a></dt>
+<dd>
+<div class="block">Returns the value of the <a href="./com/krishcpatel/realm/economy/BankNoteRecord.html#param-noteId"><code>noteId</code></a> record component.</div>
+</dd>
+</dl>
 <h2 class="title" id="I:O">O</h2>
 <dl class="index">
 <dt><a href="com/krishcpatel/realm/economy/TransactionResult.html#ok(long)" class="member-name-link">ok(long)</a> - Static method in record class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/TransactionResult.html" title="class in com.krishcpatel.realm.economy">TransactionResult</a></dt>
@@ -414,6 +495,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/krishcpatel/realm/economy/PayCommand.html#onCommand(org.bukkit.command.CommandSender,org.bukkit.command.Command,java.lang.String,java.lang.String%5B%5D)" class="member-name-link">onCommand(CommandSender, Command, String, String[])</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/PayCommand.html" title="class in com.krishcpatel.realm.economy">PayCommand</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/krishcpatel/realm/economy/RedeemCommand.html#onCommand(org.bukkit.command.CommandSender,org.bukkit.command.Command,java.lang.String,java.lang.String%5B%5D)" class="member-name-link">onCommand(CommandSender, Command, String, String[])</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/RedeemCommand.html" title="class in com.krishcpatel.realm.economy">RedeemCommand</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/krishcpatel/realm/economy/WithdrawCommand.html#onCommand(org.bukkit.command.CommandSender,org.bukkit.command.Command,java.lang.String,java.lang.String%5B%5D)" class="member-name-link">onCommand(CommandSender, Command, String, String[])</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/WithdrawCommand.html" title="class in com.krishcpatel.realm.economy">WithdrawCommand</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/krishcpatel/realm/core/Core.html#onDisable()" class="member-name-link">onDisable()</a> - Method in class com.krishcpatel.realm.core.<a href="com/krishcpatel/realm/core/Core.html" title="class in com.krishcpatel.realm.core">Core</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/krishcpatel/realm/core/Core.html#onEnable()" class="member-name-link">onEnable()</a> - Method in class com.krishcpatel.realm.core.<a href="com/krishcpatel/realm/core/Core.html" title="class in com.krishcpatel.realm.core">Core</a></dt>
@@ -421,6 +506,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/krishcpatel/realm/core/RealmEventListener.html#onEvent(T)" class="member-name-link">onEvent(T)</a> - Method in interface com.krishcpatel.realm.core.<a href="com/krishcpatel/realm/core/RealmEventListener.html" title="interface in com.krishcpatel.realm.core">RealmEventListener</a></dt>
 <dd>
 <div class="block">Called when an event of type <code>T</code> is published.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/economy/BankNoteInteractListener.html#onInteract(org.bukkit.event.player.PlayerInteractEvent)" class="member-name-link">onInteract(PlayerInteractEvent)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteInteractListener.html" title="class in com.krishcpatel.realm.economy">BankNoteInteractListener</a></dt>
+<dd>
+<div class="block">Handles player interaction for redeeming bank notes by shift-right-clicking.</div>
 </dd>
 <dt><a href="com/krishcpatel/realm/core/PlayerJoinListener.html#onJoin(org.bukkit.event.player.PlayerJoinEvent)" class="member-name-link">onJoin(PlayerJoinEvent)</a> - Method in class com.krishcpatel.realm.core.<a href="com/krishcpatel/realm/core/PlayerJoinListener.html" title="class in com.krishcpatel.realm.core">PlayerJoinListener</a></dt>
 <dd>
@@ -504,6 +593,30 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns an optional human-readable reason for the transaction.</div>
 </dd>
+<dt><a href="com/krishcpatel/realm/economy/RedeemCommand.html" class="type-name-link" title="class in com.krishcpatel.realm.economy">RedeemCommand</a> - Class in <a href="com/krishcpatel/realm/economy/package-summary.html">com.krishcpatel.realm.economy</a></dt>
+<dd>
+<div class="block">Handles the <code>/redeem</code> command.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/economy/RedeemCommand.html#%3Cinit%3E(com.krishcpatel.realm.core.Core,com.krishcpatel.realm.economy.BankNoteManager)" class="member-name-link">RedeemCommand(Core, BankNoteManager)</a> - Constructor for class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/RedeemCommand.html" title="class in com.krishcpatel.realm.economy">RedeemCommand</a></dt>
+<dd>
+<div class="block">Creates a redeem command executor.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/economy/BankNoteRecord.html#redeemed()" class="member-name-link">redeemed()</a> - Method in record class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteRecord.html" title="class in com.krishcpatel.realm.economy">BankNoteRecord</a></dt>
+<dd>
+<div class="block">Returns the value of the <a href="./com/krishcpatel/realm/economy/BankNoteRecord.html#param-redeemed"><code>redeemed</code></a> record component.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/economy/BankNoteRecord.html#redeemedAt()" class="member-name-link">redeemedAt()</a> - Method in record class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteRecord.html" title="class in com.krishcpatel.realm.economy">BankNoteRecord</a></dt>
+<dd>
+<div class="block">Returns the value of the <a href="./com/krishcpatel/realm/economy/BankNoteRecord.html#param-redeemedAt"><code>redeemedAt</code></a> record component.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/economy/BankNoteRecord.html#redeemedBy()" class="member-name-link">redeemedBy()</a> - Method in record class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteRecord.html" title="class in com.krishcpatel.realm.economy">BankNoteRecord</a></dt>
+<dd>
+<div class="block">Returns the value of the <a href="./com/krishcpatel/realm/economy/BankNoteRecord.html#param-redeemedBy"><code>redeemedBy</code></a> record component.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/economy/BankNoteManager.html#redeemHeldNote(org.bukkit.entity.Player)" class="member-name-link">redeemHeldNote(Player)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteManager.html" title="class in com.krishcpatel.realm.economy">BankNoteManager</a></dt>
+<dd>
+<div class="block">Redeems the bank note currently held in the player's main hand.</div>
+</dd>
 <dt><a href="com/krishcpatel/realm/economy/LedgerEntry.html#reference()" class="member-name-link">reference()</a> - Method in record class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/LedgerEntry.html" title="class in com.krishcpatel.realm.economy">LedgerEntry</a></dt>
 <dd>
 <div class="block">Returns the value of the <a href="./com/krishcpatel/realm/economy/LedgerEntry.html#param-reference"><code>reference</code></a> record component.</div>
@@ -525,10 +638,6 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:S">S</h2>
 <dl class="index">
-<dt><a href="com/krishcpatel/realm/economy/EconomyManager.html#set(java.lang.String,long)" class="member-name-link">set(String, long)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/EconomyManager.html" title="class in com.krishcpatel.realm.economy">EconomyManager</a></dt>
-<dd>
-<div class="block">Sets a player's balance to an exact value.</div>
-</dd>
 <dt><a href="com/krishcpatel/realm/economy/EconomyRepository.html#setBalance(java.lang.String,long)" class="member-name-link">setBalance(String, long)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/EconomyRepository.html" title="class in com.krishcpatel.realm.economy">EconomyRepository</a></dt>
 <dd>
 <div class="block">Sets the balance for a player's account to an exact value.</div>
@@ -555,7 +664,11 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/krishcpatel/realm/economy/EconomyRepository.html#subtractBalanceFloorZero(java.lang.String,long)" class="member-name-link">subtractBalanceFloorZero(String, long)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/EconomyRepository.html" title="class in com.krishcpatel.realm.economy">EconomyRepository</a></dt>
 <dd>
-<div class="block">Attempts to withdraw funds from a player's account without allowing negative balances.</div>
+<div class="block">Attempts to subtract money from a player's bank balance without allowing it to go below zero.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/economy/EconomyRepository.html#subtractBalanceFloorZero(java.sql.Connection,java.lang.String,long)" class="member-name-link">subtractBalanceFloorZero(Connection, String, long)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/EconomyRepository.html" title="class in com.krishcpatel.realm.economy">EconomyRepository</a></dt>
+<dd>
+<div class="block">Attempts to subtract money without allowing a negative balance.</div>
 </dd>
 <dt><a href="com/krishcpatel/realm/economy/TransactionResult.html#success()" class="member-name-link">success()</a> - Method in record class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/TransactionResult.html" title="class in com.krishcpatel.realm.economy">TransactionResult</a></dt>
 <dd>
@@ -568,6 +681,10 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:T">T</h2>
 <dl class="index">
+<dt><a href="com/krishcpatel/realm/economy/BankNoteRecord.html#toString()" class="member-name-link">toString()</a> - Method in record class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/BankNoteRecord.html" title="class in com.krishcpatel.realm.economy">BankNoteRecord</a></dt>
+<dd>
+<div class="block">Returns a string representation of this record class.</div>
+</dd>
 <dt><a href="com/krishcpatel/realm/economy/LedgerEntry.html#toString()" class="member-name-link">toString()</a> - Method in record class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/LedgerEntry.html" title="class in com.krishcpatel.realm.economy">LedgerEntry</a></dt>
 <dd>
 <div class="block">Returns a string representation of this record class.</div>
@@ -646,12 +763,16 @@ the order they are declared.</div>
 </dl>
 <h2 class="title" id="I:W">W</h2>
 <dl class="index">
-<dt><a href="com/krishcpatel/realm/economy/EconomyManager.html#withdraw(java.lang.String,long)" class="member-name-link">withdraw(String, long)</a> - Method in class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/EconomyManager.html" title="class in com.krishcpatel.realm.economy">EconomyManager</a></dt>
+<dt><a href="com/krishcpatel/realm/economy/WithdrawCommand.html" class="type-name-link" title="class in com.krishcpatel.realm.economy">WithdrawCommand</a> - Class in <a href="com/krishcpatel/realm/economy/package-summary.html">com.krishcpatel.realm.economy</a></dt>
 <dd>
-<div class="block">Attempts to withdraw currency from the player's balance.</div>
+<div class="block">Handles the <code>/withdraw &lt;amount&gt;</code> command.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/economy/WithdrawCommand.html#%3Cinit%3E(com.krishcpatel.realm.core.Core,com.krishcpatel.realm.economy.BankNoteManager)" class="member-name-link">WithdrawCommand(Core, BankNoteManager)</a> - Constructor for class com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/WithdrawCommand.html" title="class in com.krishcpatel.realm.economy">WithdrawCommand</a></dt>
+<dd>
+<div class="block">Creates a withdraw command executor.</div>
 </dd>
 </dl>
-<a href="#I:A">A</a>&nbsp;<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:J">J</a>&nbsp;<a href="#I:L">L</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<a href="#I:V">V</a>&nbsp;<a href="#I:W">W</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a></main>
+<a href="#I:A">A</a>&nbsp;<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:J">J</a>&nbsp;<a href="#I:L">L</a>&nbsp;<a href="#I:M">M</a>&nbsp;<a href="#I:N">N</a>&nbsp;<a href="#I:O">O</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<a href="#I:V">V</a>&nbsp;<a href="#I:W">W</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a></main>
 </div>
 </div>
 </body>
