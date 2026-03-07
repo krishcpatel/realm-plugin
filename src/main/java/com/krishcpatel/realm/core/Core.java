@@ -1,5 +1,14 @@
 package com.krishcpatel.realm.core;
 
+import com.krishcpatel.realm.core.command.RealmCommand;
+import com.krishcpatel.realm.core.config.ConfigManager;
+import com.krishcpatel.realm.core.database.DatabaseManager;
+import com.krishcpatel.realm.core.event.EventSystem;
+import com.krishcpatel.realm.core.event.RealmEvent;
+import com.krishcpatel.realm.core.event.player.PlayerUpsertedEvent;
+import com.krishcpatel.realm.core.listener.PlayerJoinListener;
+import com.krishcpatel.realm.core.module.Module;
+import com.krishcpatel.realm.core.player.PlayerRepository;
 import com.krishcpatel.realm.economy.EconomyModule;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -45,7 +54,7 @@ public final class Core extends JavaPlugin {
     private PlayerRepository playerRepo;
     private EventSystem eventSystem;
 
-    private final List<Module> modules = new ArrayList<>();
+    private final List<com.krishcpatel.realm.core.module.Module> modules = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -84,7 +93,7 @@ public final class Core extends JavaPlugin {
         );
 
         // enable modules
-        for (Module module : modules) {
+        for (com.krishcpatel.realm.core.module.Module module : modules) {
             try {
                 module.enable();
             } catch (Exception e) {
@@ -99,7 +108,7 @@ public final class Core extends JavaPlugin {
         logger.info("onDisable");
 
         // disable modules
-        for (Module module : modules) {
+        for (com.krishcpatel.realm.core.module.Module module : modules) {
             try {
                 module.disable();
             } catch (Exception e) {
