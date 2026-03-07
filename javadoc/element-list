@@ -1,2 +1,17 @@
 com.krishcpatel.realm.core
+com.krishcpatel.realm.core.command
+com.krishcpatel.realm.core.config
+com.krishcpatel.realm.core.database
+com.krishcpatel.realm.core.event
+com.krishcpatel.realm.core.event.player
+com.krishcpatel.realm.core.listener
+com.krishcpatel.realm.core.module
+com.krishcpatel.realm.core.player
 com.krishcpatel.realm.economy
+com.krishcpatel.realm.economy.command
+com.krishcpatel.realm.economy.data
+com.krishcpatel.realm.economy.event
+com.krishcpatel.realm.economy.listener
+com.krishcpatel.realm.economy.manager
+com.krishcpatel.realm.economy.model
+com.krishcpatel.realm.economy.repository

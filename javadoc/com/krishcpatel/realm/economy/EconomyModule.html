@@ -90,12 +90,12 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>All Implemented Interfaces:</dt>
-<dd><code><a href="../core/Module.html" title="interface in com.krishcpatel.realm.core">Module</a></code></dd>
+<dd><code><a href="../core/module/Module.html" title="interface in com.krishcpatel.realm.core.module">Module</a></code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">EconomyModule</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
-implements <a href="../core/Module.html" title="interface in com.krishcpatel.realm.core">Module</a></span></div>
+implements <a href="../core/module/Module.html" title="interface in com.krishcpatel.realm.core.module">Module</a></span></div>
 <div class="block">Economy module bootstrapper.
 
  <p>Wires economy components (repository/manager), registers listeners/commands,
@@ -132,7 +132,7 @@ implements <a href="../core/Module.html" title="interface in com.krishcpatel.rea
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#disable()" class="member-name-link">disable</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Disables the module and releases any resources registered in <a href="../core/Module.html#enable()"><code>Module.enable()</code></a>.</div>
+<div class="block">Disables the module and releases any resources registered in <a href="../core/module/Module.html#enable()"><code>Module.enable()</code></a>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#enable()" class="member-name-link">enable</a>()</code></div>
@@ -185,11 +185,11 @@ implements <a href="../core/Module.html" title="interface in com.krishcpatel.rea
 <h3>enable</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">enable</span>()
             throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/SQLException.html" title="class or interface in java.sql" class="external-link">SQLException</a></span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../core/Module.html#enable()">Module</a></code></span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../core/module/Module.html#enable()">Module</a></code></span></div>
 <div class="block">Enables the module and registers any required resources (commands, listeners, tasks).</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../core/Module.html#enable()">enable</a></code>&nbsp;in interface&nbsp;<code><a href="../core/Module.html" title="interface in com.krishcpatel.realm.core">Module</a></code></dd>
+<dd><code><a href="../core/module/Module.html#enable()">enable</a></code>&nbsp;in interface&nbsp;<code><a href="../core/module/Module.html" title="interface in com.krishcpatel.realm.core.module">Module</a></code></dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/SQLException.html" title="class or interface in java.sql" class="external-link">SQLException</a></code> - if module initialization requires database access and it fails</dd>
 </dl>
@@ -199,11 +199,11 @@ implements <a href="../core/Module.html" title="interface in com.krishcpatel.rea
 <section class="detail" id="disable()">
 <h3>disable</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">disable</span>()</div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../core/Module.html#disable()">Module</a></code></span></div>
-<div class="block">Disables the module and releases any resources registered in <a href="../core/Module.html#enable()"><code>Module.enable()</code></a>.</div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../core/module/Module.html#disable()">Module</a></code></span></div>
+<div class="block">Disables the module and releases any resources registered in <a href="../core/module/Module.html#enable()"><code>Module.enable()</code></a>.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../core/Module.html#disable()">disable</a></code>&nbsp;in interface&nbsp;<code><a href="../core/Module.html" title="interface in com.krishcpatel.realm.core">Module</a></code></dd>
+<dd><code><a href="../core/module/Module.html#disable()">disable</a></code>&nbsp;in interface&nbsp;<code><a href="../core/module/Module.html" title="interface in com.krishcpatel.realm.core.module">Module</a></code></dd>
 </dl>
 </section>
 </li>
@@ -211,11 +211,11 @@ implements <a href="../core/Module.html" title="interface in com.krishcpatel.rea
 <section class="detail" id="reload()">
 <h3>reload</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reload</span>()</div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../core/Module.html#reload()">Module</a></code></span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="../core/module/Module.html#reload()">Module</a></code></span></div>
 <div class="block">Reloads module configuration/state without restarting the server.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="../core/Module.html#reload()">reload</a></code>&nbsp;in interface&nbsp;<code><a href="../core/Module.html" title="interface in com.krishcpatel.realm.core">Module</a></code></dd>
+<dd><code><a href="../core/module/Module.html#reload()">reload</a></code>&nbsp;in interface&nbsp;<code><a href="../core/module/Module.html" title="interface in com.krishcpatel.realm.core.module">Module</a></code></dd>
 </dl>
 </section>
 </li>

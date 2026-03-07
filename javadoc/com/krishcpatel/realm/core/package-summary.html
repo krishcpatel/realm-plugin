@@ -38,7 +38,7 @@ loadScripts(document, 'script');</script>
 <p>Package:</p>
 <ul>
 <li>Description</li>
-<li>Related Packages</li>
+<li><a href="#related-package-summary">Related Packages</a></li>
 <li><a href="#class-summary">Classes and Interfaces</a></li>
 </ul>
 </li>
@@ -49,7 +49,7 @@ loadScripts(document, 'script');</script>
 <ul class="sub-nav-list">
 <li>Package:&nbsp;</li>
 <li>Description&nbsp;|&nbsp;</li>
-<li>Related Packages&nbsp;|&nbsp;</li>
+<li><a href="#related-package-summary">Related Packages</a>&nbsp;|&nbsp;</li>
 <li><a href="#class-summary">Classes and Interfaces</a></li>
 </ul>
 </div>
@@ -71,56 +71,37 @@ loadScripts(document, 'script');</script>
 <section class="summary">
 <ul class="summary-list">
 <li>
+<div id="related-package-summary">
+<div class="caption"><span>Related Packages</span></div>
+<div class="summary-table two-column-summary">
+<div class="table-header col-first">Package</div>
+<div class="table-header col-last">Description</div>
+<div class="col-first even-row-color"><a href="command/package-summary.html">com.krishcpatel.realm.core.command</a></div>
+<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><a href="config/package-summary.html">com.krishcpatel.realm.core.config</a></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><a href="database/package-summary.html">com.krishcpatel.realm.core.database</a></div>
+<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><a href="event/package-summary.html">com.krishcpatel.realm.core.event</a></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><a href="listener/package-summary.html">com.krishcpatel.realm.core.listener</a></div>
+<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><a href="module/package-summary.html">com.krishcpatel.realm.core.module</a></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><a href="player/package-summary.html">com.krishcpatel.realm.core.player</a></div>
+<div class="col-last even-row-color">&nbsp;</div>
+</div>
+</div>
+</li>
+<li>
 <div id="class-summary">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="class-summary-tab0" role="tab" aria-selected="true" aria-controls="class-summary.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary', 2)" class="active-table-tab">All Classes and Interfaces</button><button id="class-summary-tab1" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab1', 2)" class="table-tab">Interfaces</button><button id="class-summary-tab2" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab2', 2)" class="table-tab">Classes</button></div>
-<div id="class-summary.tabpanel" role="tabpanel" aria-labelledby="class-summary-tab0">
+<div class="caption"><span>Classes</span></div>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="ConfigManager.html" title="class in com.krishcpatel.realm.core">ConfigManager</a></div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="Core.html" title="class in com.krishcpatel.realm.core">Core</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">Loads and exposes Realm configuration files.</div>
-</div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="Core.html" title="class in com.krishcpatel.realm.core">Core</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Main entry point for the Realm plugin.</div>
-</div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="DatabaseManager.html" title="class in com.krishcpatel.realm.core">DatabaseManager</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">Manages the Realm SQLite database connection and schema.</div>
-</div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="EventSystem.html" title="class in com.krishcpatel.realm.core">EventSystem</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">Lightweight internal event bus for Realm.</div>
-</div>
-<div class="col-first even-row-color class-summary class-summary-tab1"><a href="Module.html" title="interface in com.krishcpatel.realm.core">Module</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab1">
-<div class="block">Represents a feature module that can be enabled/disabled/reloaded by the core plugin.</div>
-</div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="PlayerJoinListener.html" title="class in com.krishcpatel.realm.core">PlayerJoinListener</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">Bukkit event adapter for player joins.</div>
-</div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="PlayerRepository.html" title="class in com.krishcpatel.realm.core">PlayerRepository</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">Database access layer for player records.</div>
-</div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="PlayerUpsertedEvent.html" title="class in com.krishcpatel.realm.core">PlayerUpsertedEvent</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">Internal event published after a player has been inserted/updated in the database.</div>
-</div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="RealmCommand.html" title="class in com.krishcpatel.realm.core">RealmCommand</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">Handles the <code>/realm</code> command.</div>
-</div>
-<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="RealmEvent.html" title="interface in com.krishcpatel.realm.core">RealmEvent</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab1">
-<div class="block">Base interface for all internal Realm events.</div>
-</div>
-<div class="col-first even-row-color class-summary class-summary-tab1"><a href="RealmEventListener.html" title="interface in com.krishcpatel.realm.core">RealmEventListener</a>&lt;T extends <a href="RealmEvent.html" title="interface in com.krishcpatel.realm.core">RealmEvent</a>&gt;</div>
-<div class="col-last even-row-color class-summary class-summary-tab1">
-<div class="block">Listener callback for a specific <a href="RealmEvent.html" title="interface in com.krishcpatel.realm.core"><code>RealmEvent</code></a> type.</div>
-</div>
 </div>
 </div>
 </div>
