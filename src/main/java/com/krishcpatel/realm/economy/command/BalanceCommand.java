@@ -2,7 +2,9 @@ package com.krishcpatel.realm.economy.command;
 
 import com.krishcpatel.realm.core.Core;
 import com.krishcpatel.realm.economy.repository.EconomyRepository;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -33,35 +35,63 @@ public class BalanceCommand implements CommandExecutor {
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage(core.msg("general.player-only"));
+
+        if (args.length > 1) {
+            sender.sendMessage(core.msg("balance.usage"));
             return true;
         }
 
-        // Read balance async
+        // /bal
+        if (args.length == 0) {
+            if (!(sender instanceof Player player)) {
+                sender.sendMessage(core.msg("general.player-only"));
+                return true;
+            }
+
+            loadAndSendBalance(sender, player.getUniqueId().toString(), player.getName(), true);
+            return true;
+        }
+
+        // /bal <player>
+        OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
+
+        if ((!target.isOnline() && !target.hasPlayedBefore()) || target.getName() == null) {
+            sender.sendMessage(core.msg("balance.not-found"));
+            return true;
+        }
+
+        loadAndSendBalance(sender, target.getUniqueId().toString(), target.getName(), false);
+        return true;
+    }
+
+    private void loadAndSendBalance(CommandSender sender, String uuid, String name, boolean self) {
         core.getServer().getScheduler().runTaskAsynchronously(core, () -> {
             try {
-                String uuid = player.getUniqueId().toString();
                 repo.ensureAccount(uuid);
                 long balance = repo.getBalance(uuid);
 
-                core.getServer().getScheduler().runTask(core, () ->
-                        player.sendMessage(core.msg("balance.self", Map.of(
+                core.getServer().getScheduler().runTask(core, () -> {
+                    if (self) {
+                        sender.sendMessage(core.msg("balance.self", Map.of(
                                 "%balance%", String.valueOf(balance)
-                        )))
-                );
+                        )));
+                    } else {
+                        sender.sendMessage(core.msg("balance.others", Map.of(
+                                "%player%", name,
+                                "%balance%", String.valueOf(balance)
+                        )));
+                    }
+                });
 
             } catch (Exception e) {
-                core.getLogger().severe("[economy] Failed to get balance for " + player.getName());
+                core.getLogger().severe("[economy] Failed to get balance for " + name);
                 e.printStackTrace();
 
                 core.getServer().getScheduler().runTask(core, () ->
-                        player.sendMessage(core.msg("general.command-failed"))
+                        sender.sendMessage(core.msg("general.command-failed"))
                 );
             }
         });
-
-        return true;
     }
 
     private String color(String s) {

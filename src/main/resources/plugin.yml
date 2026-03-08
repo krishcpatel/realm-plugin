@@ -8,8 +8,8 @@ commands:
     description: Realm core command
     usage: /realm reload
   balance:
-    description: Check your bank balance
-    usage: /balance
+    description: Check a bank balance
+    usage: /balance [player]
     aliases: [bal]
   withdraw:
     description: Withdraw a bank note

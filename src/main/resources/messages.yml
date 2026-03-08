@@ -9,7 +9,10 @@ general:
   reload-success: "&aRealm configuration reloaded."
 
 balance:
+  usage: "&7Usage: &f/bal [player]"
   self: "&7Bank Balance: &a$%balance%"
+  others: "&7%player%'s Bank Balance: &a$%balance%"
+  not-found: "&cThat player does not exist or has never joined the server."
 
 pay:
   usage: "&7Usage: &f/pay <player> <amount>"
