@@ -22,7 +22,9 @@ public class ConfigManager {
 
     private FileConfiguration config;
     private FileConfiguration messages;
+    private FileConfiguration jobs;
     private File messagesFile;
+    private File jobsFile;
 
     /**
      * Creates a new configuration manager for the given plugin.
@@ -34,7 +36,8 @@ public class ConfigManager {
     }
 
     /**
-     * Loads (or reloads) {@code config.yml} and {@code messages.yml} from the plugin data folder.
+     * Loads (or reloads) {@code config.yml}, {@code messages.yml}, and {@code jobs.yml}
+     * from the plugin data folder.
      *
      * <p>If defaults do not exist, they are saved from resources.</p>
      */
@@ -48,6 +51,12 @@ public class ConfigManager {
             plugin.saveResource("messages.yml", false);
         }
         messages = YamlConfiguration.loadConfiguration(messagesFile);
+
+        jobsFile = new File(plugin.getDataFolder(), "jobs.yml");
+        if (!jobsFile.exists()) {
+            plugin.saveResource("jobs.yml", false);
+        }
+        jobs = YamlConfiguration.loadConfiguration(jobsFile);
     }
 
     /**
@@ -66,5 +75,14 @@ public class ConfigManager {
      */
     public FileConfiguration messages() {
         return messages;
+    }
+
+    /**
+     * Returns the loaded {@code jobs.yml}.
+     *
+     * @return jobs configuration
+     */
+    public FileConfiguration jobs() {
+        return jobs;
     }
 }

@@ -7,8 +7,10 @@ import com.krishcpatel.realm.economy.repository.EconomyRepository;
 import com.krishcpatel.realm.economy.repository.LedgerRepository;
 import com.krishcpatel.realm.economy.model.MoneySource;
 import com.krishcpatel.realm.economy.data.BankNoteRecord;
+import com.krishcpatel.realm.economy.data.BankNoteIssueResult;
 import com.krishcpatel.realm.economy.data.TransactionResult;
 import com.krishcpatel.realm.economy.event.LedgerRecordedEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -19,6 +21,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.concurrent.Callable;
 import java.util.List;
 import java.util.UUID;
 
@@ -62,19 +65,21 @@ public final class BankNoteManager {
     }
 
     /**
-     * Withdraws money from a player's bank balance and creates a physical bank note.
+     * Withdraws money from a player's bank balance and creates a bank note record.
      *
-     * @param player player receiving the note item
+     * <p>The actual item must be granted on the server thread by calling
+     * {@link #giveIssuedNote(Player, String, long)}.</p>
+     *
+     * @param playerUuid player account UUID
      * @param amount amount to convert into a note
-     * @return transaction result describing success or failure
+     * @return issue result describing success/failure and created note id
      * @throws SQLException if database access fails
      */
-    public TransactionResult issueNote(Player player, long amount) throws SQLException {
+    public BankNoteIssueResult issueNote(String playerUuid, long amount) throws SQLException {
         if (amount <= 0) {
-            return TransactionResult.fail("Amount must be > 0");
+            return BankNoteIssueResult.fail("Amount must be > 0");
         }
 
-        String playerUuid = player.getUniqueId().toString();
         String noteId = UUID.randomUUID().toString();
         long now = System.currentTimeMillis();
 
@@ -88,7 +93,7 @@ public final class BankNoteManager {
             boolean ok = economy.subtractBalanceFloorZero(c, playerUuid, amount);
             if (!ok) {
                 c.rollback();
-                return TransactionResult.fail("Insufficient funds");
+                return BankNoteIssueResult.fail("Insufficient funds");
             }
 
             notes.insertNote(c, noteId, amount, now, playerUuid);
@@ -108,12 +113,6 @@ public final class BankNoteManager {
 
             c.commit();
 
-            ItemStack noteItem = createNoteItem(noteId, amount);
-            var leftovers = player.getInventory().addItem(noteItem);
-            if (!leftovers.isEmpty()) {
-                leftovers.values().forEach(item -> player.getWorld().dropItemNaturally(player.getLocation(), item));
-            }
-
             core.events().publishAsync(new LedgerRecordedEvent(
                     ledgerId,
                     "WITHDRAW_NOTE",
@@ -126,7 +125,7 @@ public final class BankNoteManager {
                     playerUuid
             ));
 
-            return TransactionResult.ok(ledgerId);
+            return BankNoteIssueResult.ok(ledgerId, noteId, amount);
 
         } catch (SQLException ex) {
             c.rollback();
@@ -143,22 +142,23 @@ public final class BankNoteManager {
      * and the corresponding amount is added back to the player's bank
      * balance. A ledger entry is also recorded.</p>
      *
-     * @param player player redeeming the banknote
+     * @param playerUuid player redeeming the banknote
      * @return result describing whether the redemption succeeded
-     * @throws SQLException if a database operation fails
+     * @throws Exception if database or sync inventory operations fail
      */
-    public TransactionResult redeemHeldNote(Player player) throws SQLException {
-        ItemStack item = player.getInventory().getItemInMainHand();
-        if (!isBankNote(item)) {
+    public TransactionResult redeemHeldNote(UUID playerUuid) throws Exception {
+        ConsumedNote consumed = consumeHeldNote(playerUuid);
+        if (consumed == null) {
             return TransactionResult.fail("Hold a bank note in your main hand");
         }
 
-        String noteId = getNoteId(item);
-        if (noteId == null || noteId.isBlank()) {
+        String noteId = consumed.noteId();
+        if (noteId.isBlank()) {
+            restoreConsumedNote(playerUuid, consumed.item());
             return TransactionResult.fail("Invalid bank note");
         }
 
-        String playerUuid = player.getUniqueId().toString();
+        String playerUuidString = playerUuid.toString();
         long now = System.currentTimeMillis();
 
         Connection c = db.getConnection();
@@ -169,22 +169,25 @@ public final class BankNoteManager {
             BankNoteRecord note = notes.findById(c, noteId);
             if (note == null) {
                 c.rollback();
+                restoreConsumedNote(playerUuid, consumed.item());
                 return TransactionResult.fail("Bank note not found");
             }
 
             if (note.redeemed()) {
                 c.rollback();
+                restoreConsumedNote(playerUuid, consumed.item());
                 return TransactionResult.fail("This bank note has already been redeemed");
             }
 
-            boolean marked = notes.markRedeemed(c, noteId, now, playerUuid);
+            boolean marked = notes.markRedeemed(c, noteId, now, playerUuidString);
             if (!marked) {
                 c.rollback();
+                restoreConsumedNote(playerUuid, consumed.item());
                 return TransactionResult.fail("This bank note has already been redeemed");
             }
 
-            economy.ensureAccount(playerUuid);
-            economy.addBalance(c, playerUuid, note.amount());
+            economy.ensureAccount(playerUuidString);
+            economy.addBalance(c, playerUuidString, note.amount());
 
             long ledgerId = ledger.insertLedgerRow(
                     c,
@@ -192,37 +195,54 @@ public final class BankNoteManager {
                     "REDEEM_NOTE",
                     note.amount(),
                     null,
-                    playerUuid,
+                    playerUuidString,
                     MoneySource.SYSTEM.name(),
                     noteId,
                     "Redeem bank note",
-                    playerUuid
+                    playerUuidString
             );
 
             c.commit();
-
-            consumeOneFromMainHand(player);
 
             core.events().publishAsync(new LedgerRecordedEvent(
                     ledgerId,
                     "REDEEM_NOTE",
                     note.amount(),
                     null,
-                    playerUuid,
+                    playerUuidString,
                     MoneySource.SYSTEM,
                     noteId,
                     "Redeem bank note",
-                    playerUuid
+                    playerUuidString
             ));
 
             return TransactionResult.ok(ledgerId);
 
         } catch (SQLException ex) {
             c.rollback();
+            restoreConsumedNote(playerUuid, consumed.item());
             throw ex;
         } finally {
             c.setAutoCommit(oldAuto);
         }
+    }
+
+    /**
+     * Grants an already-issued bank note item to a player.
+     *
+     * <p>Must be called from the server thread.</p>
+     *
+     * @param player recipient
+     * @param noteId unique note id
+     * @param amount note value
+     */
+    public void giveIssuedNote(Player player, String noteId, long amount) {
+        ItemStack noteItem = createNoteItem(noteId, amount);
+        var leftovers = player.getInventory().addItem(noteItem);
+        if (!leftovers.isEmpty()) {
+            leftovers.values().forEach(item -> player.getWorld().dropItemNaturally(player.getLocation(), item));
+        }
+        player.updateInventory();
     }
 
     /**
@@ -285,6 +305,61 @@ public final class BankNoteManager {
             hand.setAmount(hand.getAmount() - 1);
             player.getInventory().setItemInMainHand(hand);
         }
+    }
+
+    private ConsumedNote consumeHeldNote(UUID playerUuid) throws Exception {
+        return runSync(() -> {
+            Player player = Bukkit.getPlayer(playerUuid);
+            if (player == null) return null;
+
+            ItemStack hand = player.getInventory().getItemInMainHand();
+            if (!isBankNote(hand)) return null;
+
+            String noteId = getNoteId(hand);
+            if (noteId == null || noteId.isBlank()) return null;
+
+            ItemStack consumed = hand.clone();
+            consumed.setAmount(1);
+            consumeOneFromMainHand(player);
+            player.updateInventory();
+
+            return new ConsumedNote(noteId, consumed);
+        });
+    }
+
+    private void restoreConsumedNote(UUID playerUuid, ItemStack item) {
+        try {
+            runSync(() -> {
+                Player player = Bukkit.getPlayer(playerUuid);
+                if (player == null) {
+                    core.getLogger().warning("[economy] Could not restore bank note because player is offline: " + playerUuid);
+                    return null;
+                }
+
+                var leftovers = player.getInventory().addItem(item.clone());
+                if (!leftovers.isEmpty()) {
+                    leftovers.values().forEach(leftover ->
+                            player.getWorld().dropItemNaturally(player.getLocation(), leftover)
+                    );
+                }
+
+                player.updateInventory();
+                return null;
+            });
+        } catch (Exception e) {
+            core.getLogger().severe("[economy] Failed to restore consumed bank note for " + playerUuid);
+            e.printStackTrace();
+        }
+    }
+
+    private <T> T runSync(Callable<T> task) throws Exception {
+        if (Bukkit.isPrimaryThread()) {
+            return task.call();
+        }
+        return core.getServer().getScheduler().callSyncMethod(core, task).get();
+    }
+
+    private record ConsumedNote(String noteId, ItemStack item) {
     }
 
     private String color(String s) {

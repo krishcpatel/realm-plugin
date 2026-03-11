@@ -1,8 +1,8 @@
 package com.krishcpatel.realm.economy.command;
 
 import com.krishcpatel.realm.core.Core;
+import com.krishcpatel.realm.economy.data.BankNoteIssueResult;
 import com.krishcpatel.realm.economy.manager.BankNoteManager;
-import com.krishcpatel.realm.economy.data.TransactionResult;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -71,9 +71,11 @@ public final class WithdrawCommand implements CommandExecutor {
             return true;
         }
 
+        String playerUuid = player.getUniqueId().toString();
+
         core.getServer().getScheduler().runTaskAsynchronously(core, () -> {
             try {
-                TransactionResult result = notes.issueNote(player, amount);
+                BankNoteIssueResult result = notes.issueNote(playerUuid, amount);
 
                 core.getServer().getScheduler().runTask(core, () -> {
                     if (!result.success()) {
@@ -83,6 +85,13 @@ public final class WithdrawCommand implements CommandExecutor {
                         return;
                     }
 
+                    Player onlinePlayer = core.getServer().getPlayer(java.util.UUID.fromString(playerUuid));
+                    if (onlinePlayer == null) {
+                        core.getLogger().warning("[economy] Could not deliver issued bank note because player is offline: " + playerUuid);
+                        return;
+                    }
+
+                    notes.giveIssuedNote(onlinePlayer, result.noteId(), result.amount());
                     player.sendMessage(core.msg("withdraw.success", Map.of(
                             "%amount%", String.valueOf(amount)
                     )));

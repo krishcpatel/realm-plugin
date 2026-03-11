@@ -72,7 +72,10 @@ public class EconomyModule implements Module {
 
         core.getLogger().info("[economy] enabled");
 
-        // subscribe to events
+        registerEventSubscriptions();
+    }
+
+    private void registerEventSubscriptions() {
         core.events().subscribe(PlayerUpsertedEvent.class, evt -> {
             try {
                 economyRepo.ensureAccount(evt.uuid().toString());
@@ -115,8 +118,6 @@ public class EconomyModule implements Module {
                 }
             }
         });
-
-        core.logger.info("[economy] enabled");
     }
 
     @Override
@@ -126,6 +127,7 @@ public class EconomyModule implements Module {
 
     @Override
     public void reload() {
+        registerEventSubscriptions();
         core.logger.info("[economy] reloaded");
     }
 }

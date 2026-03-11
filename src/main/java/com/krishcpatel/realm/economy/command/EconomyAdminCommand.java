@@ -91,11 +91,11 @@ public final class EconomyAdminCommand implements CommandExecutor {
 
                 reply(sender, "&aOK. Ledger id: &f#" + res.ledgerId());
 
-                if (target.isOnline() && target.getPlayer() != null) {
-                    core.getServer().getScheduler().runTask(core, () ->
-                            target.getPlayer().sendMessage(color("&eYour balance was updated by an admin."))
-                    );
-                }
+                core.getServer().getScheduler().runTask(core, () -> {
+                    if (target.isOnline() && target.getPlayer() != null) {
+                        target.getPlayer().sendMessage(color("&eYour balance was updated by an admin."));
+                    }
+                });
 
             } catch (Exception e) {
                 core.getLogger().severe("[economy] /eco failed: " + sender.getName());

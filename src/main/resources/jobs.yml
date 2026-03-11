@@ -1,0 +1,214 @@
+settings:
+  max-jobs-per-player: 2
+  starting-level: 1
+  allow-no-job: true
+  ignore-creative: true
+
+  notifications:
+    enabled: true
+    aggregate-window-ms: 900
+    sound-enabled: true
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP
+    sound-volume: 0.35
+    sound-pitch: 1.35
+
+  anti-farm:
+    ignore-player-placed-breaks: true
+    ignore-spawner-kills: true
+    brew-owner-expiry-ms: 300000
+
+    action-cooldown-ms:
+      break: 0
+      place: 250
+      kill: 0
+      craft: 3000
+      fish: 1500
+      brew: 15000
+      enchant: 5000
+      explore: 0
+
+  progression:
+    max-level: 50
+    required-xp-base: 125
+    required-xp-growth: 1.15
+    money-per-level: 0.005
+    max-money-multiplier: 1.25
+    xp-per-level: 0.003
+    max-xp-multiplier: 1.15
+
+jobs:
+  brewer:
+    enabled: true
+    display-name: "Brewer"
+    description: "Brew potions and keep alchemy moving."
+    rewards:
+      brew:
+        "#potions":
+          money-min: 4
+          money-max: 6
+          xp-min: 4
+          xp-max: 7
+          daily-money-cap: 300
+          daily-xp-cap: 350
+
+  builder:
+    enabled: true
+    display-name: "Builder"
+    description: "Place building blocks and shape the world."
+    rewards:
+      place:
+        "#building_blocks":
+          money-min: 0
+          money-max: 1
+          xp-min: 1
+          xp-max: 2
+          daily-money-cap: 150
+          daily-xp-cap: 250
+
+  crafter:
+    enabled: true
+    display-name: "Crafter"
+    description: "Craft useful items for the server economy."
+    rewards:
+      craft:
+        "#utility_stations":
+          money-min: 4
+          money-max: 7
+          xp-min: 4
+          xp-max: 7
+          daily-money-cap: 300
+          daily-xp-cap: 350
+
+  digger:
+    enabled: true
+    display-name: "Digger"
+    description: "Excavate dirt, sand, gravel, and other soft blocks."
+    rewards:
+      break:
+        "#diggable":
+          money-min: 1
+          money-max: 2
+          xp-min: 1
+          xp-max: 2
+          daily-money-cap: 250
+          daily-xp-cap: 350
+
+  enchanter:
+    enabled: true
+    display-name: "Enchanter"
+    description: "Enchant gear and empower crafted equipment."
+    rewards:
+      enchant:
+        "#quality_gear":
+          money-min: 5
+          money-max: 8
+          xp-min: 6
+          xp-max: 9
+          daily-money-cap: 350
+          daily-xp-cap: 450
+
+  explorer:
+    enabled: true
+    display-name: "Explorer"
+    description: "Discover new chunks and map the world."
+    rewards:
+      explore:
+        ANY:
+          money-min: 1
+          money-max: 2
+          xp-min: 2
+          xp-max: 3
+          daily-money-cap: 200
+          daily-xp-cap: 300
+
+  farmer:
+    enabled: true
+    display-name: "Farmer"
+    description: "Harvest crops and work the land."
+    rewards:
+      break:
+        "#crops":
+          money-min: 1
+          money-max: 3
+          xp-min: 2
+          xp-max: 4
+          daily-money-cap: 450
+          daily-xp-cap: 600
+
+  fisherman:
+    enabled: true
+    display-name: "Fisherman"
+    description: "Catch fish and keep the food chain going."
+    rewards:
+      fish:
+        "#fish":
+          money-min: 3
+          money-max: 5
+          xp-min: 4
+          xp-max: 6
+          daily-money-cap: 500
+          daily-xp-cap: 600
+
+  hunter:
+    enabled: true
+    display-name: "Hunter"
+    description: "Hunt hostile mobs for profit."
+    rewards:
+      kill:
+        "#hostile":
+          money-min: 2
+          money-max: 5
+          xp-min: 3
+          xp-max: 6
+          daily-money-cap: 650
+          daily-xp-cap: 750
+
+  miner:
+    enabled: true
+    display-name: "Miner"
+    description: "Mine ores and valuable underground resources."
+    rewards:
+      break:
+        "#ores":
+          money-min: 3
+          money-max: 7
+          xp-min: 4
+          xp-max: 8
+          daily-money-cap: 800
+          daily-xp-cap: 900
+
+  weaponsmith:
+    enabled: true
+    display-name: "Weaponsmith"
+    description: "Craft and improve weapons."
+    rewards:
+      craft:
+        "#quality_weapons":
+          money-min: 4
+          money-max: 7
+          xp-min: 4
+          xp-max: 7
+          daily-money-cap: 250
+          daily-xp-cap: 300
+      enchant:
+        "#quality_weapons":
+          money-min: 4
+          money-max: 7
+          xp-min: 5
+          xp-max: 8
+          daily-money-cap: 250
+          daily-xp-cap: 325
+
+  woodcutter:
+    enabled: true
+    display-name: "Woodcutter"
+    description: "Harvest logs and keep lumber flowing."
+    rewards:
+      break:
+        "#logs":
+          money-min: 1
+          money-max: 3
+          xp-min: 2
+          xp-max: 4
+          daily-money-cap: 450
+          daily-xp-cap: 550

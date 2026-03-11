@@ -26,6 +26,9 @@ commands:
   ledger:
     description: View recent ledger entries
     usage: /ledger <player> [n]
+  job:
+    description: Join, leave, and inspect jobs
+    usage: /job <list|stats|join|leave> [job]
 
 permissions:
   realm.admin:
@@ -34,3 +37,5 @@ permissions:
     default: op
   realm.economy.ledger:
     default: op
+  realm.jobs.use:
+    default: true

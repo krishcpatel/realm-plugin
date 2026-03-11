@@ -10,6 +10,7 @@ import com.krishcpatel.realm.core.listener.PlayerJoinListener;
 import com.krishcpatel.realm.core.module.Module;
 import com.krishcpatel.realm.core.player.PlayerRepository;
 import com.krishcpatel.realm.economy.EconomyModule;
+import com.krishcpatel.realm.jobs.JobsModule;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -67,6 +68,7 @@ public final class Core extends JavaPlugin {
 
         // create modules
         modules.add(new EconomyModule(this));
+        modules.add(new JobsModule(this));
 
         try {
             database.connect();
@@ -87,10 +89,7 @@ public final class Core extends JavaPlugin {
         // load event system and subscribe to player upserted to db event
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(this, playerRepo), this);
 
-        eventSystem.subscribe(
-                PlayerUpsertedEvent.class,
-                evt -> logger.info("Player upserted: " + evt.username())
-        );
+        registerCoreEventSubscriptions();
 
         // enable modules
         for (com.krishcpatel.realm.core.module.Module module : modules) {
@@ -137,10 +136,18 @@ public final class Core extends JavaPlugin {
         logger.info("Debug: " + debug);
 
         eventSystem.clearAll();
+        registerCoreEventSubscriptions();
 
         for (Module module : modules) {
             module.reload();
         }
+    }
+
+    private void registerCoreEventSubscriptions() {
+        eventSystem.subscribe(
+                PlayerUpsertedEvent.class,
+                evt -> logger.info("Player upserted: " + evt.username())
+        );
     }
 
     /**
@@ -228,6 +235,15 @@ public final class Core extends JavaPlugin {
      */
     public FileConfiguration messages() {
         return configManager.messages();
+    }
+
+    /**
+     * Returns the loaded {@code jobs.yml} configuration.
+     *
+     * @return jobs configuration
+     */
+    public FileConfiguration jobsConfig() {
+        return configManager.jobs();
     }
 
     /**

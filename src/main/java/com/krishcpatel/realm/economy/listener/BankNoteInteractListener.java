@@ -84,7 +84,7 @@ public final class BankNoteInteractListener implements Listener {
 
         core.getServer().getScheduler().runTaskAsynchronously(core, () -> {
             try {
-                TransactionResult result = notes.redeemHeldNote(player);
+                TransactionResult result = notes.redeemHeldNote(uuid);
 
                 core.getServer().getScheduler().runTask(core, () -> {
                     try {

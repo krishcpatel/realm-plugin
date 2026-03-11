@@ -51,9 +51,11 @@ public final class RedeemCommand implements CommandExecutor {
             return true;
         }
 
+        java.util.UUID playerUuid = player.getUniqueId();
+
         core.getServer().getScheduler().runTaskAsynchronously(core, () -> {
             try {
-                TransactionResult result = notes.redeemHeldNote(player);
+                TransactionResult result = notes.redeemHeldNote(playerUuid);
 
                 core.getServer().getScheduler().runTask(core, () -> {
                     if (!result.success()) {

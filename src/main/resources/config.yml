@@ -9,7 +9,7 @@ database:
 modules:
   economy: true
   teams: false
-  jobs: false
+  jobs: true
   shops: false
   plots: false
 

@@ -40,22 +40,24 @@ public class PlayerJoinListener implements Listener {
     public void onJoin(PlayerJoinEvent e) {
         var p = e.getPlayer();
         long now = System.currentTimeMillis();
+        String uuid = p.getUniqueId().toString();
+        String username = p.getName();
 
-        plugin.debug("Join event: " + p.getName() + " uuid=" + p.getUniqueId());
+        plugin.debug("Join event: " + username + " uuid=" + uuid);
 
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
-                repo.upsertPlayer(p.getUniqueId().toString(), p.getName(), now);
+                repo.upsertPlayer(uuid, username, now);
 
-                plugin.debug("DB upsert OK for " + p.getName());
+                plugin.debug("DB upsert OK for " + username);
 
                 // If your internal event handlers touch Bukkit API, publish sync instead
                 plugin.getServer().getScheduler().runTask(plugin, () ->
-                        plugin.events().publish(new PlayerUpsertedEvent(p.getUniqueId(), p.getName()))
+                        plugin.events().publish(new PlayerUpsertedEvent(java.util.UUID.fromString(uuid), username))
                 );
 
             } catch (Exception ex) {
-                plugin.getLogger().severe("Failed to upsert player " + p.getName());
+                plugin.getLogger().severe("Failed to upsert player " + username);
                 ex.printStackTrace();
             }
         });
