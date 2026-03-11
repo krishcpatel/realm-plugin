@@ -133,20 +133,27 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the unique banknote id stored in the item metadata.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isBankNote(org.bukkit.inventory.ItemStack)" class="member-name-link">isBankNote</a><wbr>(org.bukkit.inventory.ItemStack&nbsp;item)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#giveIssuedNote(org.bukkit.entity.Player,java.lang.String,long)" class="member-name-link">giveIssuedNote</a><wbr>(org.bukkit.entity.Player&nbsp;player,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;noteId,
+ long&nbsp;amount)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Grants an already-issued bank note item to a player.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isBankNote(org.bukkit.inventory.ItemStack)" class="member-name-link">isBankNote</a><wbr>(org.bukkit.inventory.ItemStack&nbsp;item)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Checks whether the provided item is a valid banknote item.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../data/TransactionResult.html" title="class in com.krishcpatel.realm.economy.data">TransactionResult</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#issueNote(org.bukkit.entity.Player,long)" class="member-name-link">issueNote</a><wbr>(org.bukkit.entity.Player&nbsp;player,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../data/BankNoteIssueResult.html" title="class in com.krishcpatel.realm.economy.data">BankNoteIssueResult</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#issueNote(java.lang.String,long)" class="member-name-link">issueNote</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;playerUuid,
  long&nbsp;amount)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Withdraws money from a player's bank balance and creates a physical bank note.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../data/TransactionResult.html" title="class in com.krishcpatel.realm.economy.data">TransactionResult</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#redeemHeldNote(org.bukkit.entity.Player)" class="member-name-link">redeemHeldNote</a><wbr>(org.bukkit.entity.Player&nbsp;player)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Withdraws money from a player's bank balance and creates a bank note record.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../data/TransactionResult.html" title="class in com.krishcpatel.realm.economy.data">TransactionResult</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#redeemHeldNote(java.util.UUID)" class="member-name-link">redeemHeldNote</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerUuid)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Redeems the banknote currently held in the player's main hand.</div>
 </div>
 </div>
@@ -194,28 +201,31 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="issueNote(org.bukkit.entity.Player,long)">
+<section class="detail" id="issueNote(java.lang.String,long)">
 <h3>issueNote</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../data/TransactionResult.html" title="class in com.krishcpatel.realm.economy.data">TransactionResult</a></span>&nbsp;<span class="element-name">issueNote</span><wbr><span class="parameters">(org.bukkit.entity.Player&nbsp;player,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../data/BankNoteIssueResult.html" title="class in com.krishcpatel.realm.economy.data">BankNoteIssueResult</a></span>&nbsp;<span class="element-name">issueNote</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;playerUuid,
  long&nbsp;amount)</span>
-                            throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/SQLException.html" title="class or interface in java.sql" class="external-link">SQLException</a></span></div>
-<div class="block">Withdraws money from a player's bank balance and creates a physical bank note.</div>
+                              throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/SQLException.html" title="class or interface in java.sql" class="external-link">SQLException</a></span></div>
+<div class="block">Withdraws money from a player's bank balance and creates a bank note record.
+
+ <p>The actual item must be granted on the server thread by calling
+ <a href="#giveIssuedNote(org.bukkit.entity.Player,java.lang.String,long)"><code>giveIssuedNote(Player, String, long)</code></a>.</p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>player</code> - player receiving the note item</dd>
+<dd><code>playerUuid</code> - player account UUID</dd>
 <dd><code>amount</code> - amount to convert into a note</dd>
 <dt>Returns:</dt>
-<dd>transaction result describing success or failure</dd>
+<dd>issue result describing success/failure and created note id</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/SQLException.html" title="class or interface in java.sql" class="external-link">SQLException</a></code> - if database access fails</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="redeemHeldNote(org.bukkit.entity.Player)">
+<section class="detail" id="redeemHeldNote(java.util.UUID)">
 <h3>redeemHeldNote</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../data/TransactionResult.html" title="class in com.krishcpatel.realm.economy.data">TransactionResult</a></span>&nbsp;<span class="element-name">redeemHeldNote</span><wbr><span class="parameters">(org.bukkit.entity.Player&nbsp;player)</span>
-                                 throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/SQLException.html" title="class or interface in java.sql" class="external-link">SQLException</a></span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../data/TransactionResult.html" title="class in com.krishcpatel.realm.economy.data">TransactionResult</a></span>&nbsp;<span class="element-name">redeemHeldNote</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerUuid)</span>
+                                 throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a></span></div>
 <div class="block">Redeems the banknote currently held in the player's main hand.
 
  <p>The note is validated, marked as redeemed in the database,
@@ -223,11 +233,28 @@ loadScripts(document, 'script');</script>
  balance. A ledger entry is also recorded.</p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>player</code> - player redeeming the banknote</dd>
+<dd><code>playerUuid</code> - player redeeming the banknote</dd>
 <dt>Returns:</dt>
 <dd>result describing whether the redemption succeeded</dd>
 <dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/SQLException.html" title="class or interface in java.sql" class="external-link">SQLException</a></code> - if a database operation fails</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a></code> - if database or sync inventory operations fail</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="giveIssuedNote(org.bukkit.entity.Player,java.lang.String,long)">
+<h3>giveIssuedNote</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">giveIssuedNote</span><wbr><span class="parameters">(org.bukkit.entity.Player&nbsp;player,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;noteId,
+ long&nbsp;amount)</span></div>
+<div class="block">Grants an already-issued bank note item to a player.
+
+ <p>Must be called from the server thread.</p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>player</code> - recipient</dd>
+<dd><code>noteId</code> - unique note id</dd>
+<dd><code>amount</code> - note value</dd>
 </dl>
 </section>
 </li>

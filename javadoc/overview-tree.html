@@ -67,7 +67,17 @@ loadScripts(document, 'script');</script>
 <li><a href="com/krishcpatel/realm/economy/listener/package-tree.html">com.krishcpatel.realm.economy.listener</a>, </li>
 <li><a href="com/krishcpatel/realm/economy/manager/package-tree.html">com.krishcpatel.realm.economy.manager</a>, </li>
 <li><a href="com/krishcpatel/realm/economy/model/package-tree.html">com.krishcpatel.realm.economy.model</a>, </li>
-<li><a href="com/krishcpatel/realm/economy/repository/package-tree.html">com.krishcpatel.realm.economy.repository</a></li>
+<li><a href="com/krishcpatel/realm/economy/repository/package-tree.html">com.krishcpatel.realm.economy.repository</a>, </li>
+<li><a href="com/krishcpatel/realm/jobs/package-tree.html">com.krishcpatel.realm.jobs</a>, </li>
+<li><a href="com/krishcpatel/realm/jobs/command/package-tree.html">com.krishcpatel.realm.jobs.command</a>, </li>
+<li><a href="com/krishcpatel/realm/jobs/event/package-tree.html">com.krishcpatel.realm.jobs.event</a>, </li>
+<li><a href="com/krishcpatel/realm/jobs/listener/package-tree.html">com.krishcpatel.realm.jobs.listener</a>, </li>
+<li><a href="com/krishcpatel/realm/jobs/manager/package-tree.html">com.krishcpatel.realm.jobs.manager</a>, </li>
+<li><a href="com/krishcpatel/realm/jobs/model/package-tree.html">com.krishcpatel.realm.jobs.model</a>, </li>
+<li><a href="com/krishcpatel/realm/jobs/notify/package-tree.html">com.krishcpatel.realm.jobs.notify</a>, </li>
+<li><a href="com/krishcpatel/realm/jobs/registry/package-tree.html">com.krishcpatel.realm.jobs.registry</a>, </li>
+<li><a href="com/krishcpatel/realm/jobs/repository/package-tree.html">com.krishcpatel.realm.jobs.repository</a>, </li>
+<li><a href="com/krishcpatel/realm/jobs/util/package-tree.html">com.krishcpatel.realm.jobs.util</a></li>
 </ul>
 <section class="hierarchy">
 <h2 title="Class Hierarchy">Class Hierarchy</h2>
@@ -84,6 +94,18 @@ loadScripts(document, 'script');</script>
 <li class="circle">com.krishcpatel.realm.economy.<a href="com/krishcpatel/realm/economy/EconomyModule.html" class="type-name-link" title="class in com.krishcpatel.realm.economy">EconomyModule</a> (implements com.krishcpatel.realm.core.module.<a href="com/krishcpatel/realm/core/module/Module.html" title="interface in com.krishcpatel.realm.core.module">Module</a>)</li>
 <li class="circle">com.krishcpatel.realm.economy.repository.<a href="com/krishcpatel/realm/economy/repository/EconomyRepository.html" class="type-name-link" title="class in com.krishcpatel.realm.economy.repository">EconomyRepository</a></li>
 <li class="circle">com.krishcpatel.realm.core.event.<a href="com/krishcpatel/realm/core/event/EventSystem.html" class="type-name-link" title="class in com.krishcpatel.realm.core.event">EventSystem</a></li>
+<li class="circle">com.krishcpatel.realm.jobs.util.<a href="com/krishcpatel/realm/jobs/util/JobActionGroups.html" class="type-name-link" title="class in com.krishcpatel.realm.jobs.util">JobActionGroups</a></li>
+<li class="circle">com.krishcpatel.realm.jobs.command.<a href="com/krishcpatel/realm/jobs/command/JobCommand.html" class="type-name-link" title="class in com.krishcpatel.realm.jobs.command">JobCommand</a> (implements org.bukkit.command.CommandExecutor)</li>
+<li class="circle">com.krishcpatel.realm.jobs.model.<a href="com/krishcpatel/realm/jobs/model/JobDefinition.html" class="type-name-link" title="class in com.krishcpatel.realm.jobs.model">JobDefinition</a></li>
+<li class="circle">com.krishcpatel.realm.jobs.registry.<a href="com/krishcpatel/realm/jobs/registry/JobDefinitionLoader.html" class="type-name-link" title="class in com.krishcpatel.realm.jobs.registry">JobDefinitionLoader</a></li>
+<li class="circle">com.krishcpatel.realm.jobs.registry.<a href="com/krishcpatel/realm/jobs/registry/JobDefinitionRegistry.html" class="type-name-link" title="class in com.krishcpatel.realm.jobs.registry">JobDefinitionRegistry</a></li>
+<li class="circle">com.krishcpatel.realm.jobs.event.<a href="com/krishcpatel/realm/jobs/event/JobLevelUpEvent.html" class="type-name-link" title="class in com.krishcpatel.realm.jobs.event">JobLevelUpEvent</a> (implements com.krishcpatel.realm.core.event.<a href="com/krishcpatel/realm/core/event/RealmEvent.html" title="interface in com.krishcpatel.realm.core.event">RealmEvent</a>)</li>
+<li class="circle">com.krishcpatel.realm.jobs.manager.<a href="com/krishcpatel/realm/jobs/manager/JobManager.html" class="type-name-link" title="class in com.krishcpatel.realm.jobs.manager">JobManager</a></li>
+<li class="circle">com.krishcpatel.realm.jobs.notify.<a href="com/krishcpatel/realm/jobs/notify/JobPayoutNotifier.html" class="type-name-link" title="class in com.krishcpatel.realm.jobs.notify">JobPayoutNotifier</a></li>
+<li class="circle">com.krishcpatel.realm.jobs.manager.<a href="com/krishcpatel/realm/jobs/manager/JobRewardService.html" class="type-name-link" title="class in com.krishcpatel.realm.jobs.manager">JobRewardService</a></li>
+<li class="circle">com.krishcpatel.realm.jobs.listener.<a href="com/krishcpatel/realm/jobs/listener/JobsActionListener.html" class="type-name-link" title="class in com.krishcpatel.realm.jobs.listener">JobsActionListener</a> (implements org.bukkit.event.Listener)</li>
+<li class="circle">com.krishcpatel.realm.jobs.<a href="com/krishcpatel/realm/jobs/JobsModule.html" class="type-name-link" title="class in com.krishcpatel.realm.jobs">JobsModule</a> (implements com.krishcpatel.realm.core.module.<a href="com/krishcpatel/realm/core/module/Module.html" title="interface in com.krishcpatel.realm.core.module">Module</a>)</li>
+<li class="circle">com.krishcpatel.realm.jobs.repository.<a href="com/krishcpatel/realm/jobs/repository/JobsRepository.html" class="type-name-link" title="class in com.krishcpatel.realm.jobs.repository">JobsRepository</a></li>
 <li class="circle">com.krishcpatel.realm.economy.command.<a href="com/krishcpatel/realm/economy/command/LedgerCommand.html" class="type-name-link" title="class in com.krishcpatel.realm.economy.command">LedgerCommand</a> (implements org.bukkit.command.CommandExecutor)</li>
 <li class="circle">com.krishcpatel.realm.economy.event.<a href="com/krishcpatel/realm/economy/event/LedgerRecordedEvent.html" class="type-name-link" title="class in com.krishcpatel.realm.economy.event">LedgerRecordedEvent</a> (implements com.krishcpatel.realm.core.event.<a href="com/krishcpatel/realm/core/event/RealmEvent.html" title="interface in com.krishcpatel.realm.core.event">RealmEvent</a>)</li>
 <li class="circle">com.krishcpatel.realm.economy.repository.<a href="com/krishcpatel/realm/economy/repository/LedgerRepository.html" class="type-name-link" title="class in com.krishcpatel.realm.economy.repository">LedgerRepository</a></li>
@@ -123,6 +145,7 @@ loadScripts(document, 'script');</script>
 <ul>
 <li class="circle">java.lang.<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Enum.html" class="type-name-link external-link" title="class or interface in java.lang">Enum</a>&lt;E&gt; (implements java.lang.<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;T&gt;, java.lang.constant.<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/constant/Constable.html" title="class or interface in java.lang.constant" class="external-link">Constable</a>, java.io.<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a>)
 <ul>
+<li class="circle">com.krishcpatel.realm.jobs.model.<a href="com/krishcpatel/realm/jobs/model/JobActionType.html" class="type-name-link" title="enum class in com.krishcpatel.realm.jobs.model">JobActionType</a></li>
 <li class="circle">com.krishcpatel.realm.economy.model.<a href="com/krishcpatel/realm/economy/model/MoneySource.html" class="type-name-link" title="enum class in com.krishcpatel.realm.economy.model">MoneySource</a></li>
 </ul>
 </li>
@@ -137,8 +160,15 @@ loadScripts(document, 'script');</script>
 <ul>
 <li class="circle">java.lang.<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html" class="type-name-link external-link" title="class or interface in java.lang">Record</a>
 <ul>
+<li class="circle">com.krishcpatel.realm.economy.data.<a href="com/krishcpatel/realm/economy/data/BankNoteIssueResult.html" class="type-name-link" title="class in com.krishcpatel.realm.economy.data">BankNoteIssueResult</a></li>
 <li class="circle">com.krishcpatel.realm.economy.data.<a href="com/krishcpatel/realm/economy/data/BankNoteRecord.html" class="type-name-link" title="class in com.krishcpatel.realm.economy.data">BankNoteRecord</a></li>
+<li class="circle">com.krishcpatel.realm.jobs.model.<a href="com/krishcpatel/realm/jobs/model/JobActionContext.html" class="type-name-link" title="class in com.krishcpatel.realm.jobs.model">JobActionContext</a></li>
+<li class="circle">com.krishcpatel.realm.jobs.model.<a href="com/krishcpatel/realm/jobs/model/JobCapState.html" class="type-name-link" title="class in com.krishcpatel.realm.jobs.model">JobCapState</a></li>
+<li class="circle">com.krishcpatel.realm.jobs.model.<a href="com/krishcpatel/realm/jobs/model/JobMembershipResult.html" class="type-name-link" title="class in com.krishcpatel.realm.jobs.model">JobMembershipResult</a></li>
 <li class="circle">com.krishcpatel.realm.economy.data.<a href="com/krishcpatel/realm/economy/data/LedgerEntry.html" class="type-name-link" title="class in com.krishcpatel.realm.economy.data">LedgerEntry</a></li>
+<li class="circle">com.krishcpatel.realm.jobs.model.<a href="com/krishcpatel/realm/jobs/model/LevelingSettings.html" class="type-name-link" title="class in com.krishcpatel.realm.jobs.model">LevelingSettings</a></li>
+<li class="circle">com.krishcpatel.realm.jobs.model.<a href="com/krishcpatel/realm/jobs/model/PlayerJob.html" class="type-name-link" title="class in com.krishcpatel.realm.jobs.model">PlayerJob</a></li>
+<li class="circle">com.krishcpatel.realm.jobs.model.<a href="com/krishcpatel/realm/jobs/model/RewardRule.html" class="type-name-link" title="class in com.krishcpatel.realm.jobs.model">RewardRule</a></li>
 <li class="circle">com.krishcpatel.realm.economy.data.<a href="com/krishcpatel/realm/economy/data/TransactionResult.html" class="type-name-link" title="class in com.krishcpatel.realm.economy.data">TransactionResult</a></li>
 </ul>
 </li>

@@ -15,3 +15,13 @@ com.krishcpatel.realm.economy.listener
 com.krishcpatel.realm.economy.manager
 com.krishcpatel.realm.economy.model
 com.krishcpatel.realm.economy.repository
+com.krishcpatel.realm.jobs
+com.krishcpatel.realm.jobs.command
+com.krishcpatel.realm.jobs.event
+com.krishcpatel.realm.jobs.listener
+com.krishcpatel.realm.jobs.manager
+com.krishcpatel.realm.jobs.model
+com.krishcpatel.realm.jobs.notify
+com.krishcpatel.realm.jobs.registry
+com.krishcpatel.realm.jobs.repository
+com.krishcpatel.realm.jobs.util
