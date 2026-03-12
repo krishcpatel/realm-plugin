@@ -184,6 +184,8 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:C">C</h2>
 <dl class="index">
+<dt><a href="com/krishcpatel/realm/core/database/DatabaseManager.SqlCallable.html#call()" class="member-name-link">call()</a> - Method in interface com.krishcpatel.realm.core.database.<a href="com/krishcpatel/realm/core/database/DatabaseManager.SqlCallable.html" title="interface in com.krishcpatel.realm.core.database">DatabaseManager.SqlCallable</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/krishcpatel/realm/skills/model/SkillDefinition.html#category()" class="member-name-link">category()</a> - Method in record class com.krishcpatel.realm.skills.model.<a href="com/krishcpatel/realm/skills/model/SkillDefinition.html" title="class in com.krishcpatel.realm.skills.model">SkillDefinition</a></dt>
 <dd>
 <div class="block">Returns the value of the <a href="./com/krishcpatel/realm/skills/model/SkillDefinition.html#param-category"><code>category</code></a> record component.</div>
@@ -359,6 +361,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates a database manager bound to the given plugin (for data folder access).</div>
 </dd>
+<dt><a href="com/krishcpatel/realm/core/database/DatabaseManager.SqlCallable.html" class="type-name-link" title="interface in com.krishcpatel.realm.core.database">DatabaseManager.SqlCallable&lt;T&gt;</a> - Interface in <a href="com/krishcpatel/realm/core/database/package-summary.html">com.krishcpatel.realm.core.database</a></dt>
+<dd>
+<div class="block">SQL operation that returns a value and may throw <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/SQLException.html" title="class or interface in java.sql" class="external-link"><code>SQLException</code></a>.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/core/database/DatabaseManager.SqlRunnable.html" class="type-name-link" title="interface in com.krishcpatel.realm.core.database">DatabaseManager.SqlRunnable</a> - Interface in <a href="com/krishcpatel/realm/core/database/package-summary.html">com.krishcpatel.realm.core.database</a></dt>
+<dd>
+<div class="block">SQL operation with no return value that may throw <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/SQLException.html" title="class or interface in java.sql" class="external-link"><code>SQLException</code></a>.</div>
+</dd>
 <dt><a href="com/krishcpatel/realm/core/Core.html#debug(java.lang.String)" class="member-name-link">debug(String)</a> - Method in class com.krishcpatel.realm.core.<a href="com/krishcpatel/realm/core/Core.html" title="class in com.krishcpatel.realm.core">Core</a></dt>
 <dd>
 <div class="block">Logs a debug message if <code>debug: true</code> is enabled in <code>config.yml</code>.</div>
@@ -446,6 +456,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Enchanting an item.</div>
 </dd>
+<dt><a href="com/krishcpatel/realm/skills/manager/SkillProgressService.html#enqueueAction(com.krishcpatel.realm.skills.model.SkillActionContext)" class="member-name-link">enqueueAction(SkillActionContext)</a> - Method in class com.krishcpatel.realm.skills.manager.<a href="com/krishcpatel/realm/skills/manager/SkillProgressService.html" title="class in com.krishcpatel.realm.skills.manager">SkillProgressService</a></dt>
+<dd>
+<div class="block">Queues one normalized skill action to be coalesced and persisted.</div>
+</dd>
 <dt><a href="com/krishcpatel/realm/economy/repository/EconomyRepository.html#ensureAccount(java.lang.String)" class="member-name-link">ensureAccount(String)</a> - Method in class com.krishcpatel.realm.economy.repository.<a href="com/krishcpatel/realm/economy/repository/EconomyRepository.html" title="class in com.krishcpatel.realm.economy.repository">EconomyRepository</a></dt>
 <dd>
 <div class="block">Ensures an account exists for the given player.</div>
@@ -529,6 +543,16 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/krishcpatel/realm/core/event/EventSystem.html#%3Cinit%3E(org.bukkit.plugin.java.JavaPlugin)" class="member-name-link">EventSystem(JavaPlugin)</a> - Constructor for class com.krishcpatel.realm.core.event.<a href="com/krishcpatel/realm/core/event/EventSystem.html" title="class in com.krishcpatel.realm.core.event">EventSystem</a></dt>
 <dd>
 <div class="block">Creates a new event system.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/core/database/DatabaseManager.html#executeWrite(com.krishcpatel.realm.core.database.DatabaseManager.SqlCallable)" class="member-name-link">executeWrite(DatabaseManager.SqlCallable&lt;T&gt;)</a> - Method in class com.krishcpatel.realm.core.database.<a href="com/krishcpatel/realm/core/database/DatabaseManager.html" title="class in com.krishcpatel.realm.core.database">DatabaseManager</a></dt>
+<dd>
+<div class="block">Executes a write operation under a global write lock with retry/backoff
+ for transient <code>SQLITE_BUSY</code> lock contention.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/core/database/DatabaseManager.html#executeWrite(com.krishcpatel.realm.core.database.DatabaseManager.SqlRunnable)" class="member-name-link">executeWrite(DatabaseManager.SqlRunnable)</a> - Method in class com.krishcpatel.realm.core.database.<a href="com/krishcpatel/realm/core/database/DatabaseManager.html" title="class in com.krishcpatel.realm.core.database">DatabaseManager</a></dt>
+<dd>
+<div class="block">Executes a write operation under a global write lock with retry/backoff
+ for transient <code>SQLITE_BUSY</code> lock contention.</div>
 </dd>
 <dt><a href="com/krishcpatel/realm/core/player/PlayerRepository.html#exists(java.lang.String)" class="member-name-link">exists(String)</a> - Method in class com.krishcpatel.realm.core.player.<a href="com/krishcpatel/realm/core/player/PlayerRepository.html" title="class in com.krishcpatel.realm.core.player">PlayerRepository</a></dt>
 <dd>
@@ -1602,6 +1626,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the configured reward rules grouped by action type.</div>
 </dd>
+<dt><a href="com/krishcpatel/realm/core/database/DatabaseManager.SqlRunnable.html#run()" class="member-name-link">run()</a> - Method in interface com.krishcpatel.realm.core.database.<a href="com/krishcpatel/realm/core/database/DatabaseManager.SqlRunnable.html" title="interface in com.krishcpatel.realm.core.database">DatabaseManager.SqlRunnable</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <h2 class="title" id="I:S">S</h2>
 <dl class="index">

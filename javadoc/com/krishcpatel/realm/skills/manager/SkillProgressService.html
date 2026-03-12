@@ -125,8 +125,13 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#handleAction(com.krishcpatel.realm.skills.model.SkillActionContext)" class="member-name-link">handleAction</a><wbr>(<a href="../model/SkillActionContext.html" title="class in com.krishcpatel.realm.skills.model">SkillActionContext</a>&nbsp;action)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#enqueueAction(com.krishcpatel.realm.skills.model.SkillActionContext)" class="member-name-link">enqueueAction</a><wbr>(<a href="../model/SkillActionContext.html" title="class in com.krishcpatel.realm.skills.model">SkillActionContext</a>&nbsp;action)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Queues one normalized skill action to be coalesced and persisted.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#handleAction(com.krishcpatel.realm.skills.model.SkillActionContext)" class="member-name-link">handleAction</a><wbr>(<a href="../model/SkillActionContext.html" title="class in com.krishcpatel.realm.skills.model">SkillActionContext</a>&nbsp;action)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Processes one normalized skill action for a player.</div>
 </div>
 </div>
@@ -176,6 +181,17 @@ loadScripts(document, 'script');</script>
 <h3>handleAction</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">handleAction</span><wbr><span class="parameters">(<a href="../model/SkillActionContext.html" title="class in com.krishcpatel.realm.skills.model">SkillActionContext</a>&nbsp;action)</span></div>
 <div class="block">Processes one normalized skill action for a player.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>action</code> - normalized skill action</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="enqueueAction(com.krishcpatel.realm.skills.model.SkillActionContext)">
+<h3>enqueueAction</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">enqueueAction</span><wbr><span class="parameters">(<a href="../model/SkillActionContext.html" title="class in com.krishcpatel.realm.skills.model">SkillActionContext</a>&nbsp;action)</span></div>
+<div class="block">Queues one normalized skill action to be coalesced and persisted.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>action</code> - normalized skill action</dd>

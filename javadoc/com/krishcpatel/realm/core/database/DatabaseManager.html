@@ -37,7 +37,7 @@ loadScripts(document, 'script');</script>
 <li>
 <p>Summary:</p>
 <ul>
-<li>Nested</li>
+<li><a href="#nested-class-summary">Nested</a></li>
 <li>Field</li>
 <li><a href="#constructor-summary">Constr</a></li>
 <li><a href="#method-summary">Method</a></li>
@@ -57,7 +57,7 @@ loadScripts(document, 'script');</script>
 <div id="navbar-sub-list">
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested-class-summary">Nested</a>&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor-summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
@@ -102,6 +102,28 @@ loadScripts(document, 'script');</script>
 </section>
 <section class="summary">
 <ul class="summary-list">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<li>
+<section class="nested-class-summary" id="nested-class-summary">
+<h2>Nested Class Summary</h2>
+<div class="caption"><span>Nested Classes</span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier and Type</div>
+<div class="table-header col-second">Class</div>
+<div class="table-header col-last">Description</div>
+<div class="col-first even-row-color"><code>static interface&nbsp;</code></div>
+<div class="col-second even-row-color"><code><a href="DatabaseManager.SqlCallable.html" class="type-name-link" title="interface in com.krishcpatel.realm.core.database">DatabaseManager.SqlCallable</a>&lt;<a href="DatabaseManager.SqlCallable.html" title="type parameter in DatabaseManager.SqlCallable">T</a>&gt;</code></div>
+<div class="col-last even-row-color">
+<div class="block">SQL operation that returns a value and may throw <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/SQLException.html" title="class or interface in java.sql" class="external-link"><code>SQLException</code></a>.</div>
+</div>
+<div class="col-first odd-row-color"><code>static interface&nbsp;</code></div>
+<div class="col-second odd-row-color"><code><a href="DatabaseManager.SqlRunnable.html" class="type-name-link" title="interface in com.krishcpatel.realm.core.database">DatabaseManager.SqlRunnable</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">SQL operation with no return value that may throw <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/SQLException.html" title="class or interface in java.sql" class="external-link"><code>SQLException</code></a>.</div>
+</div>
+</div>
+</section>
+</li>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <li>
 <section class="constructor-summary" id="constructor-summary">
@@ -137,6 +159,18 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#connect()" class="member-name-link">connect</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Opens the database connection and initializes schema/migrations.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>&lt;T&gt;&nbsp;T</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#executeWrite(com.krishcpatel.realm.core.database.DatabaseManager.SqlCallable)" class="member-name-link">executeWrite</a><wbr>(<a href="DatabaseManager.SqlCallable.html" title="interface in com.krishcpatel.realm.core.database">DatabaseManager.SqlCallable</a>&lt;T&gt;&nbsp;action)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Executes a write operation under a global write lock with retry/backoff
+ for transient <code>SQLITE_BUSY</code> lock contention.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#executeWrite(com.krishcpatel.realm.core.database.DatabaseManager.SqlRunnable)" class="member-name-link">executeWrite</a><wbr>(<a href="DatabaseManager.SqlRunnable.html" title="interface in com.krishcpatel.realm.core.database">DatabaseManager.SqlRunnable</a>&nbsp;action)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Executes a write operation under a global write lock with retry/backoff
+ for transient <code>SQLITE_BUSY</code> lock contention.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/Connection.html" title="class or interface in java.sql" class="external-link">Connection</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getConnection()" class="member-name-link">getConnection</a>()</code></div>
@@ -212,6 +246,40 @@ loadScripts(document, 'script');</script>
 <div class="block">Closes the database connection.
 
  <p>Safe to call multiple times.</p></div>
+</section>
+</li>
+<li>
+<section class="detail" id="executeWrite(com.krishcpatel.realm.core.database.DatabaseManager.SqlCallable)">
+<h3>executeWrite</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">T</span>&nbsp;<span class="element-name">executeWrite</span><wbr><span class="parameters">(<a href="DatabaseManager.SqlCallable.html" title="interface in com.krishcpatel.realm.core.database">DatabaseManager.SqlCallable</a>&lt;T&gt;&nbsp;action)</span>
+                   throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/SQLException.html" title="class or interface in java.sql" class="external-link">SQLException</a></span></div>
+<div class="block">Executes a write operation under a global write lock with retry/backoff
+ for transient <code>SQLITE_BUSY</code> lock contention.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - return type</dd>
+<dt>Parameters:</dt>
+<dd><code>action</code> - write action</dd>
+<dt>Returns:</dt>
+<dd>action return value</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/SQLException.html" title="class or interface in java.sql" class="external-link">SQLException</a></code> - when the operation permanently fails</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="executeWrite(com.krishcpatel.realm.core.database.DatabaseManager.SqlRunnable)">
+<h3>executeWrite</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">executeWrite</span><wbr><span class="parameters">(<a href="DatabaseManager.SqlRunnable.html" title="interface in com.krishcpatel.realm.core.database">DatabaseManager.SqlRunnable</a>&nbsp;action)</span>
+                  throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/SQLException.html" title="class or interface in java.sql" class="external-link">SQLException</a></span></div>
+<div class="block">Executes a write operation under a global write lock with retry/backoff
+ for transient <code>SQLITE_BUSY</code> lock contention.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>action</code> - write action</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/SQLException.html" title="class or interface in java.sql" class="external-link">SQLException</a></code> - when the operation permanently fails</dd>
+</dl>
 </section>
 </li>
 </ul>
