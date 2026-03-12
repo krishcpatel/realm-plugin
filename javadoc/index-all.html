@@ -345,9 +345,21 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:D">D</h2>
 <dl class="index">
+<dt><a href="com/krishcpatel/realm/jobs/manager/JobManager.html#dailyCapKey(java.lang.String)" class="member-name-link">dailyCapKey(String)</a> - Static method in class com.krishcpatel.realm.jobs.manager.<a href="com/krishcpatel/realm/jobs/manager/JobManager.html" title="class in com.krishcpatel.realm.jobs.manager">JobManager</a></dt>
+<dd>
+<div class="block">Returns the canonical cap-tracking key used for a job's daily cap bucket.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/jobs/model/JobDefinition.html#dailyMoneyCap()" class="member-name-link">dailyMoneyCap()</a> - Method in class com.krishcpatel.realm.jobs.model.<a href="com/krishcpatel/realm/jobs/model/JobDefinition.html" title="class in com.krishcpatel.realm.jobs.model">JobDefinition</a></dt>
+<dd>
+<div class="block">Returns the max money this job can pay in a UTC day.</div>
+</dd>
 <dt><a href="com/krishcpatel/realm/jobs/model/RewardRule.html#dailyMoneyCap()" class="member-name-link">dailyMoneyCap()</a> - Method in record class com.krishcpatel.realm.jobs.model.<a href="com/krishcpatel/realm/jobs/model/RewardRule.html" title="class in com.krishcpatel.realm.jobs.model">RewardRule</a></dt>
 <dd>
 <div class="block">Returns the value of the <a href="./com/krishcpatel/realm/jobs/model/RewardRule.html#param-dailyMoneyCap"><code>dailyMoneyCap</code></a> record component.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/jobs/model/JobDefinition.html#dailyXpCap()" class="member-name-link">dailyXpCap()</a> - Method in class com.krishcpatel.realm.jobs.model.<a href="com/krishcpatel/realm/jobs/model/JobDefinition.html" title="class in com.krishcpatel.realm.jobs.model">JobDefinition</a></dt>
+<dd>
+<div class="block">Returns the max xp this job can grant in a UTC day.</div>
 </dd>
 <dt><a href="com/krishcpatel/realm/jobs/model/RewardRule.html#dailyXpCap()" class="member-name-link">dailyXpCap()</a> - Method in record class com.krishcpatel.realm.jobs.model.<a href="com/krishcpatel/realm/jobs/model/RewardRule.html" title="class in com.krishcpatel.realm.jobs.model">RewardRule</a></dt>
 <dd>
@@ -628,6 +640,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns a player's current balance.</div>
 </dd>
+<dt><a href="com/krishcpatel/realm/jobs/repository/JobsRepository.html#getCapState(java.lang.String,java.lang.String,java.lang.String,long)" class="member-name-link">getCapState(String, String, String, long)</a> - Method in class com.krishcpatel.realm.jobs.repository.<a href="com/krishcpatel/realm/jobs/repository/JobsRepository.html" title="class in com.krishcpatel.realm.jobs.repository">JobsRepository</a></dt>
+<dd>
+<div class="block">Returns the current daily cap usage for a reward rule.</div>
+</dd>
 <dt><a href="com/krishcpatel/realm/jobs/repository/JobsRepository.html#getCapState(java.sql.Connection,java.lang.String,java.lang.String,java.lang.String,long)" class="member-name-link">getCapState(Connection, String, String, String, long)</a> - Method in class com.krishcpatel.realm.jobs.repository.<a href="com/krishcpatel/realm/jobs/repository/JobsRepository.html" title="class in com.krishcpatel.realm.jobs.repository">JobsRepository</a></dt>
 <dd>
 <div class="block">Returns the current daily cap usage for a reward rule.</div>
@@ -639,6 +655,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/krishcpatel/realm/core/database/DatabaseManager.html#getConnection()" class="member-name-link">getConnection()</a> - Method in class com.krishcpatel.realm.core.database.<a href="com/krishcpatel/realm/core/database/DatabaseManager.html" title="class in com.krishcpatel.realm.core.database">DatabaseManager</a></dt>
 <dd>
 <div class="block">Returns the active SQL connection.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/jobs/manager/JobManager.html#getDailyCapState(java.util.UUID,java.lang.String,long)" class="member-name-link">getDailyCapState(UUID, String, long)</a> - Method in class com.krishcpatel.realm.jobs.manager.<a href="com/krishcpatel/realm/jobs/manager/JobManager.html" title="class in com.krishcpatel.realm.jobs.manager">JobManager</a></dt>
+<dd>
+<div class="block">Returns a player's current daily cap usage for the given job.</div>
 </dd>
 <dt><a href="com/krishcpatel/realm/core/Core.html#getDatabase()" class="member-name-link">getDatabase()</a> - Method in class com.krishcpatel.realm.core.<a href="com/krishcpatel/realm/core/Core.html" title="class in com.krishcpatel.realm.core">Core</a></dt>
 <dd>
@@ -869,7 +889,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Immutable definition of a job loaded from configuration.</div>
 </dd>
-<dt><a href="com/krishcpatel/realm/jobs/model/JobDefinition.html#%3Cinit%3E(java.lang.String,java.lang.String,java.lang.String,com.krishcpatel.realm.jobs.model.LevelingSettings,java.util.Map)" class="member-name-link">JobDefinition(String, String, String, LevelingSettings, Map&lt;JobActionType, List&lt;RewardRule&gt;&gt;)</a> - Constructor for class com.krishcpatel.realm.jobs.model.<a href="com/krishcpatel/realm/jobs/model/JobDefinition.html" title="class in com.krishcpatel.realm.jobs.model">JobDefinition</a></dt>
+<dt><a href="com/krishcpatel/realm/jobs/model/JobDefinition.html#%3Cinit%3E(java.lang.String,java.lang.String,java.lang.String,com.krishcpatel.realm.jobs.model.LevelingSettings,long,long,java.util.Map)" class="member-name-link">JobDefinition(String, String, String, LevelingSettings, long, long, Map&lt;JobActionType, List&lt;RewardRule&gt;&gt;)</a> - Constructor for class com.krishcpatel.realm.jobs.model.<a href="com/krishcpatel/realm/jobs/model/JobDefinition.html" title="class in com.krishcpatel.realm.jobs.model">JobDefinition</a></dt>
 <dd>
 <div class="block">Creates an immutable job definition.</div>
 </dd>
@@ -1103,6 +1123,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Marks a chunk as explored for a player's job, returning whether it was a first visit.</div>
 </dd>
+<dt><a href="com/krishcpatel/realm/jobs/repository/JobsRepository.html#markGlobalBossPayoutClaimed(java.sql.Connection,java.lang.String,java.lang.String,long,long)" class="member-name-link">markGlobalBossPayoutClaimed(Connection, String, String, long, long)</a> - Method in class com.krishcpatel.realm.jobs.repository.<a href="com/krishcpatel/realm/jobs/repository/JobsRepository.html" title="class in com.krishcpatel.realm.jobs.repository">JobsRepository</a></dt>
+<dd>
+<div class="block">Marks a global boss payout as claimed for a player/day combination.</div>
+</dd>
 <dt><a href="com/krishcpatel/realm/jobs/repository/JobsRepository.html#markPlacedBlockGuard(java.lang.String,int,int,int,java.lang.String,java.lang.String,long)" class="member-name-link">markPlacedBlockGuard(String, int, int, int, String, String, long)</a> - Method in class com.krishcpatel.realm.jobs.repository.<a href="com/krishcpatel/realm/jobs/repository/JobsRepository.html" title="class in com.krishcpatel.realm.jobs.repository">JobsRepository</a></dt>
 <dd>
 <div class="block">Persists a placed block guard so the block cannot later be farmed for break rewards.</div>
@@ -1289,6 +1313,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/krishcpatel/realm/skills/listener/SkillsActionListener.html#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)" class="member-name-link">onBlockPlace(BlockPlaceEvent)</a> - Method in class com.krishcpatel.realm.skills.listener.<a href="com/krishcpatel/realm/skills/listener/SkillsActionListener.html" title="class in com.krishcpatel.realm.skills.listener">SkillsActionListener</a></dt>
 <dd>
 <div class="block">Persists anti-farm placement guards for break-rewarded blocks.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/jobs/listener/JobsActionListener.html#onBossDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)" class="member-name-link">onBossDamage(EntityDamageByEntityEvent)</a> - Method in class com.krishcpatel.realm.jobs.listener.<a href="com/krishcpatel/realm/jobs/listener/JobsActionListener.html" title="class in com.krishcpatel.realm.jobs.listener">JobsActionListener</a></dt>
+<dd>
+<div class="block">Tracks player damage contribution on configured bosses so payouts can be split by contribution.</div>
 </dd>
 <dt><a href="com/krishcpatel/realm/jobs/listener/JobsActionListener.html#onBrew(org.bukkit.event.inventory.BrewEvent)" class="member-name-link">onBrew(BrewEvent)</a> - Method in class com.krishcpatel.realm.jobs.listener.<a href="com/krishcpatel/realm/jobs/listener/JobsActionListener.html" title="class in com.krishcpatel.realm.jobs.listener">JobsActionListener</a></dt>
 <dd>

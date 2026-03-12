@@ -123,6 +123,18 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#dailyCapKey(java.lang.String)" class="member-name-link">dailyCapKey</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jobId)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns the canonical cap-tracking key used for a job's daily cap bucket.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../model/JobCapState.html" title="class in com.krishcpatel.realm.jobs.model">JobCapState</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDailyCapState(java.util.UUID,java.lang.String,long)" class="member-name-link">getDailyCapState</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerUuid,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jobId,
+ long&nbsp;dayKey)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns a player's current daily cap usage for the given job.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="../model/PlayerJob.html" title="class in com.krishcpatel.realm.jobs.model">PlayerJob</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getJob(java.util.UUID,java.lang.String)" class="member-name-link">getJob</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerUuid,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jobId)</code></div>
@@ -231,6 +243,26 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="getDailyCapState(java.util.UUID,java.lang.String,long)">
+<h3>getDailyCapState</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../model/JobCapState.html" title="class in com.krishcpatel.realm.jobs.model">JobCapState</a></span>&nbsp;<span class="element-name">getDailyCapState</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerUuid,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jobId,
+ long&nbsp;dayKey)</span>
+                             throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/SQLException.html" title="class or interface in java.sql" class="external-link">SQLException</a></span></div>
+<div class="block">Returns a player's current daily cap usage for the given job.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>playerUuid</code> - player UUID</dd>
+<dd><code>jobId</code> - job id</dd>
+<dd><code>dayKey</code> - UTC epoch day</dd>
+<dt>Returns:</dt>
+<dd>current earned amounts for the day's job cap bucket</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/SQLException.html" title="class or interface in java.sql" class="external-link">SQLException</a></code> - if the lookup fails</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="joinJob(java.util.UUID,java.lang.String)">
 <h3>joinJob</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../model/JobMembershipResult.html" title="class in com.krishcpatel.realm.jobs.model">JobMembershipResult</a></span>&nbsp;<span class="element-name">joinJob</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerUuid,
@@ -292,6 +324,19 @@ loadScripts(document, 'script');</script>
 <dd><code>jobId</code> - raw job id</dd>
 <dt>Returns:</dt>
 <dd>normalized lowercase job id, or an empty string if null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="dailyCapKey(java.lang.String)">
+<h3>dailyCapKey</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">dailyCapKey</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jobId)</span></div>
+<div class="block">Returns the canonical cap-tracking key used for a job's daily cap bucket.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>jobId</code> - raw or normalized job id</dd>
+<dt>Returns:</dt>
+<dd>normalized daily cap key</dd>
 </dl>
 </section>
 </li>
