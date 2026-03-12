@@ -73,58 +73,59 @@ public class TransactionManager {
         if (amount <= 0) return TransactionResult.fail("Amount must be > 0");
         if (fromUuid.equalsIgnoreCase(toUuid)) return TransactionResult.fail("Cannot pay yourself");
 
-        Connection c = db.getConnection();
-        boolean oldAuto = c.getAutoCommit();
-        c.setAutoCommit(false);
+        try (Connection c = db.getConnection()) {
+            boolean oldAuto = c.getAutoCommit();
+            c.setAutoCommit(false);
 
-        try {
-            economy.ensureAccount(fromUuid);
-            economy.ensureAccount(toUuid);
+            try {
+                economy.ensureAccount(c, fromUuid);
+                economy.ensureAccount(c, toUuid);
 
-            // Atomic withdraw (no negatives)
-            boolean ok = subtractIfEnough(c, fromUuid, amount);
-            if (!ok) {
+                // Atomic withdraw (no negatives)
+                boolean ok = subtractIfEnough(c, fromUuid, amount);
+                if (!ok) {
+                    c.rollback();
+                    return TransactionResult.fail("Insufficient funds");
+                }
+
+                add(c, toUuid, amount);
+
+                long ledgerId = ledger.insertLedgerRow(
+                        c,
+                        System.currentTimeMillis(),
+                        "TRANSFER",
+                        amount,
+                        fromUuid,
+                        toUuid,
+                        source.name(),
+                        reference,
+                        reason,
+                        actor
+                );
+
+                c.commit();
+
+                // publish AFTER commit so listeners never see “phantom” ledger rows
+                core.events().publishAsync(new LedgerRecordedEvent(
+                        ledgerId,
+                        "TRANSFER",
+                        amount,
+                        fromUuid,
+                        toUuid,
+                        source,
+                        reference,
+                        reason,
+                        actor
+                ));
+
+                return TransactionResult.ok(ledgerId);
+
+            } catch (SQLException ex) {
                 c.rollback();
-                return TransactionResult.fail("Insufficient funds");
+                throw ex;
+            } finally {
+                c.setAutoCommit(oldAuto);
             }
-
-            add(c, toUuid, amount);
-
-            long ledgerId = ledger.insertLedgerRow(
-                    c,
-                    System.currentTimeMillis(),
-                    "TRANSFER",
-                    amount,
-                    fromUuid,
-                    toUuid,
-                    source.name(),
-                    reference,
-                    reason,
-                    actor
-            );
-
-            c.commit();
-
-            // publish AFTER commit so listeners never see “phantom” ledger rows
-            core.events().publishAsync(new LedgerRecordedEvent(
-                    ledgerId,
-                    "TRANSFER",
-                    amount,
-                    fromUuid,
-                    toUuid,
-                    source,
-                    reference,
-                    reason,
-                    actor
-            ));
-
-            return TransactionResult.ok(ledgerId);
-
-        } catch (SQLException ex) {
-            c.rollback();
-            throw ex;
-        } finally {
-            c.setAutoCommit(oldAuto);
         }
     }
 
@@ -154,51 +155,52 @@ public class TransactionManager {
 
         if (amount <= 0) return TransactionResult.fail("Amount must be > 0");
 
-        Connection c = db.getConnection();
-        boolean oldAuto = c.getAutoCommit();
-        c.setAutoCommit(false);
+        try (Connection c = db.getConnection()) {
+            boolean oldAuto = c.getAutoCommit();
+            c.setAutoCommit(false);
 
-        try {
-            economy.ensureAccount(toUuid);
+            try {
+                economy.ensureAccount(c, toUuid);
 
-            add(c, toUuid, amount);
+                add(c, toUuid, amount);
 
-            long ledgerId = ledger.insertLedgerRow(
-                    c,
-                    System.currentTimeMillis(),
-                    "MINT",
-                    amount,
-                    null,
-                    toUuid,
-                    source.name(),
-                    reference,
-                    reason,
-                    actor
-            );
+                long ledgerId = ledger.insertLedgerRow(
+                        c,
+                        System.currentTimeMillis(),
+                        "MINT",
+                        amount,
+                        null,
+                        toUuid,
+                        source.name(),
+                        reference,
+                        reason,
+                        actor
+                );
 
-            c.commit();
+                c.commit();
 
-            // publish AFTER commit so listeners never see “phantom” ledger rows
-            String fromUuid = "";
-            core.events().publishAsync(new LedgerRecordedEvent(
-                    ledgerId,
-                    "MINT",
-                    amount,
-                    fromUuid,
-                    toUuid,
-                    source,
-                    reference,
-                    reason,
-                    actor
-            ));
+                // publish AFTER commit so listeners never see “phantom” ledger rows
+                String fromUuid = "";
+                core.events().publishAsync(new LedgerRecordedEvent(
+                        ledgerId,
+                        "MINT",
+                        amount,
+                        fromUuid,
+                        toUuid,
+                        source,
+                        reference,
+                        reason,
+                        actor
+                ));
 
-            return TransactionResult.ok(ledgerId);
+                return TransactionResult.ok(ledgerId);
 
-        } catch (SQLException ex) {
-            c.rollback();
-            throw ex;
-        } finally {
-            c.setAutoCommit(oldAuto);
+            } catch (SQLException ex) {
+                c.rollback();
+                throw ex;
+            } finally {
+                c.setAutoCommit(oldAuto);
+            }
         }
     }
 
@@ -228,55 +230,56 @@ public class TransactionManager {
 
         if (amount <= 0) return TransactionResult.fail("Amount must be > 0");
 
-        Connection c = db.getConnection();
-        boolean oldAuto = c.getAutoCommit();
-        c.setAutoCommit(false);
+        try (Connection c = db.getConnection()) {
+            boolean oldAuto = c.getAutoCommit();
+            c.setAutoCommit(false);
 
-        try {
-            economy.ensureAccount(fromUuid);
+            try {
+                economy.ensureAccount(c, fromUuid);
 
-            boolean ok = subtractIfEnough(c, fromUuid, amount);
-            if (!ok) {
+                boolean ok = subtractIfEnough(c, fromUuid, amount);
+                if (!ok) {
+                    c.rollback();
+                    return TransactionResult.fail("Insufficient funds");
+                }
+
+                long ledgerId = ledger.insertLedgerRow(
+                        c,
+                        System.currentTimeMillis(),
+                        "BURN",
+                        amount,
+                        fromUuid,
+                        null,
+                        source.name(),
+                        reference,
+                        reason,
+                        actor
+                );
+
+                c.commit();
+
+                // publish AFTER commit so listeners never see “phantom” ledger rows
+                String toUuid = "";
+                core.events().publishAsync(new LedgerRecordedEvent(
+                        ledgerId,
+                        "BURN",
+                        amount,
+                        fromUuid,
+                        toUuid,
+                        source,
+                        reference,
+                        reason,
+                        actor
+                ));
+
+                return TransactionResult.ok(ledgerId);
+
+            } catch (SQLException ex) {
                 c.rollback();
-                return TransactionResult.fail("Insufficient funds");
+                throw ex;
+            } finally {
+                c.setAutoCommit(oldAuto);
             }
-
-            long ledgerId = ledger.insertLedgerRow(
-                    c,
-                    System.currentTimeMillis(),
-                    "BURN",
-                    amount,
-                    fromUuid,
-                    null,
-                    source.name(),
-                    reference,
-                    reason,
-                    actor
-            );
-
-            c.commit();
-
-            // publish AFTER commit so listeners never see “phantom” ledger rows
-            String toUuid = "";
-            core.events().publishAsync(new LedgerRecordedEvent(
-                    ledgerId,
-                    "BURN",
-                    amount,
-                    fromUuid,
-                    toUuid,
-                    source,
-                    reference,
-                    reason,
-                    actor
-            ));
-
-            return TransactionResult.ok(ledgerId);
-
-        } catch (SQLException ex) {
-            c.rollback();
-            throw ex;
-        } finally {
-            c.setAutoCommit(oldAuto);
         }
     }
 
@@ -306,53 +309,54 @@ public class TransactionManager {
 
         long clamped = Math.max(0, newBalance);
 
-        Connection c = db.getConnection();
-        boolean oldAuto = c.getAutoCommit();
-        c.setAutoCommit(false);
+        try (Connection c = db.getConnection()) {
+            boolean oldAuto = c.getAutoCommit();
+            c.setAutoCommit(false);
 
-        try {
-            economy.ensureAccount(targetUuid);
+            try {
+                economy.ensureAccount(c, targetUuid);
 
-            long old = economy.getBalance(targetUuid);
-            economy.setBalance(targetUuid, clamped);
+                long old = getBalance(c, targetUuid);
+                setBalance(c, targetUuid, clamped);
 
-            long delta = Math.abs(clamped - old);
+                long delta = Math.abs(clamped - old);
 
-            long ledgerId = ledger.insertLedgerRow(
-                    c,
-                    System.currentTimeMillis(),
-                    "SET",
-                    delta,
-                    old > clamped ? targetUuid : null,
-                    old > clamped ? null : targetUuid,
-                    source.name(),
-                    reference,
-                    reason + " (old=" + old + ", new=" + clamped + ")",
-                    actor
-            );
+                long ledgerId = ledger.insertLedgerRow(
+                        c,
+                        System.currentTimeMillis(),
+                        "SET",
+                        delta,
+                        old > clamped ? targetUuid : null,
+                        old > clamped ? null : targetUuid,
+                        source.name(),
+                        reference,
+                        reason + " (old=" + old + ", new=" + clamped + ")",
+                        actor
+                );
 
-            c.commit();
+                c.commit();
 
-            // publish AFTER commit so listeners never see “phantom” ledger rows
-            String fromUuid = "";
-            core.events().publishAsync(new LedgerRecordedEvent(
-                    ledgerId,
-                    "SET",
-                    newBalance,
-                    fromUuid,
-                    targetUuid,
-                    source,
-                    reference,
-                    reason,
-                    actor
-            ));
+                // publish AFTER commit so listeners never see “phantom” ledger rows
+                String fromUuid = "";
+                core.events().publishAsync(new LedgerRecordedEvent(
+                        ledgerId,
+                        "SET",
+                        delta,
+                        fromUuid,
+                        targetUuid,
+                        source,
+                        reference,
+                        reason,
+                        actor
+                ));
 
-            return TransactionResult.ok(ledgerId);
-        } catch (SQLException ex) {
-            c.rollback();
-            throw ex;
-        } finally {
-            c.setAutoCommit(oldAuto);
+                return TransactionResult.ok(ledgerId);
+            } catch (SQLException ex) {
+                c.rollback();
+                throw ex;
+            } finally {
+                c.setAutoCommit(oldAuto);
+            }
         }
     }
 
@@ -383,5 +387,29 @@ public class TransactionManager {
             ps.executeUpdate();
         }
     }
-}
 
+    private long getBalance(Connection c, String uuid) throws SQLException {
+        try (PreparedStatement ps = c.prepareStatement("""
+          SELECT balance
+          FROM economy_accounts
+          WHERE player_uuid = ?
+        """)) {
+            ps.setString(1, uuid);
+            try (var rs = ps.executeQuery()) {
+                return rs.next() ? rs.getLong("balance") : 0L;
+            }
+        }
+    }
+
+    private void setBalance(Connection c, String uuid, long value) throws SQLException {
+        try (PreparedStatement ps = c.prepareStatement("""
+          UPDATE economy_accounts
+          SET balance = ?
+          WHERE player_uuid = ?
+        """)) {
+            ps.setLong(1, value);
+            ps.setString(2, uuid);
+            ps.executeUpdate();
+        }
+    }
+}

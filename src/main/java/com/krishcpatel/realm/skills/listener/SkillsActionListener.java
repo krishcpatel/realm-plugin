@@ -1,6 +1,7 @@
 package com.krishcpatel.realm.skills.listener;
 
 import com.krishcpatel.realm.core.Core;
+import com.krishcpatel.realm.jobs.repository.JobsRepository;
 import com.krishcpatel.realm.skills.manager.SkillProgressService;
 import com.krishcpatel.realm.skills.model.SkillActionContext;
 import org.bukkit.GameMode;
@@ -8,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Item;
@@ -16,6 +18,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockFertilizeEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityTameEvent;
@@ -26,6 +31,7 @@ import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.ConcurrentHashMap;
@@ -50,17 +56,35 @@ public final class SkillsActionListener implements Listener {
 
     private final Core core;
     private final SkillProgressService progress;
+    private final JobsRepository guardRepo;
+    private final Set<String> placedBreakGuards = ConcurrentHashMap.newKeySet();
     private final Map<String, BrewSession> brewSessions = new ConcurrentHashMap<>();
+    private final Map<UUID, Long> acrobaticsDodgeCooldowns = new ConcurrentHashMap<>();
+    private final Map<UUID, Long> acrobaticsRollCooldowns = new ConcurrentHashMap<>();
 
     /**
      * Creates the skill action listener.
      *
      * @param core plugin instance
      * @param progress skill progression service
+     * @param guardRepo shared placed-block guard repository
      */
-    public SkillsActionListener(Core core, SkillProgressService progress) {
+    public SkillsActionListener(Core core, SkillProgressService progress, JobsRepository guardRepo) {
         this.core = core;
         this.progress = progress;
+        this.guardRepo = guardRepo;
+    }
+
+    /**
+     * Applies acrobatics dodge before other monitor listeners finalize combat damage.
+     *
+     * @param event damage event
+     */
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    public void onEntityDamageDefensive(EntityDamageByEntityEvent event) {
+        if (event.getEntity() instanceof Player defender && !shouldIgnore(defender)) {
+            maybeApplyAcrobaticsDodge(event, defender);
+        }
     }
 
     /**
@@ -70,10 +94,6 @@ public final class SkillsActionListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onEntityDamage(EntityDamageByEntityEvent event) {
-        if (event.getEntity() instanceof Player defender && !shouldIgnore(defender)) {
-            maybeApplyAcrobaticsDodge(event, defender);
-        }
-
         if (event.getDamager() instanceof Player player) {
             if (shouldIgnore(player)) {
                 return;
@@ -113,7 +133,24 @@ public final class SkillsActionListener implements Listener {
     }
 
     /**
-     * Handles acrobatics xp on fall damage and successful roll outcomes.
+     * Applies acrobatics roll before monitor listeners read final damage.
+     *
+     * @param event damage event
+     */
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+    public void onFallDamageDefensive(EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof Player player) || shouldIgnore(player)) {
+            return;
+        }
+        if (event.getCause() != EntityDamageEvent.DamageCause.FALL) {
+            return;
+        }
+
+        maybeApplyAcrobaticsRoll(event, player);
+    }
+
+    /**
+     * Handles acrobatics xp on fall damage using final post-modifier damage.
      *
      * @param event damage event
      */
@@ -125,8 +162,6 @@ public final class SkillsActionListener implements Listener {
         if (event.getCause() != EntityDamageEvent.DamageCause.FALL) {
             return;
         }
-
-        maybeApplyAcrobaticsRoll(event, player);
 
         int halfHearts = (int) Math.ceil(event.getFinalDamage());
         if (halfHearts <= 0) {
@@ -152,24 +187,105 @@ public final class SkillsActionListener implements Listener {
         UUID uuid = player.getUniqueId();
         String name = player.getName();
 
-        if (isMiningOre(type)) {
-            dispatch(uuid, name, SKILL_MINING, "ore-break", 1);
+        boolean miningOre = isMiningOre(type);
+        boolean miningStone = isMiningStone(type);
+        boolean woodcutting = Tag.LOGS.isTagged(type);
+        boolean herbalism = isHerbalismHarvest(event.getBlock());
+        boolean excavation = isUsingShovel(player.getInventory().getItemInMainHand().getType()) && isExcavationMaterial(type);
+
+        if (!(miningOre || miningStone || woodcutting || herbalism || excavation)) {
+            return;
         }
 
-        if (isMiningStone(type)) {
-            dispatch(uuid, name, SKILL_MINING, "stone-break", 1);
+        if (!core.skillsConfig().getBoolean("settings.anti-farm.ignore-player-placed-breaks", true)) {
+            dispatchBreakRewards(uuid, name, miningOre, miningStone, woodcutting, herbalism, excavation);
+            return;
         }
 
-        if (Tag.LOGS.isTagged(type)) {
-            dispatch(uuid, name, SKILL_WOODCUTTING, "log-break", 1);
+        Location location = event.getBlock().getLocation();
+        String world = location.getWorld().getName();
+        int x = location.getBlockX();
+        int y = location.getBlockY();
+        int z = location.getBlockZ();
+
+        if (shouldIgnorePlayerPlacedBreak(location)) {
+            return;
         }
 
-        if (isHerbalismHarvest(event.getBlock())) {
-            dispatch(uuid, name, SKILL_HERBALISM, "crop-harvest", 1);
+        core.getServer().getScheduler().runTaskAsynchronously(core, () -> {
+            try {
+                boolean playerPlaced = guardRepo.consumePlacedBlockGuard(world, x, y, z);
+                if (!playerPlaced) {
+                    dispatchBreakRewards(uuid, name, miningOre, miningStone, woodcutting, herbalism, excavation);
+                }
+            } catch (Exception e) {
+                core.getLogger().severe("[skills] Failed to check placed-block guard for "
+                        + world + " " + x + "," + y + "," + z);
+                e.printStackTrace();
+            }
+        });
+    }
+
+    /**
+     * Persists anti-farm placement guards for break-rewarded blocks.
+     *
+     * @param event block place event
+     */
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void onBlockPlace(BlockPlaceEvent event) {
+        Player player = event.getPlayer();
+        if (shouldIgnore(player)) {
+            return;
         }
 
-        if (isUsingShovel(player.getInventory().getItemInMainHand().getType()) && isExcavationMaterial(type)) {
-            dispatch(uuid, name, SKILL_EXCAVATION, "shovel-dig", 1);
+        if (!antiFarmPlacedBreakEnabled()) {
+            return;
+        }
+
+        markPlacedBreakGuard(event.getBlockPlaced().getLocation(), event.getBlockPlaced().getType(), player.getUniqueId().toString());
+    }
+
+    /**
+     * Marks fertilized blocks as player-generated to prevent bonemeal farm loops.
+     *
+     * @param event fertilize event
+     */
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void onBlockFertilize(BlockFertilizeEvent event) {
+        if (!antiFarmPlacedBreakEnabled()) {
+            return;
+        }
+
+        Player player = event.getPlayer();
+        if (player != null && shouldIgnore(player)) {
+            return;
+        }
+        String source = player == null ? "SYSTEM" : player.getUniqueId().toString();
+
+        for (BlockState blockState : event.getBlocks()) {
+            markPlacedBreakGuard(blockState.getLocation(), blockState.getType(), source);
+        }
+    }
+
+    /**
+     * Marks bonemeal-grown structure blocks (for example trees) as player-generated.
+     *
+     * @param event structure grow event
+     */
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void onStructureGrow(StructureGrowEvent event) {
+        if (!antiFarmPlacedBreakEnabled() || !event.isFromBonemeal()) {
+            return;
+        }
+
+        Player player = event.getPlayer();
+        if (player != null && shouldIgnore(player)) {
+            return;
+        }
+        String source = player == null ? "SYSTEM" : player.getUniqueId().toString();
+
+        for (BlockState blockState : event.getBlocks()) {
+            markPlacedBreakGuard(blockState.getLocation(), blockState.getType(), source);
         }
     }
 
@@ -301,11 +417,81 @@ public final class SkillsActionListener implements Listener {
         core.getServer().getScheduler().runTaskAsynchronously(core, () -> progress.handleAction(context));
     }
 
+    private void dispatchBreakRewards(
+            UUID playerUuid,
+            String playerName,
+            boolean miningOre,
+            boolean miningStone,
+            boolean woodcutting,
+            boolean herbalism,
+            boolean excavation
+    ) {
+        if (miningOre) {
+            dispatch(playerUuid, playerName, SKILL_MINING, "ore-break", 1);
+        }
+        if (miningStone) {
+            dispatch(playerUuid, playerName, SKILL_MINING, "stone-break", 1);
+        }
+        if (woodcutting) {
+            dispatch(playerUuid, playerName, SKILL_WOODCUTTING, "log-break", 1);
+        }
+        if (herbalism) {
+            dispatch(playerUuid, playerName, SKILL_HERBALISM, "crop-harvest", 1);
+        }
+        if (excavation) {
+            dispatch(playerUuid, playerName, SKILL_EXCAVATION, "shovel-dig", 1);
+        }
+    }
+
     private boolean shouldIgnore(Player player) {
         if (!core.skillsConfig().getBoolean("settings.ignore-creative", true)) {
             return false;
         }
         return player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR;
+    }
+
+    private boolean shouldIgnorePlayerPlacedBreak(Location location) {
+        if (!antiFarmPlacedBreakEnabled()) {
+            return false;
+        }
+        return placedBreakGuards.remove(blockKey(location));
+    }
+
+    private boolean antiFarmPlacedBreakEnabled() {
+        return core.skillsConfig().getBoolean("settings.anti-farm.ignore-player-placed-breaks", true);
+    }
+
+    private void markPlacedBreakGuard(Location location, Material type, String playerUuid) {
+        if (!shouldTrackPlacedBreakGuard(type) || location.getWorld() == null) {
+            return;
+        }
+
+        String key = blockKey(location);
+        placedBreakGuards.add(key);
+        String world = location.getWorld().getName();
+        int x = location.getBlockX();
+        int y = location.getBlockY();
+        int z = location.getBlockZ();
+        long placedAt = System.currentTimeMillis();
+
+        core.getServer().getScheduler().runTaskAsynchronously(core, () -> {
+            try {
+                guardRepo.markPlacedBlockGuard(world, x, y, z, playerUuid, type.name(), placedAt);
+                placedBreakGuards.remove(key);
+            } catch (Exception e) {
+                core.getLogger().severe("[skills] Failed to persist placed-block guard for "
+                        + world + " " + x + "," + y + "," + z);
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private boolean shouldTrackPlacedBreakGuard(Material material) {
+        return isMiningOre(material)
+                || isMiningStone(material)
+                || Tag.LOGS.isTagged(material)
+                || isPotentialHerbalismMaterial(material)
+                || isExcavationMaterial(material);
     }
 
     private String blockKey(Location location) {
@@ -337,6 +523,20 @@ public final class SkillsActionListener implements Listener {
 
         return switch (type) {
             case SUGAR_CANE, CACTUS, MELON, PUMPKIN, KELP_PLANT -> true;
+            default -> false;
+        };
+    }
+
+    private boolean isPotentialHerbalismMaterial(Material type) {
+        if (isHerbalismFlora(type)) {
+            return true;
+        }
+        if (Tag.CROPS.isTagged(type)) {
+            return true;
+        }
+        return switch (type) {
+            case SUGAR_CANE, CACTUS, MELON, PUMPKIN, KELP_PLANT,
+                    SWEET_BERRY_BUSH, NETHER_WART, COCOA -> true;
             default -> false;
         };
     }
@@ -398,10 +598,17 @@ public final class SkillsActionListener implements Listener {
             return;
         }
 
+        long cooldownMs = Math.max(0L, core.skillsConfig().getLong("settings.acrobatics.roll-cooldown-ms", 1200L));
+        if (isAcrobaticsProcOnCooldown(acrobaticsRollCooldowns, player.getUniqueId(), cooldownMs)) {
+            return;
+        }
+
         double chance = clampChance(core.skillsConfig().getDouble("settings.acrobatics.roll-chance", 0.15D));
         if (ThreadLocalRandom.current().nextDouble() > chance) {
             return;
         }
+
+        acrobaticsRollCooldowns.put(player.getUniqueId(), System.currentTimeMillis());
 
         double damageMultiplier = core.skillsConfig().getDouble("settings.acrobatics.roll-damage-multiplier", 0.5D);
         damageMultiplier = Math.max(0D, Math.min(1D, damageMultiplier));
@@ -414,14 +621,34 @@ public final class SkillsActionListener implements Listener {
         if (event.getDamage() <= 0D) {
             return;
         }
+        if (event.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK
+                && event.getCause() != EntityDamageEvent.DamageCause.PROJECTILE) {
+            return;
+        }
+
+        long cooldownMs = Math.max(0L, core.skillsConfig().getLong("settings.acrobatics.dodge-cooldown-ms", 1000L));
+        if (isAcrobaticsProcOnCooldown(acrobaticsDodgeCooldowns, player.getUniqueId(), cooldownMs)) {
+            return;
+        }
 
         double chance = clampChance(core.skillsConfig().getDouble("settings.acrobatics.dodge-chance", 0.07D));
         if (ThreadLocalRandom.current().nextDouble() > chance) {
             return;
         }
 
+        acrobaticsDodgeCooldowns.put(player.getUniqueId(), System.currentTimeMillis());
         event.setCancelled(true);
         dispatch(player.getUniqueId(), player.getName(), SKILL_ACROBATICS, "dodge-success", 1);
+    }
+
+    private boolean isAcrobaticsProcOnCooldown(Map<UUID, Long> cooldowns, UUID playerUuid, long cooldownMs) {
+        if (cooldownMs <= 0L) {
+            return false;
+        }
+
+        Long previous = cooldowns.get(playerUuid);
+        long now = System.currentTimeMillis();
+        return previous != null && now - previous < cooldownMs;
     }
 
     private double clampChance(double value) {

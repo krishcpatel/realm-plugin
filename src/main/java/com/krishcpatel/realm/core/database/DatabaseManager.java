@@ -12,12 +12,12 @@ import java.sql.*;
  * <ul>
  *   <li>Create/open {@code database.db} in the plugin data folder</li>
  *   <li>Initialize schema and apply migrations</li>
- *   <li>Provide a shared {@link Connection} for repositories</li>
+ *   <li>Provide configured {@link Connection} instances for repositories</li>
  * </ul>
  */
 public class DatabaseManager {
     private final JavaPlugin plugin;
-    private Connection connection;
+    private String jdbcUrl;
 
     /**
      * Creates a database manager bound to the given plugin (for data folder access).
@@ -40,11 +40,11 @@ public class DatabaseManager {
         }
 
         File dbFile = new File(dataFolder, "database.db");
-        String url = "jdbc:sqlite:" + dbFile.getAbsolutePath();
+        jdbcUrl = "jdbc:sqlite:" + dbFile.getAbsolutePath();
 
-        connection = DriverManager.getConnection(url);
-
-        initSchema();
+        try (Connection c = openConnection()) {
+            initSchema(c);
+        }
     }
 
     /**
@@ -54,10 +54,10 @@ public class DatabaseManager {
      * @throws SQLException if not connected or connection is closed
      */
     public synchronized Connection getConnection() throws SQLException {
-        if (connection == null || connection.isClosed()) {
+        if (jdbcUrl == null || jdbcUrl.isBlank()) {
             throw new SQLException("Database is not connected.");
         }
-        return connection;
+        return openConnection();
     }
 
     /**
@@ -66,18 +66,25 @@ public class DatabaseManager {
      * <p>Safe to call multiple times.</p>
      */
     public synchronized void close() {
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException ignored) {
-            } finally {
-                connection = null;
-            }
+        jdbcUrl = null;
+    }
+
+    private Connection openConnection() throws SQLException {
+        Connection c = DriverManager.getConnection(jdbcUrl);
+        configureConnection(c);
+        return c;
+    }
+
+    private void configureConnection(Connection c) throws SQLException {
+        try (Statement st = c.createStatement()) {
+            st.execute("PRAGMA foreign_keys = ON;");
+            st.execute("PRAGMA busy_timeout = 5000;");
+            st.execute("PRAGMA journal_mode = WAL;");
         }
     }
 
-    private void initSchema() throws SQLException {
-        try (Statement st = connection.createStatement()) {
+    private void initSchema(Connection c) throws SQLException {
+        try (Statement st = c.createStatement()) {
             st.execute("""
               CREATE TABLE IF NOT EXISTS players (
                 uuid TEXT PRIMARY KEY,
@@ -86,28 +93,6 @@ public class DatabaseManager {
                 last_login INTEGER NOT NULL
               );
             """);
-        }
-    }
-
-    private boolean tableExists(String table) throws SQLException {
-        try (PreparedStatement ps = connection.prepareStatement(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name=?")) {
-            ps.setString(1, table);
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next();
-            }
-        }
-    }
-
-    private boolean columnExists(String table, String column) throws SQLException {
-        try (PreparedStatement ps = connection.prepareStatement("PRAGMA table_info(" + table + ")")) {
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    String name = rs.getString("name");
-                    if (column.equalsIgnoreCase(name)) return true;
-                }
-                return false;
-            }
         }
     }
 }

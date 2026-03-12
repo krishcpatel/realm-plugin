@@ -32,7 +32,7 @@ public final class JobsRepository {
      * @throws SQLException if schema creation fails
      */
     public void initSchema() throws SQLException {
-        try (var st = db.getConnection().createStatement()) {
+        try (Connection c = db.getConnection(); var st = c.createStatement()) {
             st.execute("""
                 CREATE TABLE IF NOT EXISTS jobs_memberships (
                     player_uuid TEXT NOT NULL,
@@ -89,6 +89,7 @@ public final class JobsRepository {
             st.execute("CREATE INDEX IF NOT EXISTS idx_jobs_progress_player ON jobs_progress(player_uuid);");
             st.execute("CREATE INDEX IF NOT EXISTS idx_jobs_caps_day ON jobs_reward_caps(day_key);");
             st.execute("CREATE INDEX IF NOT EXISTS idx_jobs_placed_blocks_player ON jobs_placed_block_guards(player_uuid);");
+            st.execute("CREATE INDEX IF NOT EXISTS idx_jobs_placed_blocks_placed_at ON jobs_placed_block_guards(placed_at);");
         }
     }
 
@@ -100,8 +101,8 @@ public final class JobsRepository {
      * @throws SQLException if the query fails
      */
     public List<PlayerJob> getJobs(String playerUuid) throws SQLException {
-        Connection c = db.getConnection();
-        try (PreparedStatement ps = c.prepareStatement("""
+        try (Connection c = db.getConnection();
+             PreparedStatement ps = c.prepareStatement("""
             SELECT m.job_id, p.level, p.xp, p.total_xp, m.joined_at
             FROM jobs_memberships m
             JOIN jobs_progress p
@@ -131,7 +132,8 @@ public final class JobsRepository {
      * @throws SQLException if the query fails
      */
     public PlayerJob getJob(String playerUuid, String jobId) throws SQLException {
-        try (PreparedStatement ps = db.getConnection().prepareStatement("""
+        try (Connection c = db.getConnection();
+             PreparedStatement ps = c.prepareStatement("""
             SELECT m.job_id, p.level, p.xp, p.total_xp, m.joined_at
             FROM jobs_memberships m
             JOIN jobs_progress p
@@ -185,7 +187,8 @@ public final class JobsRepository {
      * @throws SQLException if the query fails
      */
     public int countJobs(String playerUuid) throws SQLException {
-        try (PreparedStatement ps = db.getConnection().prepareStatement("""
+        try (Connection c = db.getConnection();
+             PreparedStatement ps = c.prepareStatement("""
             SELECT COUNT(*) AS cnt
             FROM jobs_memberships
             WHERE player_uuid = ?
@@ -208,19 +211,20 @@ public final class JobsRepository {
      * @throws SQLException if the write fails
      */
     public boolean joinJob(String playerUuid, String jobId, long joinedAt, int startingLevel) throws SQLException {
-        Connection c = db.getConnection();
-        boolean oldAuto = c.getAutoCommit();
-        c.setAutoCommit(false);
+        try (Connection c = db.getConnection()) {
+            boolean oldAuto = c.getAutoCommit();
+            c.setAutoCommit(false);
 
-        try {
-            boolean inserted = joinJob(c, playerUuid, jobId, joinedAt, startingLevel);
-            c.commit();
-            return inserted;
-        } catch (SQLException ex) {
-            c.rollback();
-            throw ex;
-        } finally {
-            c.setAutoCommit(oldAuto);
+            try {
+                boolean inserted = joinJob(c, playerUuid, jobId, joinedAt, startingLevel);
+                c.commit();
+                return inserted;
+            } catch (SQLException ex) {
+                c.rollback();
+                throw ex;
+            } finally {
+                c.setAutoCommit(oldAuto);
+            }
         }
     }
 
@@ -281,7 +285,8 @@ public final class JobsRepository {
      * @throws SQLException if the delete fails
      */
     public boolean leaveJob(String playerUuid, String jobId) throws SQLException {
-        try (PreparedStatement ps = db.getConnection().prepareStatement("""
+        try (Connection c = db.getConnection();
+             PreparedStatement ps = c.prepareStatement("""
             DELETE FROM jobs_memberships
             WHERE player_uuid = ?
               AND job_id = ?
@@ -300,7 +305,8 @@ public final class JobsRepository {
      * @throws SQLException if the delete fails
      */
     public int leaveAllJobs(String playerUuid) throws SQLException {
-        try (PreparedStatement ps = db.getConnection().prepareStatement("""
+        try (Connection c = db.getConnection();
+             PreparedStatement ps = c.prepareStatement("""
             DELETE FROM jobs_memberships
             WHERE player_uuid = ?
         """)) {
@@ -456,7 +462,8 @@ public final class JobsRepository {
             String material,
             long placedAt
     ) throws SQLException {
-        try (PreparedStatement ps = db.getConnection().prepareStatement("""
+        try (Connection c = db.getConnection();
+             PreparedStatement ps = c.prepareStatement("""
             INSERT INTO jobs_placed_block_guards (world, x, y, z, player_uuid, material, placed_at)
             VALUES (?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(world, x, y, z) DO UPDATE SET
@@ -489,7 +496,8 @@ public final class JobsRepository {
      * @throws SQLException if the delete fails
      */
     public boolean consumePlacedBlockGuard(String world, int x, int y, int z) throws SQLException {
-        try (PreparedStatement ps = db.getConnection().prepareStatement("""
+        try (Connection c = db.getConnection();
+             PreparedStatement ps = c.prepareStatement("""
             DELETE FROM jobs_placed_block_guards
             WHERE world = ?
               AND x = ?
@@ -501,6 +509,24 @@ public final class JobsRepository {
             ps.setInt(3, y);
             ps.setInt(4, z);
             return ps.executeUpdate() > 0;
+        }
+    }
+
+    /**
+     * Purges stale placed-block guard rows older than the provided cutoff.
+     *
+     * @param cutoffMillis epoch millis cutoff (rows older than this are deleted)
+     * @return deleted row count
+     * @throws SQLException if the delete fails
+     */
+    public int purgePlacedBlockGuardsOlderThan(long cutoffMillis) throws SQLException {
+        try (Connection c = db.getConnection();
+             PreparedStatement ps = c.prepareStatement("""
+            DELETE FROM jobs_placed_block_guards
+            WHERE placed_at < ?
+        """)) {
+            ps.setLong(1, cutoffMillis);
+            return ps.executeUpdate();
         }
     }
 

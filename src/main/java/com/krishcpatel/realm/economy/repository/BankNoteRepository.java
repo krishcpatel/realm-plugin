@@ -33,7 +33,7 @@ public final class BankNoteRepository {
      * @throws SQLException if schema creation fails
      */
     public void initSchema() throws SQLException {
-        try (var st = db.getConnection().createStatement()) {
+        try (Connection c = db.getConnection(); var st = c.createStatement()) {
             st.execute("""
                 CREATE TABLE IF NOT EXISTS bank_notes (
                     note_id TEXT PRIMARY KEY,
@@ -137,6 +137,28 @@ public final class BankNoteRepository {
             ps.setLong(1, redeemedAt);
             ps.setString(2, redeemedBy);
             ps.setString(3, noteId);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    /**
+     * Deletes an unredeemed note row.
+     *
+     * @param c active database connection
+     * @param noteId note id
+     * @param issuedBy expected issuer UUID
+     * @return true if the note row was deleted
+     * @throws SQLException if database access fails
+     */
+    public boolean deleteUnredeemed(Connection c, String noteId, String issuedBy) throws SQLException {
+        try (PreparedStatement ps = c.prepareStatement("""
+                DELETE FROM bank_notes
+                WHERE note_id = ?
+                  AND issued_by = ?
+                  AND redeemed = 0
+        """)) {
+            ps.setString(1, noteId);
+            ps.setString(2, issuedBy);
             return ps.executeUpdate() > 0;
         }
     }

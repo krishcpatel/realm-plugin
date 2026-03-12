@@ -16,6 +16,7 @@ settings:
     ignore-player-placed-breaks: true
     ignore-spawner-kills: true
     brew-owner-expiry-ms: 300000
+    placed-block-guard-retention-days: 14
 
     action-cooldown-ms:
       break: 0

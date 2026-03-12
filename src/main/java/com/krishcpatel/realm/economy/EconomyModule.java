@@ -40,6 +40,11 @@ public class EconomyModule implements Module {
 
     @Override
     public void enable() throws SQLException {
+        if (!core.config().getBoolean("modules.economy", true)) {
+            core.getLogger().info("[economy] module disabled in config.");
+            return;
+        }
+
         // create tables / migrations
         economyRepo = new EconomyRepository(core.getDatabase());
         economyRepo.initSchema();
@@ -57,11 +62,6 @@ public class EconomyModule implements Module {
                 new BankNoteInteractListener(core, bankNoteManager),
                 core
         );
-
-        if (!core.config().getBoolean("modules.economy", true)) {
-            core.getLogger().info("[economy] module disabled in config.");
-            return;
-        }
 
         core.getCommand("balance").setExecutor(new BalanceCommand(core, economyRepo));
         core.getCommand("pay").setExecutor(new PayCommand(core, tx));

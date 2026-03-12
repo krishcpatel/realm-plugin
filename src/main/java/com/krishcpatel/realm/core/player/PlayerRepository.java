@@ -40,9 +40,9 @@ public class PlayerRepository {
      * @throws SQLException if the database operation fails
      */
     public void upsertPlayer(String uuid, String username, long now) throws SQLException {
-        Connection c = db.getConnection();
         int updated;
-        try (PreparedStatement ps = c.prepareStatement("""
+        try (Connection c = db.getConnection();
+             PreparedStatement ps = c.prepareStatement("""
             INSERT INTO players (uuid, username, first_join, last_login)
             VALUES (?, ?, ?, ?)
             ON CONFLICT(uuid) DO UPDATE SET
@@ -67,8 +67,8 @@ public class PlayerRepository {
      * @throws SQLException if query fails
      */
     public boolean exists(String uuid) throws SQLException {
-        Connection c = db.getConnection();
-        try (PreparedStatement ps = c.prepareStatement("SELECT 1 FROM players WHERE uuid = ? LIMIT 1")) {
+        try (Connection c = db.getConnection();
+             PreparedStatement ps = c.prepareStatement("SELECT 1 FROM players WHERE uuid = ? LIMIT 1")) {
             ps.setString(1, uuid);
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.next();

@@ -30,7 +30,7 @@ public class EconomyRepository {
      * @throws SQLException if query fails
      */
     public void initSchema() throws SQLException {
-        try (var st = db.getConnection().createStatement()) {
+        try (Connection c = db.getConnection(); var st = c.createStatement()) {
             st.execute("""
               CREATE TABLE IF NOT EXISTS economy_accounts (
                 player_uuid TEXT PRIMARY KEY,
@@ -48,7 +48,9 @@ public class EconomyRepository {
      * @throws SQLException if database access fails
      */
     public void ensureAccount(String uuid) throws SQLException {
-        ensureAccount(db.getConnection(), uuid);
+        try (Connection c = db.getConnection()) {
+            ensureAccount(c, uuid);
+        }
     }
 
     /**
@@ -77,8 +79,8 @@ public class EconomyRepository {
      * @throws SQLException if query fails
      */
     public long getBalance(String uuid) throws SQLException {
-        Connection c = db.getConnection();
-        try (PreparedStatement ps = c.prepareStatement("SELECT balance FROM economy_accounts WHERE player_uuid = ?")) {
+        try (Connection c = db.getConnection();
+             PreparedStatement ps = c.prepareStatement("SELECT balance FROM economy_accounts WHERE player_uuid = ?")) {
             ps.setString(1, uuid);
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.next() ? rs.getLong("balance") : 0L;
@@ -166,8 +168,8 @@ public class EconomyRepository {
      * @throws SQLException if database access fails
      */
     public void setBalance(String uuid, long newBalance) throws SQLException {
-        Connection c = db.getConnection();
-        try (PreparedStatement ps = c.prepareStatement("""
+        try (Connection c = db.getConnection();
+             PreparedStatement ps = c.prepareStatement("""
           UPDATE economy_accounts
           SET balance = ?
           WHERE player_uuid = ?

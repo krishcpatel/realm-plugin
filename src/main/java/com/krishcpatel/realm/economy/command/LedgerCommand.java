@@ -9,6 +9,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.*;
 
 import java.text.SimpleDateFormat;
+import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
 
@@ -60,7 +61,10 @@ public final class LedgerCommand implements CommandExecutor {
 
         core.getServer().getScheduler().runTaskAsynchronously(core, () -> {
             try {
-                List<LedgerEntry> entries = ledger.getRecentForPlayer(core.getDatabase().getConnection(), uuid, limit);
+                List<LedgerEntry> entries;
+                try (Connection c = core.getDatabase().getConnection()) {
+                    entries = ledger.getRecentForPlayer(c, uuid, limit);
+                }
 
                 core.getServer().getScheduler().runTask(core, () -> {
                     sender.sendMessage(color("&7--- &fLedger for &e" + target.getName() + " &7(last " + limit + ") ---"));

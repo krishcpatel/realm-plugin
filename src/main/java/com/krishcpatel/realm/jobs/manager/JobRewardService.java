@@ -105,110 +105,111 @@ public final class JobRewardService {
         String rewardKey = playerJob.jobId() + ":" + action.type().name() + ":" + rule.selector();
         String rewardReason = "Job reward: " + definition.displayName() + " " + action.type().name();
 
-        Connection c = core.getDatabase().getConnection();
-        boolean oldAuto = c.getAutoCommit();
-        c.setAutoCommit(false);
-        long ledgerId = -1L;
+        try (Connection c = core.getDatabase().getConnection()) {
+            boolean oldAuto = c.getAutoCommit();
+            c.setAutoCommit(false);
+            long ledgerId = -1L;
 
-        try {
-            if (action.type().name().equals("EXPLORE")) {
-                boolean firstVisit = repo.markChunkExplored(
-                        c,
-                        playerUuid,
-                        playerJob.jobId(),
-                        action.worldName(),
-                        action.chunkX(),
-                        action.chunkZ(),
-                        now
-                );
-                if (!firstVisit) {
+            try {
+                if (action.type().name().equals("EXPLORE")) {
+                    boolean firstVisit = repo.markChunkExplored(
+                            c,
+                            playerUuid,
+                            playerJob.jobId(),
+                            action.worldName(),
+                            action.chunkX(),
+                            action.chunkZ(),
+                            now
+                    );
+                    if (!firstVisit) {
+                        c.rollback();
+                        return;
+                    }
+                }
+
+                PlayerJob current = repo.getJob(c, playerUuid, playerJob.jobId());
+                if (current == null) {
                     c.rollback();
                     return;
                 }
-            }
 
-            PlayerJob current = repo.getJob(c, playerUuid, playerJob.jobId());
-            if (current == null) {
+                long money = scaleMoneyReward(rule, definition.leveling(), current.level(), action.amount());
+                long xp = scaleXpReward(rule, definition.leveling(), current.level(), action.amount());
+
+                JobCapState capState = repo.getCapState(c, playerUuid, playerJob.jobId(), rewardKey, dayKey);
+                money = clampToCap(money, capState.moneyEarned(), rule.dailyMoneyCap());
+                xp = clampToCap(xp, capState.xpEarned(), rule.dailyXpCap());
+
+                if (money <= 0 && xp <= 0) {
+                    c.rollback();
+                    return;
+                }
+
+                ProgressUpdate update = applyProgress(current, definition.leveling(), xp);
+                if (money > 0) {
+                    economy.ensureAccount(c, playerUuid);
+                    economy.addBalance(c, playerUuid, money);
+                    ledgerId = ledger.insertLedgerRow(
+                            c,
+                            now,
+                            "MINT",
+                            money,
+                            null,
+                            playerUuid,
+                            MoneySource.JOBS.name(),
+                            rewardKey,
+                            rewardReason,
+                            "SYSTEM"
+                    );
+                }
+
+                repo.updateProgress(c, playerUuid, playerJob.jobId(), update.level(), update.xp(), update.totalXp());
+                repo.addCapEarnings(c, playerUuid, playerJob.jobId(), rewardKey, dayKey, money, xp);
+                c.commit();
+
+                if (ledgerId > 0) {
+                    core.events().publishAsync(new LedgerRecordedEvent(
+                            ledgerId,
+                            "MINT",
+                            money,
+                            null,
+                            playerUuid,
+                            MoneySource.JOBS,
+                            rewardKey,
+                            rewardReason,
+                            "SYSTEM"
+                    ));
+                }
+
+                if (money > 0 || xp > 0) {
+                    notifier.notifyPayout(action.playerUuid(), definition.displayName(), money, xp);
+                }
+
+                if (update.level() > current.level()) {
+                    core.events().publishAsync(new JobLevelUpEvent(
+                            action.playerUuid(),
+                            action.playerName(),
+                            playerJob.jobId(),
+                            current.level(),
+                            update.level()
+                    ));
+
+                    Bukkit.getScheduler().runTask(core, () -> {
+                        var player = Bukkit.getPlayer(action.playerUuid());
+                        if (player != null) {
+                            player.sendMessage(core.msg("jobs.level-up", java.util.Map.of(
+                                    "%job%", definition.displayName(),
+                                    "%level%", String.valueOf(update.level())
+                            )));
+                        }
+                    });
+                }
+            } catch (SQLException ex) {
                 c.rollback();
-                return;
+                throw ex;
+            } finally {
+                c.setAutoCommit(oldAuto);
             }
-
-            long money = scaleMoneyReward(rule, definition.leveling(), current.level(), action.amount());
-            long xp = scaleXpReward(rule, definition.leveling(), current.level(), action.amount());
-
-            JobCapState capState = repo.getCapState(c, playerUuid, playerJob.jobId(), rewardKey, dayKey);
-            money = clampToCap(money, capState.moneyEarned(), rule.dailyMoneyCap());
-            xp = clampToCap(xp, capState.xpEarned(), rule.dailyXpCap());
-
-            if (money <= 0 && xp <= 0) {
-                c.rollback();
-                return;
-            }
-
-            ProgressUpdate update = applyProgress(current, definition.leveling(), xp);
-            if (money > 0) {
-                economy.ensureAccount(c, playerUuid);
-                economy.addBalance(c, playerUuid, money);
-                ledgerId = ledger.insertLedgerRow(
-                        c,
-                        now,
-                        "MINT",
-                        money,
-                        null,
-                        playerUuid,
-                        MoneySource.JOBS.name(),
-                        rewardKey,
-                        rewardReason,
-                        "SYSTEM"
-                );
-            }
-
-            repo.updateProgress(c, playerUuid, playerJob.jobId(), update.level(), update.xp(), update.totalXp());
-            repo.addCapEarnings(c, playerUuid, playerJob.jobId(), rewardKey, dayKey, money, xp);
-            c.commit();
-
-            if (ledgerId > 0) {
-                core.events().publishAsync(new LedgerRecordedEvent(
-                        ledgerId,
-                        "MINT",
-                        money,
-                        null,
-                        playerUuid,
-                        MoneySource.JOBS,
-                        rewardKey,
-                        rewardReason,
-                        "SYSTEM"
-                ));
-            }
-
-            if (money > 0 || xp > 0) {
-                notifier.notifyPayout(action.playerUuid(), definition.displayName(), money, xp);
-            }
-
-            if (update.level() > current.level()) {
-                core.events().publishAsync(new JobLevelUpEvent(
-                        action.playerUuid(),
-                        action.playerName(),
-                        playerJob.jobId(),
-                        current.level(),
-                        update.level()
-                ));
-
-                Bukkit.getScheduler().runTask(core, () -> {
-                    var player = Bukkit.getPlayer(action.playerUuid());
-                    if (player != null) {
-                        player.sendMessage(core.msg("jobs.level-up", java.util.Map.of(
-                                "%job%", definition.displayName(),
-                                "%level%", String.valueOf(update.level())
-                        )));
-                    }
-                });
-            }
-        } catch (SQLException ex) {
-            c.rollback();
-            throw ex;
-        } finally {
-            c.setAutoCommit(oldAuto);
         }
     }
 

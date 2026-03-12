@@ -43,6 +43,7 @@ public final class JobsModule implements Module {
 
         jobsRepo = new JobsRepository(core.getDatabase());
         jobsRepo.initSchema();
+        purgeStalePlacedGuards();
 
         registry = new JobDefinitionRegistry(core);
         registry.reload();
@@ -77,7 +78,30 @@ public final class JobsModule implements Module {
 
         if (registry != null) {
             registry.reload();
+            purgeStalePlacedGuards();
             core.getLogger().info("[jobs] reloaded with " + registry.all().size() + " configured jobs.");
+        }
+    }
+
+    private void purgeStalePlacedGuards() {
+        if (jobsRepo == null) {
+            return;
+        }
+        if (!core.jobsConfig().getBoolean("settings.anti-farm.ignore-player-placed-breaks", true)) {
+            return;
+        }
+
+        long retentionDays = Math.max(1L, core.jobsConfig().getLong("settings.anti-farm.placed-block-guard-retention-days", 14L));
+        long cutoff = System.currentTimeMillis() - (retentionDays * 86_400_000L);
+
+        try {
+            int purged = jobsRepo.purgePlacedBlockGuardsOlderThan(cutoff);
+            if (purged > 0) {
+                core.getLogger().info("[jobs] Purged " + purged + " stale placed-block guards.");
+            }
+        } catch (SQLException e) {
+            core.getLogger().severe("[jobs] Failed to purge stale placed-block guards.");
+            e.printStackTrace();
         }
     }
 }

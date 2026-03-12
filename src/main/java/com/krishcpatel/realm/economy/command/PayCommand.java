@@ -5,10 +5,11 @@ import com.krishcpatel.realm.economy.model.MoneySource;
 import com.krishcpatel.realm.economy.manager.TransactionManager;
 import com.krishcpatel.realm.economy.data.TransactionResult;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
+
+import java.util.Map;
 
 /**
  * Command executor for {@code /pay <player> <amount>}.
@@ -36,24 +37,29 @@ public final class PayCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(color("&cOnly players can use /pay."));
+            sender.sendMessage(core.msg("general.player-only"));
+            return true;
+        }
+
+        if (!core.config().getBoolean("economy.payments.enabled", true)) {
+            player.sendMessage(core.msg("pay.disabled"));
             return true;
         }
 
         if (args.length != 2) {
-            player.sendMessage(color("&7Usage: &f/pay <player> <amount>"));
+            player.sendMessage(core.msg("pay.usage"));
             return true;
         }
 
         OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
 
         if ((!target.isOnline() && !target.hasPlayedBefore()) || target.getName() == null) {
-            player.sendMessage(color("&cThat player does not exist or has never joined the server."));
+            player.sendMessage(core.msg("pay.not-found"));
             return true;
         }
 
         if (player.getUniqueId().equals(target.getUniqueId())) {
-            player.sendMessage(color("&cYou cannot pay yourself."));
+            player.sendMessage(core.msg("pay.self-pay"));
             return true;
         }
 
@@ -61,12 +67,16 @@ public final class PayCommand implements CommandExecutor {
         try {
             amount = Long.parseLong(args[1]);
         } catch (NumberFormatException e) {
-            player.sendMessage(color("&cAmount must be a number."));
+            player.sendMessage(core.msg("general.invalid-number"));
             return true;
         }
 
-        if (amount <= 0) {
-            player.sendMessage(color("&cAmount must be > 0."));
+        long min = core.config().getLong("economy.payments.min-amount", 1L);
+        long max = core.config().getLong("economy.payments.max-amount", 1_000_000L);
+        long low = Math.min(min, max);
+        long high = Math.max(min, max);
+        if (amount < low || amount > high) {
+            player.sendMessage(core.msg("general.invalid-amount"));
             return true;
         }
 
@@ -87,14 +97,22 @@ public final class PayCommand implements CommandExecutor {
 
                 core.getServer().getScheduler().runTask(core, () -> {
                     if (!res.success()) {
-                        player.sendMessage(color("&cPayment failed: &f" + res.message()));
+                        player.sendMessage(core.msg("pay.failed", Map.of(
+                                "%reason%", res.message()
+                        )));
                         return;
                     }
 
-                    player.sendMessage(color("&aPaid &f$" + amount + " &ato &f" + target.getName() + "&a."));
+                    player.sendMessage(core.msg("pay.success-sender", Map.of(
+                            "%amount%", String.valueOf(amount),
+                            "%target%", target.getName()
+                    )));
 
                     if (target.isOnline() && target.getPlayer() != null) {
-                        target.getPlayer().sendMessage(color("&aYou received &f$" + amount + " &afrom &f" + player.getName() + "&a."));
+                        target.getPlayer().sendMessage(core.msg("pay.success-target", Map.of(
+                                "%amount%", String.valueOf(amount),
+                                "%sender%", player.getName()
+                        )));
                     }
                 });
 
@@ -102,15 +120,11 @@ public final class PayCommand implements CommandExecutor {
                 core.getLogger().severe("[economy] /pay failed");
                 e.printStackTrace();
                 core.getServer().getScheduler().runTask(core, () ->
-                        player.sendMessage(color("&cPayment failed. Check console."))
+                        player.sendMessage(core.msg("general.command-failed"))
                 );
             }
         });
 
         return true;
-    }
-
-    private String color(String s) {
-        return ChatColor.translateAlternateColorCodes('&', s);
     }
 }

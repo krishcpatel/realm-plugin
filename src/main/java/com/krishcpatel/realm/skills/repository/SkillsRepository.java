@@ -31,7 +31,7 @@ public final class SkillsRepository {
      * @throws SQLException if schema creation fails
      */
     public void initSchema() throws SQLException {
-        try (var st = db.getConnection().createStatement()) {
+        try (Connection c = db.getConnection(); var st = c.createStatement()) {
             st.execute("""
                 CREATE TABLE IF NOT EXISTS skills_progress (
                     player_uuid TEXT NOT NULL,
@@ -56,7 +56,8 @@ public final class SkillsRepository {
      * @throws SQLException if query fails
      */
     public List<SkillProgress> getSkills(String playerUuid) throws SQLException {
-        try (PreparedStatement ps = db.getConnection().prepareStatement("""
+        try (Connection c = db.getConnection();
+             PreparedStatement ps = c.prepareStatement("""
             SELECT skill_id, level, xp, total_xp, updated_at
             FROM skills_progress
             WHERE player_uuid = ?
@@ -83,7 +84,8 @@ public final class SkillsRepository {
      * @throws SQLException if query fails
      */
     public SkillProgress getSkill(String playerUuid, String skillId) throws SQLException {
-        try (PreparedStatement ps = db.getConnection().prepareStatement("""
+        try (Connection c = db.getConnection();
+             PreparedStatement ps = c.prepareStatement("""
             SELECT skill_id, level, xp, total_xp, updated_at
             FROM skills_progress
             WHERE player_uuid = ?

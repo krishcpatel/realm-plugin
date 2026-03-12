@@ -33,7 +33,7 @@ public class LedgerRepository {
      * @throws SQLException if schema creation fails
      */
     public void initSchema() throws SQLException {
-        try (var st = db.getConnection().createStatement()) {
+        try (Connection c = db.getConnection(); var st = c.createStatement()) {
             st.execute("""
               CREATE TABLE IF NOT EXISTS economy_ledger (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,

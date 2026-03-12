@@ -87,14 +87,43 @@ public final class WithdrawCommand implements CommandExecutor {
 
                     Player onlinePlayer = core.getServer().getPlayer(java.util.UUID.fromString(playerUuid));
                     if (onlinePlayer == null) {
-                        core.getLogger().warning("[economy] Could not deliver issued bank note because player is offline: " + playerUuid);
+                        core.getLogger().warning("[economy] Player went offline before bank note delivery, refunding: " + playerUuid);
+                        core.getServer().getScheduler().runTaskAsynchronously(core, () -> {
+                            try {
+                                boolean refunded = notes.refundIssuedNote(playerUuid, result.noteId(), result.amount());
+                                if (!refunded) {
+                                    core.getLogger().warning("[economy] Failed to refund undelivered bank note " + result.noteId()
+                                            + " for " + playerUuid + " (note may have already been reconciled)");
+                                }
+                            } catch (Exception refundError) {
+                                core.getLogger().severe("[economy] Failed to refund undelivered bank note " + result.noteId()
+                                        + " for " + playerUuid);
+                                refundError.printStackTrace();
+                            }
+                        });
                         return;
                     }
 
-                    notes.giveIssuedNote(onlinePlayer, result.noteId(), result.amount());
-                    player.sendMessage(core.msg("withdraw.success", Map.of(
-                            "%amount%", String.valueOf(amount)
-                    )));
+                    try {
+                        notes.giveIssuedNote(onlinePlayer, result.noteId(), result.amount());
+                        player.sendMessage(core.msg("withdraw.success", Map.of(
+                                "%amount%", String.valueOf(amount)
+                        )));
+                    } catch (Exception deliveryError) {
+                        core.getLogger().severe("[economy] Failed to deliver issued bank note " + result.noteId()
+                                + " for " + playerUuid + ", refunding.");
+                        deliveryError.printStackTrace();
+                        core.getServer().getScheduler().runTaskAsynchronously(core, () -> {
+                            try {
+                                notes.refundIssuedNote(playerUuid, result.noteId(), result.amount());
+                            } catch (Exception refundError) {
+                                core.getLogger().severe("[economy] Failed to refund undelivered bank note " + result.noteId()
+                                        + " for " + playerUuid);
+                                refundError.printStackTrace();
+                            }
+                        });
+                        player.sendMessage(core.msg("general.command-failed"));
+                    }
                 });
 
             } catch (Exception e) {

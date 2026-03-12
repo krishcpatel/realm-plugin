@@ -9,12 +9,14 @@ import com.krishcpatel.realm.jobs.util.JobActionGroups;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockFertilizeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -24,6 +26,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashSet;
@@ -78,7 +81,7 @@ public final class JobsActionListener implements Listener {
                 event.getBlock().getChunk().getZ()
         );
 
-        if (!core.jobsConfig().getBoolean("settings.anti-farm.ignore-player-placed-breaks", true)) {
+        if (!antiFarmPlacedBreakEnabled()) {
             dispatch(context);
             return;
         }
@@ -119,25 +122,8 @@ public final class JobsActionListener implements Listener {
         }
 
         Material type = event.getBlockPlaced().getType();
-        if (shouldTrackPlacedBreakGuard(type)) {
-            placedBreakGuards.add(blockKey(event.getBlockPlaced().getLocation()));
-            String world = event.getBlockPlaced().getWorld().getName();
-            int x = event.getBlockPlaced().getX();
-            int y = event.getBlockPlaced().getY();
-            int z = event.getBlockPlaced().getZ();
-            String playerUuid = event.getPlayer().getUniqueId().toString();
-            String material = type.name();
-            long placedAt = System.currentTimeMillis();
-
-            core.getServer().getScheduler().runTaskAsynchronously(core, () -> {
-                try {
-                    repo.markPlacedBlockGuard(world, x, y, z, playerUuid, material, placedAt);
-                } catch (Exception e) {
-                    core.getLogger().severe("[jobs] Failed to persist placed-block guard for "
-                            + world + " " + x + "," + y + "," + z);
-                    e.printStackTrace();
-                }
-            });
+        if (antiFarmPlacedBreakEnabled()) {
+            markPlacedBreakGuard(event.getBlockPlaced().getLocation(), type, event.getPlayer().getUniqueId().toString());
         }
 
         dispatch(buildContext(
@@ -150,6 +136,50 @@ public final class JobsActionListener implements Listener {
                 event.getBlockPlaced().getChunk().getX(),
                 event.getBlockPlaced().getChunk().getZ()
         ));
+    }
+
+    /**
+     * Marks fertilized blocks as player-generated to prevent bonemeal farm loops.
+     *
+     * @param event fertilize event
+     */
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void onBlockFertilize(BlockFertilizeEvent event) {
+        if (!antiFarmPlacedBreakEnabled()) {
+            return;
+        }
+
+        Player player = event.getPlayer();
+        if (player != null && shouldIgnore(player)) {
+            return;
+        }
+        String source = player == null ? "SYSTEM" : player.getUniqueId().toString();
+
+        for (BlockState blockState : event.getBlocks()) {
+            markPlacedBreakGuard(blockState.getLocation(), blockState.getType(), source);
+        }
+    }
+
+    /**
+     * Marks bonemeal-grown structure blocks (for example trees) as player-generated.
+     *
+     * @param event structure grow event
+     */
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void onStructureGrow(StructureGrowEvent event) {
+        if (!antiFarmPlacedBreakEnabled() || !event.isFromBonemeal()) {
+            return;
+        }
+
+        Player player = event.getPlayer();
+        if (player != null && shouldIgnore(player)) {
+            return;
+        }
+        String source = player == null ? "SYSTEM" : player.getUniqueId().toString();
+
+        for (BlockState blockState : event.getBlocks()) {
+            markPlacedBreakGuard(blockState.getLocation(), blockState.getType(), source);
+        }
     }
 
     /**
@@ -400,15 +430,47 @@ public final class JobsActionListener implements Listener {
     }
 
     private boolean shouldIgnorePlayerPlacedBreak(Location location) {
-        if (!core.jobsConfig().getBoolean("settings.anti-farm.ignore-player-placed-breaks", true)) {
+        if (!antiFarmPlacedBreakEnabled()) {
             return false;
         }
         return placedBreakGuards.remove(blockKey(location));
     }
 
+    private boolean antiFarmPlacedBreakEnabled() {
+        return core.jobsConfig().getBoolean("settings.anti-farm.ignore-player-placed-breaks", true);
+    }
+
+    private void markPlacedBreakGuard(Location location, Material material, String playerUuid) {
+        if (!shouldTrackPlacedBreakGuard(material) || location.getWorld() == null) {
+            return;
+        }
+
+        String key = blockKey(location);
+        placedBreakGuards.add(key);
+        String world = location.getWorld().getName();
+        int x = location.getBlockX();
+        int y = location.getBlockY();
+        int z = location.getBlockZ();
+        long placedAt = System.currentTimeMillis();
+
+        core.getServer().getScheduler().runTaskAsynchronously(core, () -> {
+            try {
+                repo.markPlacedBlockGuard(world, x, y, z, playerUuid, material.name(), placedAt);
+                placedBreakGuards.remove(key);
+            } catch (Exception e) {
+                core.getLogger().severe("[jobs] Failed to persist placed-block guard for "
+                        + world + " " + x + "," + y + "," + z);
+                e.printStackTrace();
+            }
+        });
+    }
+
     private boolean shouldTrackPlacedBreakGuard(Material material) {
         Set<String> groups = JobActionGroups.forMaterial(material);
-        return groups.contains("#LOGS") || groups.contains("#ORES") || groups.contains("#DIGGABLE");
+        return groups.contains("#LOGS")
+                || groups.contains("#ORES")
+                || groups.contains("#DIGGABLE")
+                || groups.contains("#CROPS");
     }
 
     private String blockKey(Location location) {
