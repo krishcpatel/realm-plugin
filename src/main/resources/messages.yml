@@ -65,3 +65,13 @@ jobs:
   level-up: "&aYour &f%job% &ajob reached level &f%level%&a."
   payout-action-bar: "&6%job% &8• %rewards%"
   payout-summary-action-bar: "&6Jobs &8• %rewards% &8• &7%count%x"
+
+skills:
+  usage: "&7Usage: &f/skills [category|skill]"
+  header: "&7--- &fYour Skills &7---"
+  category-header: "&7--- &f%category% Skills &7---"
+  item: "&e%skill% &8| &7Lvl &f%level% &8| &7XP &f%xp%&7/&f%required% &8| &7Total &f%total_xp%"
+  no-matches: "&cNo skills matched that filter."
+  xp-action-bar: "&b+%xp% %skill% XP &8| &7Lvl &f%level% &8| &7%current%&8/&f%required%"
+  level-up: "&bYour &f%skill% &bskill reached level &f%level%&b."
+  level-up-action-bar: "&6Level Up! &b%skill% &7-> &f%level%"

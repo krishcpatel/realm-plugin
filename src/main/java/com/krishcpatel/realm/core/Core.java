@@ -11,6 +11,7 @@ import com.krishcpatel.realm.core.module.Module;
 import com.krishcpatel.realm.core.player.PlayerRepository;
 import com.krishcpatel.realm.economy.EconomyModule;
 import com.krishcpatel.realm.jobs.JobsModule;
+import com.krishcpatel.realm.skills.SkillsModule;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -69,6 +70,7 @@ public final class Core extends JavaPlugin {
         // create modules
         modules.add(new EconomyModule(this));
         modules.add(new JobsModule(this));
+        modules.add(new SkillsModule(this));
 
         try {
             database.connect();
@@ -244,6 +246,15 @@ public final class Core extends JavaPlugin {
      */
     public FileConfiguration jobsConfig() {
         return configManager.jobs();
+    }
+
+    /**
+     * Returns the loaded {@code skills.yml} configuration.
+     *
+     * @return skills configuration
+     */
+    public FileConfiguration skillsConfig() {
+        return configManager.skills();
     }
 
     /**

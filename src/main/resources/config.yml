@@ -10,6 +10,7 @@ modules:
   economy: true
   teams: false
   jobs: true
+  skills: true
   shops: false
   plots: false
 

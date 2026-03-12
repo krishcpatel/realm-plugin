@@ -23,8 +23,10 @@ public class ConfigManager {
     private FileConfiguration config;
     private FileConfiguration messages;
     private FileConfiguration jobs;
+    private FileConfiguration skills;
     private File messagesFile;
     private File jobsFile;
+    private File skillsFile;
 
     /**
      * Creates a new configuration manager for the given plugin.
@@ -57,6 +59,12 @@ public class ConfigManager {
             plugin.saveResource("jobs.yml", false);
         }
         jobs = YamlConfiguration.loadConfiguration(jobsFile);
+
+        skillsFile = new File(plugin.getDataFolder(), "skills.yml");
+        if (!skillsFile.exists()) {
+            plugin.saveResource("skills.yml", false);
+        }
+        skills = YamlConfiguration.loadConfiguration(skillsFile);
     }
 
     /**
@@ -84,5 +92,14 @@ public class ConfigManager {
      */
     public FileConfiguration jobs() {
         return jobs;
+    }
+
+    /**
+     * Returns the loaded {@code skills.yml}.
+     *
+     * @return skills configuration
+     */
+    public FileConfiguration skills() {
+        return skills;
     }
 }

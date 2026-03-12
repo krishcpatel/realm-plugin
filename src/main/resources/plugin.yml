@@ -29,6 +29,9 @@ commands:
   job:
     description: Join, leave, and inspect jobs
     usage: /job <list|stats|join|leave> [job]
+  skills:
+    description: View your realm skill levels
+    usage: /skills [category|skill]
 
 permissions:
   realm.admin:
@@ -38,4 +41,6 @@ permissions:
   realm.economy.ledger:
     default: op
   realm.jobs.use:
+    default: true
+  realm.skills.use:
     default: true
