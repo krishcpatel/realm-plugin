@@ -25,3 +25,12 @@ com.krishcpatel.realm.jobs.notify
 com.krishcpatel.realm.jobs.registry
 com.krishcpatel.realm.jobs.repository
 com.krishcpatel.realm.jobs.util
+com.krishcpatel.realm.skills
+com.krishcpatel.realm.skills.command
+com.krishcpatel.realm.skills.event
+com.krishcpatel.realm.skills.listener
+com.krishcpatel.realm.skills.manager
+com.krishcpatel.realm.skills.model
+com.krishcpatel.realm.skills.notify
+com.krishcpatel.realm.skills.registry
+com.krishcpatel.realm.skills.repository

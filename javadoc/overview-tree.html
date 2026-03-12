@@ -77,7 +77,16 @@ loadScripts(document, 'script');</script>
 <li><a href="com/krishcpatel/realm/jobs/notify/package-tree.html">com.krishcpatel.realm.jobs.notify</a>, </li>
 <li><a href="com/krishcpatel/realm/jobs/registry/package-tree.html">com.krishcpatel.realm.jobs.registry</a>, </li>
 <li><a href="com/krishcpatel/realm/jobs/repository/package-tree.html">com.krishcpatel.realm.jobs.repository</a>, </li>
-<li><a href="com/krishcpatel/realm/jobs/util/package-tree.html">com.krishcpatel.realm.jobs.util</a></li>
+<li><a href="com/krishcpatel/realm/jobs/util/package-tree.html">com.krishcpatel.realm.jobs.util</a>, </li>
+<li><a href="com/krishcpatel/realm/skills/package-tree.html">com.krishcpatel.realm.skills</a>, </li>
+<li><a href="com/krishcpatel/realm/skills/command/package-tree.html">com.krishcpatel.realm.skills.command</a>, </li>
+<li><a href="com/krishcpatel/realm/skills/event/package-tree.html">com.krishcpatel.realm.skills.event</a>, </li>
+<li><a href="com/krishcpatel/realm/skills/listener/package-tree.html">com.krishcpatel.realm.skills.listener</a>, </li>
+<li><a href="com/krishcpatel/realm/skills/manager/package-tree.html">com.krishcpatel.realm.skills.manager</a>, </li>
+<li><a href="com/krishcpatel/realm/skills/model/package-tree.html">com.krishcpatel.realm.skills.model</a>, </li>
+<li><a href="com/krishcpatel/realm/skills/notify/package-tree.html">com.krishcpatel.realm.skills.notify</a>, </li>
+<li><a href="com/krishcpatel/realm/skills/registry/package-tree.html">com.krishcpatel.realm.skills.registry</a>, </li>
+<li><a href="com/krishcpatel/realm/skills/repository/package-tree.html">com.krishcpatel.realm.skills.repository</a></li>
 </ul>
 <section class="hierarchy">
 <h2 title="Class Hierarchy">Class Hierarchy</h2>
@@ -124,6 +133,16 @@ loadScripts(document, 'script');</script>
 </li>
 <li class="circle">com.krishcpatel.realm.core.command.<a href="com/krishcpatel/realm/core/command/RealmCommand.html" class="type-name-link" title="class in com.krishcpatel.realm.core.command">RealmCommand</a> (implements org.bukkit.command.CommandExecutor)</li>
 <li class="circle">com.krishcpatel.realm.economy.command.<a href="com/krishcpatel/realm/economy/command/RedeemCommand.html" class="type-name-link" title="class in com.krishcpatel.realm.economy.command">RedeemCommand</a> (implements org.bukkit.command.CommandExecutor)</li>
+<li class="circle">com.krishcpatel.realm.skills.registry.<a href="com/krishcpatel/realm/skills/registry/SkillDefinitionLoader.html" class="type-name-link" title="class in com.krishcpatel.realm.skills.registry">SkillDefinitionLoader</a></li>
+<li class="circle">com.krishcpatel.realm.skills.registry.<a href="com/krishcpatel/realm/skills/registry/SkillDefinitionRegistry.html" class="type-name-link" title="class in com.krishcpatel.realm.skills.registry">SkillDefinitionRegistry</a></li>
+<li class="circle">com.krishcpatel.realm.skills.event.<a href="com/krishcpatel/realm/skills/event/SkillLevelUpEvent.html" class="type-name-link" title="class in com.krishcpatel.realm.skills.event">SkillLevelUpEvent</a> (implements com.krishcpatel.realm.core.event.<a href="com/krishcpatel/realm/core/event/RealmEvent.html" title="interface in com.krishcpatel.realm.core.event">RealmEvent</a>)</li>
+<li class="circle">com.krishcpatel.realm.skills.manager.<a href="com/krishcpatel/realm/skills/manager/SkillManager.html" class="type-name-link" title="class in com.krishcpatel.realm.skills.manager">SkillManager</a></li>
+<li class="circle">com.krishcpatel.realm.skills.notify.<a href="com/krishcpatel/realm/skills/notify/SkillNotifier.html" class="type-name-link" title="class in com.krishcpatel.realm.skills.notify">SkillNotifier</a></li>
+<li class="circle">com.krishcpatel.realm.skills.manager.<a href="com/krishcpatel/realm/skills/manager/SkillProgressService.html" class="type-name-link" title="class in com.krishcpatel.realm.skills.manager">SkillProgressService</a></li>
+<li class="circle">com.krishcpatel.realm.skills.listener.<a href="com/krishcpatel/realm/skills/listener/SkillsActionListener.html" class="type-name-link" title="class in com.krishcpatel.realm.skills.listener">SkillsActionListener</a> (implements org.bukkit.event.Listener)</li>
+<li class="circle">com.krishcpatel.realm.skills.command.<a href="com/krishcpatel/realm/skills/command/SkillsCommand.html" class="type-name-link" title="class in com.krishcpatel.realm.skills.command">SkillsCommand</a> (implements org.bukkit.command.CommandExecutor)</li>
+<li class="circle">com.krishcpatel.realm.skills.<a href="com/krishcpatel/realm/skills/SkillsModule.html" class="type-name-link" title="class in com.krishcpatel.realm.skills">SkillsModule</a> (implements com.krishcpatel.realm.core.module.<a href="com/krishcpatel/realm/core/module/Module.html" title="interface in com.krishcpatel.realm.core.module">Module</a>)</li>
+<li class="circle">com.krishcpatel.realm.skills.repository.<a href="com/krishcpatel/realm/skills/repository/SkillsRepository.html" class="type-name-link" title="class in com.krishcpatel.realm.skills.repository">SkillsRepository</a></li>
 <li class="circle">com.krishcpatel.realm.economy.manager.<a href="com/krishcpatel/realm/economy/manager/TransactionManager.html" class="type-name-link" title="class in com.krishcpatel.realm.economy.manager">TransactionManager</a></li>
 <li class="circle">com.krishcpatel.realm.economy.command.<a href="com/krishcpatel/realm/economy/command/WithdrawCommand.html" class="type-name-link" title="class in com.krishcpatel.realm.economy.command">WithdrawCommand</a> (implements org.bukkit.command.CommandExecutor)</li>
 </ul>
@@ -147,6 +166,7 @@ loadScripts(document, 'script');</script>
 <ul>
 <li class="circle">com.krishcpatel.realm.jobs.model.<a href="com/krishcpatel/realm/jobs/model/JobActionType.html" class="type-name-link" title="enum class in com.krishcpatel.realm.jobs.model">JobActionType</a></li>
 <li class="circle">com.krishcpatel.realm.economy.model.<a href="com/krishcpatel/realm/economy/model/MoneySource.html" class="type-name-link" title="enum class in com.krishcpatel.realm.economy.model">MoneySource</a></li>
+<li class="circle">com.krishcpatel.realm.skills.model.<a href="com/krishcpatel/realm/skills/model/SkillCategory.html" class="type-name-link" title="enum class in com.krishcpatel.realm.skills.model">SkillCategory</a></li>
 </ul>
 </li>
 </ul>
@@ -169,6 +189,10 @@ loadScripts(document, 'script');</script>
 <li class="circle">com.krishcpatel.realm.jobs.model.<a href="com/krishcpatel/realm/jobs/model/LevelingSettings.html" class="type-name-link" title="class in com.krishcpatel.realm.jobs.model">LevelingSettings</a></li>
 <li class="circle">com.krishcpatel.realm.jobs.model.<a href="com/krishcpatel/realm/jobs/model/PlayerJob.html" class="type-name-link" title="class in com.krishcpatel.realm.jobs.model">PlayerJob</a></li>
 <li class="circle">com.krishcpatel.realm.jobs.model.<a href="com/krishcpatel/realm/jobs/model/RewardRule.html" class="type-name-link" title="class in com.krishcpatel.realm.jobs.model">RewardRule</a></li>
+<li class="circle">com.krishcpatel.realm.skills.model.<a href="com/krishcpatel/realm/skills/model/SkillActionContext.html" class="type-name-link" title="class in com.krishcpatel.realm.skills.model">SkillActionContext</a></li>
+<li class="circle">com.krishcpatel.realm.skills.model.<a href="com/krishcpatel/realm/skills/model/SkillDefinition.html" class="type-name-link" title="class in com.krishcpatel.realm.skills.model">SkillDefinition</a></li>
+<li class="circle">com.krishcpatel.realm.skills.model.<a href="com/krishcpatel/realm/skills/model/SkillProgress.html" class="type-name-link" title="class in com.krishcpatel.realm.skills.model">SkillProgress</a></li>
+<li class="circle">com.krishcpatel.realm.skills.model.<a href="com/krishcpatel/realm/skills/model/SkillProgressionSettings.html" class="type-name-link" title="class in com.krishcpatel.realm.skills.model">SkillProgressionSettings</a></li>
 <li class="circle">com.krishcpatel.realm.economy.data.<a href="com/krishcpatel/realm/economy/data/TransactionResult.html" class="type-name-link" title="class in com.krishcpatel.realm.economy.data">TransactionResult</a></li>
 </ul>
 </li>

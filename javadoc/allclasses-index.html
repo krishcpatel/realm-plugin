@@ -240,16 +240,76 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
 <div class="block">Configured reward for a single job action selector.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/krishcpatel/realm/economy/manager/TransactionManager.html" title="class in com.krishcpatel.realm.economy.manager">TransactionManager</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="com/krishcpatel/realm/skills/model/SkillActionContext.html" title="class in com.krishcpatel.realm.skills.model">SkillActionContext</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="block">Normalized skill action emitted from Bukkit listeners.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab3"><a href="com/krishcpatel/realm/skills/model/SkillCategory.html" title="enum class in com.krishcpatel.realm.skills.model">SkillCategory</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab3">
+<div class="block">Top-level grouping for skill presentation and filtering.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="com/krishcpatel/realm/skills/model/SkillDefinition.html" title="class in com.krishcpatel.realm.skills.model">SkillDefinition</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="block">Immutable definition for a configured skill.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/krishcpatel/realm/skills/registry/SkillDefinitionLoader.html" title="class in com.krishcpatel.realm.skills.registry">SkillDefinitionLoader</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Loads skill definitions from <code>skills.yml</code>.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/krishcpatel/realm/skills/registry/SkillDefinitionRegistry.html" title="class in com.krishcpatel.realm.skills.registry">SkillDefinitionRegistry</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="block">In-memory registry of configured skills.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/krishcpatel/realm/skills/event/SkillLevelUpEvent.html" title="class in com.krishcpatel.realm.skills.event">SkillLevelUpEvent</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Event published when a player levels up in a skill.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/krishcpatel/realm/skills/manager/SkillManager.html" title="class in com.krishcpatel.realm.skills.manager">SkillManager</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Read-facing API for player skill progress.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/krishcpatel/realm/skills/notify/SkillNotifier.html" title="class in com.krishcpatel.realm.skills.notify">SkillNotifier</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Sends player-facing notifications for skill xp and level-up milestones.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="com/krishcpatel/realm/skills/model/SkillProgress.html" title="class in com.krishcpatel.realm.skills.model">SkillProgress</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
+<div class="block">Stored player progress for a single skill.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="com/krishcpatel/realm/skills/model/SkillProgressionSettings.html" title="class in com.krishcpatel.realm.skills.model">SkillProgressionSettings</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
+<div class="block">Level progression settings for a skill.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/krishcpatel/realm/skills/manager/SkillProgressService.html" title="class in com.krishcpatel.realm.skills.manager">SkillProgressService</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Applies skill xp actions and handles leveling progression.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/krishcpatel/realm/skills/listener/SkillsActionListener.html" title="class in com.krishcpatel.realm.skills.listener">SkillsActionListener</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Converts Bukkit actions into normalized skill actions.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/krishcpatel/realm/skills/command/SkillsCommand.html" title="class in com.krishcpatel.realm.skills.command">SkillsCommand</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Command for viewing player skill levels and xp.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/krishcpatel/realm/skills/SkillsModule.html" title="class in com.krishcpatel.realm.skills">SkillsModule</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Bootstrapper for the skills module.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/krishcpatel/realm/skills/repository/SkillsRepository.html" title="class in com.krishcpatel.realm.skills.repository">SkillsRepository</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="block">Persistence layer for skill xp and levels.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/krishcpatel/realm/economy/manager/TransactionManager.html" title="class in com.krishcpatel.realm.economy.manager">TransactionManager</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Central gateway for all money movement in the server economy.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="com/krishcpatel/realm/economy/data/TransactionResult.html" title="class in com.krishcpatel.realm.economy.data">TransactionResult</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="com/krishcpatel/realm/economy/data/TransactionResult.html" title="class in com.krishcpatel.realm.economy.data">TransactionResult</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">
 <div class="block">Result of a transaction performed by <a href="com/krishcpatel/realm/economy/manager/TransactionManager.html" title="class in com.krishcpatel.realm.economy.manager"><code>TransactionManager</code></a>.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="com/krishcpatel/realm/economy/command/WithdrawCommand.html" title="class in com.krishcpatel.realm.economy.command">WithdrawCommand</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="com/krishcpatel/realm/economy/command/WithdrawCommand.html" title="class in com.krishcpatel.realm.economy.command">WithdrawCommand</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Handles the <code>/withdraw &lt;amount&gt;</code> command.</div>
 </div>
 </div>
