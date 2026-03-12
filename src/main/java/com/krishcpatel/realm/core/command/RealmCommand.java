@@ -34,7 +34,7 @@ public class RealmCommand implements CommandExecutor {
 
         if (args[0].equalsIgnoreCase("reload")) {
             if (!sender.hasPermission("realm.admin")) {
-                sender.sendMessage(plugin.msg("no-permission"));
+                sender.sendMessage(plugin.msg("general.no-permission"));
                 return true;
             }
 
