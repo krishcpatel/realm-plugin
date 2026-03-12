@@ -414,7 +414,7 @@ public final class SkillsActionListener implements Listener {
 
     private void dispatch(UUID playerUuid, String playerName, String skillId, String actionKey, int amount) {
         SkillActionContext context = new SkillActionContext(playerUuid, playerName, skillId, actionKey, amount);
-        core.getServer().getScheduler().runTaskAsynchronously(core, () -> progress.handleAction(context));
+        progress.enqueueAction(context);
     }
 
     private void dispatchBreakRewards(

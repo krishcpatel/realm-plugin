@@ -5,6 +5,8 @@ settings:
   anti-farm:
     ignore-player-placed-breaks: true
     placed-block-guard-retention-days: 14
+  persistence:
+    aggregate-window-ms: 200
   notifications:
     enabled: true
     xp-action-bar-enabled: true

@@ -40,21 +40,22 @@ public class PlayerRepository {
      * @throws SQLException if the database operation fails
      */
     public void upsertPlayer(String uuid, String username, long now) throws SQLException {
-        int updated;
-        try (Connection c = db.getConnection();
-             PreparedStatement ps = c.prepareStatement("""
+        int updated = db.executeWrite(() -> {
+            try (Connection c = db.getConnection();
+                 PreparedStatement ps = c.prepareStatement("""
             INSERT INTO players (uuid, username, first_join, last_login)
             VALUES (?, ?, ?, ?)
             ON CONFLICT(uuid) DO UPDATE SET
                 username = excluded.username,
                 last_login = excluded.last_login
         """)) {
-            ps.setString(1, uuid);
-            ps.setString(2, username);
-            ps.setLong(3, now);
-            ps.setLong(4, now);
-            updated = ps.executeUpdate();
-        }
+                ps.setString(1, uuid);
+                ps.setString(2, username);
+                ps.setLong(3, now);
+                ps.setLong(4, now);
+                return ps.executeUpdate();
+            }
+        });
 
         plugin.debug("Upserted player " + username + " (" + uuid + "), rows=" + updated);
     }

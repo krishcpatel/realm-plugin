@@ -3,6 +3,7 @@ package com.krishcpatel.realm.core.database;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.Locale;
 import java.sql.*;
 
 /**
@@ -16,8 +17,30 @@ import java.sql.*;
  * </ul>
  */
 public class DatabaseManager {
+    private static final int SQLITE_BUSY_RETRY_ATTEMPTS = 8;
+    private static final long SQLITE_BUSY_RETRY_BASE_DELAY_MS = 25L;
+
     private final JavaPlugin plugin;
+    private final Object writeLock = new Object();
     private String jdbcUrl;
+
+    /**
+     * SQL operation that returns a value and may throw {@link SQLException}.
+     *
+     * @param <T> return type
+     */
+    @FunctionalInterface
+    public interface SqlCallable<T> {
+        T call() throws SQLException;
+    }
+
+    /**
+     * SQL operation with no return value that may throw {@link SQLException}.
+     */
+    @FunctionalInterface
+    public interface SqlRunnable {
+        void run() throws SQLException;
+    }
 
     /**
      * Creates a database manager bound to the given plugin (for data folder access).
@@ -69,6 +92,35 @@ public class DatabaseManager {
         jdbcUrl = null;
     }
 
+    /**
+     * Executes a write operation under a global write lock with retry/backoff
+     * for transient {@code SQLITE_BUSY} lock contention.
+     *
+     * @param action write action
+     * @param <T> return type
+     * @return action return value
+     * @throws SQLException when the operation permanently fails
+     */
+    public <T> T executeWrite(SqlCallable<T> action) throws SQLException {
+        synchronized (writeLock) {
+            return executeWithBusyRetry(action);
+        }
+    }
+
+    /**
+     * Executes a write operation under a global write lock with retry/backoff
+     * for transient {@code SQLITE_BUSY} lock contention.
+     *
+     * @param action write action
+     * @throws SQLException when the operation permanently fails
+     */
+    public void executeWrite(SqlRunnable action) throws SQLException {
+        executeWrite(() -> {
+            action.run();
+            return null;
+        });
+    }
+
     private Connection openConnection() throws SQLException {
         Connection c = DriverManager.getConnection(jdbcUrl);
         configureConnection(c);
@@ -94,5 +146,49 @@ public class DatabaseManager {
               );
             """);
         }
+    }
+
+    private <T> T executeWithBusyRetry(SqlCallable<T> action) throws SQLException {
+        SQLException lastError = null;
+
+        for (int attempt = 1; attempt <= SQLITE_BUSY_RETRY_ATTEMPTS; attempt++) {
+            try {
+                return action.call();
+            } catch (SQLException ex) {
+                if (!isSqliteBusy(ex) || attempt == SQLITE_BUSY_RETRY_ATTEMPTS) {
+                    throw ex;
+                }
+
+                lastError = ex;
+                long backoffMs = SQLITE_BUSY_RETRY_BASE_DELAY_MS * attempt;
+                try {
+                    Thread.sleep(backoffMs);
+                } catch (InterruptedException interrupted) {
+                    Thread.currentThread().interrupt();
+                    SQLException wrapped = new SQLException("Interrupted while waiting for SQLite write lock", interrupted);
+                    wrapped.addSuppressed(ex);
+                    throw wrapped;
+                }
+            }
+        }
+
+        throw lastError == null ? new SQLException("SQLite write operation failed after retries.") : lastError;
+    }
+
+    private boolean isSqliteBusy(SQLException ex) {
+        SQLException cursor = ex;
+        while (cursor != null) {
+            if (cursor.getErrorCode() == 5) {
+                return true;
+            }
+
+            String message = cursor.getMessage();
+            if (message != null && message.toUpperCase(Locale.ROOT).contains("SQLITE_BUSY")) {
+                return true;
+            }
+
+            cursor = cursor.getNextException();
+        }
+        return false;
     }
 }

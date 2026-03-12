@@ -48,9 +48,11 @@ public class EconomyRepository {
      * @throws SQLException if database access fails
      */
     public void ensureAccount(String uuid) throws SQLException {
-        try (Connection c = db.getConnection()) {
-            ensureAccount(c, uuid);
-        }
+        db.executeWrite(() -> {
+            try (Connection c = db.getConnection()) {
+                ensureAccount(c, uuid);
+            }
+        });
     }
 
     /**
@@ -116,9 +118,11 @@ public class EconomyRepository {
      * @throws SQLException if database access fails
      */
     public void addBalance(String uuid, long amount) throws SQLException {
-        try (Connection c = db.getConnection()) {
-            addBalance(c, uuid, amount);
-        }
+        db.executeWrite(() -> {
+            try (Connection c = db.getConnection()) {
+                addBalance(c, uuid, amount);
+            }
+        });
     }
 
     /**
@@ -153,9 +157,11 @@ public class EconomyRepository {
      * @throws SQLException if database access fails
      */
     public boolean subtractBalanceFloorZero(String uuid, long amount) throws SQLException {
-        try (Connection c = db.getConnection()) {
-            return subtractBalanceFloorZero(c, uuid, amount);
-        }
+        return db.executeWrite(() -> {
+            try (Connection c = db.getConnection()) {
+                return subtractBalanceFloorZero(c, uuid, amount);
+            }
+        });
     }
 
     /**
@@ -168,15 +174,17 @@ public class EconomyRepository {
      * @throws SQLException if database access fails
      */
     public void setBalance(String uuid, long newBalance) throws SQLException {
-        try (Connection c = db.getConnection();
-             PreparedStatement ps = c.prepareStatement("""
+        db.executeWrite(() -> {
+            try (Connection c = db.getConnection();
+                 PreparedStatement ps = c.prepareStatement("""
           UPDATE economy_accounts
           SET balance = ?
           WHERE player_uuid = ?
         """)) {
-            ps.setLong(1, newBalance);
-            ps.setString(2, uuid);
-            ps.executeUpdate();
-        }
+                ps.setLong(1, newBalance);
+                ps.setString(2, uuid);
+                ps.executeUpdate();
+            }
+        });
     }
 }

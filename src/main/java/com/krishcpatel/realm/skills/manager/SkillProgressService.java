@@ -10,9 +10,15 @@ import com.krishcpatel.realm.skills.notify.SkillNotifier;
 import com.krishcpatel.realm.skills.registry.SkillDefinitionRegistry;
 import com.krishcpatel.realm.skills.repository.SkillsRepository;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Optional;
+import java.util.Queue;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Applies skill xp actions and handles leveling progression.
@@ -22,6 +28,8 @@ public final class SkillProgressService {
     private final SkillsRepository repo;
     private final SkillDefinitionRegistry registry;
     private final SkillNotifier notifier;
+    private final Queue<SkillActionContext> pendingActions = new ConcurrentLinkedQueue<>();
+    private final AtomicBoolean flushScheduled = new AtomicBoolean(false);
 
     /**
      * Creates the skill progression service.
@@ -44,6 +52,66 @@ public final class SkillProgressService {
      * @param action normalized skill action
      */
     public void handleAction(SkillActionContext action) {
+        enqueueAction(action);
+    }
+
+    /**
+     * Queues one normalized skill action to be coalesced and persisted.
+     *
+     * @param action normalized skill action
+     */
+    public void enqueueAction(SkillActionContext action) {
+        if (action == null) {
+            return;
+        }
+        pendingActions.offer(action);
+        scheduleFlush();
+    }
+
+    private void scheduleFlush() {
+        if (!flushScheduled.compareAndSet(false, true)) {
+            return;
+        }
+
+        long windowMs = Math.max(50L, core.skillsConfig().getLong("settings.persistence.aggregate-window-ms", 200L));
+        long delayTicks = Math.max(1L, (windowMs + 49L) / 50L);
+
+        core.getServer().getScheduler().runTaskLaterAsynchronously(core, this::flushPendingActions, delayTicks);
+    }
+
+    private void flushPendingActions() {
+        try {
+            Map<PendingSkillAction, Integer> merged = new HashMap<>();
+            SkillActionContext action;
+            while ((action = pendingActions.poll()) != null) {
+                PendingSkillAction key = new PendingSkillAction(
+                        action.playerUuid(),
+                        action.playerName(),
+                        action.skillId(),
+                        action.actionKey()
+                );
+                merged.merge(key, Math.max(1, action.amount()), Integer::sum);
+            }
+
+            for (Map.Entry<PendingSkillAction, Integer> entry : merged.entrySet()) {
+                PendingSkillAction key = entry.getKey();
+                processActionNow(new SkillActionContext(
+                        key.playerUuid(),
+                        key.playerName(),
+                        key.skillId(),
+                        key.actionKey(),
+                        entry.getValue()
+                ));
+            }
+        } finally {
+            flushScheduled.set(false);
+            if (!pendingActions.isEmpty()) {
+                scheduleFlush();
+            }
+        }
+    }
+
+    private void processActionNow(SkillActionContext action) {
         String skillId = SkillManager.normalizeSkillId(action.skillId());
         Optional<SkillDefinition> maybeDefinition = registry.get(skillId);
         if (maybeDefinition.isEmpty()) {
@@ -66,55 +134,64 @@ public final class SkillProgressService {
         long now = System.currentTimeMillis();
         int startingLevel = Math.max(1, core.skillsConfig().getInt("settings.starting-level", 1));
 
-        try (Connection c = core.getDatabase().getConnection()) {
-            boolean oldAuto = c.getAutoCommit();
-            c.setAutoCommit(false);
+        try {
+            SkillWriteResult writeResult = core.getDatabase().executeWrite(() -> {
+                try (Connection c = core.getDatabase().getConnection()) {
+                    boolean oldAuto = c.getAutoCommit();
+                    c.setAutoCommit(false);
 
-            try {
-                SkillProgress current = repo.getSkill(c, playerUuid, skillId);
-                if (current == null) {
-                    repo.ensureSkill(c, playerUuid, skillId, startingLevel, now);
-                    current = repo.getSkill(c, playerUuid, skillId);
+                    try {
+                        SkillProgress current = repo.getSkill(c, playerUuid, skillId);
+                        if (current == null) {
+                            repo.ensureSkill(c, playerUuid, skillId, startingLevel, now);
+                            current = repo.getSkill(c, playerUuid, skillId);
+                        }
+                        if (current == null) {
+                            c.rollback();
+                            return null;
+                        }
+
+                        ProgressUpdate update = applyProgress(current, definition.progression(), gainedXp, now);
+                        repo.updateSkill(c, playerUuid, skillId, update.level(), update.xp(), update.totalXp(), update.updatedAt());
+                        c.commit();
+
+                        return new SkillWriteResult(current.level(), update.level(), update.xp(), update.totalXp());
+                    } catch (SQLException e) {
+                        c.rollback();
+                        throw e;
+                    } finally {
+                        c.setAutoCommit(oldAuto);
+                    }
                 }
-                if (current == null) {
-                    c.rollback();
-                    return;
-                }
+            });
 
-                ProgressUpdate update = applyProgress(current, definition.progression(), gainedXp, now);
-                repo.updateSkill(c, playerUuid, skillId, update.level(), update.xp(), update.totalXp(), update.updatedAt());
-                c.commit();
+            if (writeResult == null) {
+                return;
+            }
 
-                long requiredXp = definition.progression().requiredXpForLevel(update.level());
-                notifier.notifyXpGain(
+            long requiredXp = definition.progression().requiredXpForLevel(writeResult.newLevel());
+            notifier.notifyXpGain(
+                    action.playerUuid(),
+                    definition.displayName(),
+                    gainedXp,
+                    writeResult.newLevel(),
+                    writeResult.newXp(),
+                    requiredXp
+            );
+
+            if (writeResult.newLevel() > writeResult.oldLevel()) {
+                core.events().publishAsync(new SkillLevelUpEvent(
                         action.playerUuid(),
-                        definition.displayName(),
-                        gainedXp,
-                        update.level(),
-                        update.xp(),
-                        requiredXp
-                );
-
-                if (update.level() > current.level()) {
-                    core.events().publishAsync(new SkillLevelUpEvent(
-                            action.playerUuid(),
-                            action.playerName(),
-                            skillId,
-                            current.level(),
-                            update.level()
-                    ));
-                    notifier.notifyLevelUp(action.playerUuid(), definition.displayName(), update.level());
-                }
-            } catch (SQLException e) {
-                c.rollback();
-                core.getLogger().severe("[skills] Failed to process action " + action.actionKey()
-                        + " for " + action.playerName() + " skill=" + skillId);
-                e.printStackTrace();
-            } finally {
-                c.setAutoCommit(oldAuto);
+                        action.playerName(),
+                        skillId,
+                        writeResult.oldLevel(),
+                        writeResult.newLevel()
+                ));
+                notifier.notifyLevelUp(action.playerUuid(), definition.displayName(), writeResult.newLevel());
             }
         } catch (SQLException e) {
-            core.getLogger().severe("[skills] Failed to get database connection for " + action.playerName());
+            core.getLogger().severe("[skills] Failed to process action " + action.actionKey()
+                    + " for " + action.playerName() + " skill=" + skillId);
             e.printStackTrace();
         }
     }
@@ -147,5 +224,11 @@ public final class SkillProgressService {
     }
 
     private record ProgressUpdate(int level, long xp, long totalXp, long updatedAt) {
+    }
+
+    private record PendingSkillAction(UUID playerUuid, String playerName, String skillId, String actionKey) {
+    }
+
+    private record SkillWriteResult(int oldLevel, int newLevel, long newXp, long totalXp) {
     }
 }

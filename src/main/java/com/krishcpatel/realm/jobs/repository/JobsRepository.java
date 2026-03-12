@@ -211,21 +211,23 @@ public final class JobsRepository {
      * @throws SQLException if the write fails
      */
     public boolean joinJob(String playerUuid, String jobId, long joinedAt, int startingLevel) throws SQLException {
-        try (Connection c = db.getConnection()) {
-            boolean oldAuto = c.getAutoCommit();
-            c.setAutoCommit(false);
+        return db.executeWrite(() -> {
+            try (Connection c = db.getConnection()) {
+                boolean oldAuto = c.getAutoCommit();
+                c.setAutoCommit(false);
 
-            try {
-                boolean inserted = joinJob(c, playerUuid, jobId, joinedAt, startingLevel);
-                c.commit();
-                return inserted;
-            } catch (SQLException ex) {
-                c.rollback();
-                throw ex;
-            } finally {
-                c.setAutoCommit(oldAuto);
+                try {
+                    boolean inserted = joinJob(c, playerUuid, jobId, joinedAt, startingLevel);
+                    c.commit();
+                    return inserted;
+                } catch (SQLException ex) {
+                    c.rollback();
+                    throw ex;
+                } finally {
+                    c.setAutoCommit(oldAuto);
+                }
             }
-        }
+        });
     }
 
     /**
@@ -285,16 +287,18 @@ public final class JobsRepository {
      * @throws SQLException if the delete fails
      */
     public boolean leaveJob(String playerUuid, String jobId) throws SQLException {
-        try (Connection c = db.getConnection();
-             PreparedStatement ps = c.prepareStatement("""
+        return db.executeWrite(() -> {
+            try (Connection c = db.getConnection();
+                 PreparedStatement ps = c.prepareStatement("""
             DELETE FROM jobs_memberships
             WHERE player_uuid = ?
               AND job_id = ?
         """)) {
-            ps.setString(1, playerUuid);
-            ps.setString(2, jobId);
-            return ps.executeUpdate() > 0;
-        }
+                ps.setString(1, playerUuid);
+                ps.setString(2, jobId);
+                return ps.executeUpdate() > 0;
+            }
+        });
     }
 
     /**
@@ -305,14 +309,16 @@ public final class JobsRepository {
      * @throws SQLException if the delete fails
      */
     public int leaveAllJobs(String playerUuid) throws SQLException {
-        try (Connection c = db.getConnection();
-             PreparedStatement ps = c.prepareStatement("""
+        return db.executeWrite(() -> {
+            try (Connection c = db.getConnection();
+                 PreparedStatement ps = c.prepareStatement("""
             DELETE FROM jobs_memberships
             WHERE player_uuid = ?
         """)) {
-            ps.setString(1, playerUuid);
-            return ps.executeUpdate();
-        }
+                ps.setString(1, playerUuid);
+                return ps.executeUpdate();
+            }
+        });
     }
 
     /**
@@ -462,8 +468,9 @@ public final class JobsRepository {
             String material,
             long placedAt
     ) throws SQLException {
-        try (Connection c = db.getConnection();
-             PreparedStatement ps = c.prepareStatement("""
+        db.executeWrite(() -> {
+            try (Connection c = db.getConnection();
+                 PreparedStatement ps = c.prepareStatement("""
             INSERT INTO jobs_placed_block_guards (world, x, y, z, player_uuid, material, placed_at)
             VALUES (?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(world, x, y, z) DO UPDATE SET
@@ -471,15 +478,16 @@ public final class JobsRepository {
                 material = excluded.material,
                 placed_at = excluded.placed_at
         """)) {
-            ps.setString(1, world);
-            ps.setInt(2, x);
-            ps.setInt(3, y);
-            ps.setInt(4, z);
-            ps.setString(5, playerUuid);
-            ps.setString(6, material);
-            ps.setLong(7, placedAt);
-            ps.executeUpdate();
-        }
+                ps.setString(1, world);
+                ps.setInt(2, x);
+                ps.setInt(3, y);
+                ps.setInt(4, z);
+                ps.setString(5, playerUuid);
+                ps.setString(6, material);
+                ps.setLong(7, placedAt);
+                ps.executeUpdate();
+            }
+        });
     }
 
     /**
@@ -496,20 +504,22 @@ public final class JobsRepository {
      * @throws SQLException if the delete fails
      */
     public boolean consumePlacedBlockGuard(String world, int x, int y, int z) throws SQLException {
-        try (Connection c = db.getConnection();
-             PreparedStatement ps = c.prepareStatement("""
+        return db.executeWrite(() -> {
+            try (Connection c = db.getConnection();
+                 PreparedStatement ps = c.prepareStatement("""
             DELETE FROM jobs_placed_block_guards
             WHERE world = ?
               AND x = ?
               AND y = ?
               AND z = ?
         """)) {
-            ps.setString(1, world);
-            ps.setInt(2, x);
-            ps.setInt(3, y);
-            ps.setInt(4, z);
-            return ps.executeUpdate() > 0;
-        }
+                ps.setString(1, world);
+                ps.setInt(2, x);
+                ps.setInt(3, y);
+                ps.setInt(4, z);
+                return ps.executeUpdate() > 0;
+            }
+        });
     }
 
     /**
@@ -520,14 +530,16 @@ public final class JobsRepository {
      * @throws SQLException if the delete fails
      */
     public int purgePlacedBlockGuardsOlderThan(long cutoffMillis) throws SQLException {
-        try (Connection c = db.getConnection();
-             PreparedStatement ps = c.prepareStatement("""
+        return db.executeWrite(() -> {
+            try (Connection c = db.getConnection();
+                 PreparedStatement ps = c.prepareStatement("""
             DELETE FROM jobs_placed_block_guards
             WHERE placed_at < ?
         """)) {
-            ps.setLong(1, cutoffMillis);
-            return ps.executeUpdate();
-        }
+                ps.setLong(1, cutoffMillis);
+                return ps.executeUpdate();
+            }
+        });
     }
 
     private PlayerJob mapPlayerJob(ResultSet rs) throws SQLException {

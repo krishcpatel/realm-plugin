@@ -83,57 +83,59 @@ public final class BankNoteManager {
         String noteId = UUID.randomUUID().toString();
         long now = System.currentTimeMillis();
 
-        try (Connection c = db.getConnection()) {
-            boolean oldAuto = c.getAutoCommit();
-            c.setAutoCommit(false);
+        return db.executeWrite(() -> {
+            try (Connection c = db.getConnection()) {
+                boolean oldAuto = c.getAutoCommit();
+                c.setAutoCommit(false);
 
-            try {
-                economy.ensureAccount(c, playerUuid);
+                try {
+                    economy.ensureAccount(c, playerUuid);
 
-                boolean ok = economy.subtractBalanceFloorZero(c, playerUuid, amount);
-                if (!ok) {
+                    boolean ok = economy.subtractBalanceFloorZero(c, playerUuid, amount);
+                    if (!ok) {
+                        c.rollback();
+                        return BankNoteIssueResult.fail("Insufficient funds");
+                    }
+
+                    notes.insertNote(c, noteId, amount, now, playerUuid);
+
+                    long ledgerId = ledger.insertLedgerRow(
+                            c,
+                            now,
+                            "WITHDRAW_NOTE",
+                            amount,
+                            playerUuid,
+                            null,
+                            MoneySource.SYSTEM.name(),
+                            noteId,
+                            "Withdraw bank note",
+                            playerUuid
+                    );
+
+                    c.commit();
+
+                    core.events().publishAsync(new LedgerRecordedEvent(
+                            ledgerId,
+                            "WITHDRAW_NOTE",
+                            amount,
+                            playerUuid,
+                            null,
+                            MoneySource.SYSTEM,
+                            noteId,
+                            "Withdraw bank note",
+                            playerUuid
+                    ));
+
+                    return BankNoteIssueResult.ok(ledgerId, noteId, amount);
+
+                } catch (SQLException ex) {
                     c.rollback();
-                    return BankNoteIssueResult.fail("Insufficient funds");
+                    throw ex;
+                } finally {
+                    c.setAutoCommit(oldAuto);
                 }
-
-                notes.insertNote(c, noteId, amount, now, playerUuid);
-
-                long ledgerId = ledger.insertLedgerRow(
-                        c,
-                        now,
-                        "WITHDRAW_NOTE",
-                        amount,
-                        playerUuid,
-                        null,
-                        MoneySource.SYSTEM.name(),
-                        noteId,
-                        "Withdraw bank note",
-                        playerUuid
-                );
-
-                c.commit();
-
-                core.events().publishAsync(new LedgerRecordedEvent(
-                        ledgerId,
-                        "WITHDRAW_NOTE",
-                        amount,
-                        playerUuid,
-                        null,
-                        MoneySource.SYSTEM,
-                        noteId,
-                        "Withdraw bank note",
-                        playerUuid
-                ));
-
-                return BankNoteIssueResult.ok(ledgerId, noteId, amount);
-
-            } catch (SQLException ex) {
-                c.rollback();
-                throw ex;
-            } finally {
-                c.setAutoCommit(oldAuto);
             }
-        }
+        });
     }
 
     /**
@@ -162,71 +164,73 @@ public final class BankNoteManager {
         String playerUuidString = playerUuid.toString();
         long now = System.currentTimeMillis();
 
-        try (Connection c = db.getConnection()) {
-            boolean oldAuto = c.getAutoCommit();
-            c.setAutoCommit(false);
+        return db.executeWrite(() -> {
+            try (Connection c = db.getConnection()) {
+                boolean oldAuto = c.getAutoCommit();
+                c.setAutoCommit(false);
 
-            try {
-                BankNoteRecord note = notes.findById(c, noteId);
-                if (note == null) {
+                try {
+                    BankNoteRecord note = notes.findById(c, noteId);
+                    if (note == null) {
+                        c.rollback();
+                        restoreConsumedNote(playerUuid, consumed.item());
+                        return TransactionResult.fail("Bank note not found");
+                    }
+
+                    if (note.redeemed()) {
+                        c.rollback();
+                        restoreConsumedNote(playerUuid, consumed.item());
+                        return TransactionResult.fail("This bank note has already been redeemed");
+                    }
+
+                    boolean marked = notes.markRedeemed(c, noteId, now, playerUuidString);
+                    if (!marked) {
+                        c.rollback();
+                        restoreConsumedNote(playerUuid, consumed.item());
+                        return TransactionResult.fail("This bank note has already been redeemed");
+                    }
+
+                    economy.ensureAccount(c, playerUuidString);
+                    economy.addBalance(c, playerUuidString, note.amount());
+
+                    long ledgerId = ledger.insertLedgerRow(
+                            c,
+                            now,
+                            "REDEEM_NOTE",
+                            note.amount(),
+                            null,
+                            playerUuidString,
+                            MoneySource.SYSTEM.name(),
+                            noteId,
+                            "Redeem bank note",
+                            playerUuidString
+                    );
+
+                    c.commit();
+
+                    core.events().publishAsync(new LedgerRecordedEvent(
+                            ledgerId,
+                            "REDEEM_NOTE",
+                            note.amount(),
+                            null,
+                            playerUuidString,
+                            MoneySource.SYSTEM,
+                            noteId,
+                            "Redeem bank note",
+                            playerUuidString
+                    ));
+
+                    return TransactionResult.ok(ledgerId);
+
+                } catch (SQLException ex) {
                     c.rollback();
                     restoreConsumedNote(playerUuid, consumed.item());
-                    return TransactionResult.fail("Bank note not found");
+                    throw ex;
+                } finally {
+                    c.setAutoCommit(oldAuto);
                 }
-
-                if (note.redeemed()) {
-                    c.rollback();
-                    restoreConsumedNote(playerUuid, consumed.item());
-                    return TransactionResult.fail("This bank note has already been redeemed");
-                }
-
-                boolean marked = notes.markRedeemed(c, noteId, now, playerUuidString);
-                if (!marked) {
-                    c.rollback();
-                    restoreConsumedNote(playerUuid, consumed.item());
-                    return TransactionResult.fail("This bank note has already been redeemed");
-                }
-
-                economy.ensureAccount(c, playerUuidString);
-                economy.addBalance(c, playerUuidString, note.amount());
-
-                long ledgerId = ledger.insertLedgerRow(
-                        c,
-                        now,
-                        "REDEEM_NOTE",
-                        note.amount(),
-                        null,
-                        playerUuidString,
-                        MoneySource.SYSTEM.name(),
-                        noteId,
-                        "Redeem bank note",
-                        playerUuidString
-                );
-
-                c.commit();
-
-                core.events().publishAsync(new LedgerRecordedEvent(
-                        ledgerId,
-                        "REDEEM_NOTE",
-                        note.amount(),
-                        null,
-                        playerUuidString,
-                        MoneySource.SYSTEM,
-                        noteId,
-                        "Redeem bank note",
-                        playerUuidString
-                ));
-
-                return TransactionResult.ok(ledgerId);
-
-            } catch (SQLException ex) {
-                c.rollback();
-                restoreConsumedNote(playerUuid, consumed.item());
-                throw ex;
-            } finally {
-                c.setAutoCommit(oldAuto);
             }
-        }
+        });
     }
 
     /**
@@ -244,54 +248,56 @@ public final class BankNoteManager {
     public boolean refundIssuedNote(String playerUuid, String noteId, long amount) throws SQLException {
         long now = System.currentTimeMillis();
 
-        try (Connection c = db.getConnection()) {
-            boolean oldAuto = c.getAutoCommit();
-            c.setAutoCommit(false);
+        return db.executeWrite(() -> {
+            try (Connection c = db.getConnection()) {
+                boolean oldAuto = c.getAutoCommit();
+                c.setAutoCommit(false);
 
-            try {
-                boolean deleted = notes.deleteUnredeemed(c, noteId, playerUuid);
-                if (!deleted) {
+                try {
+                    boolean deleted = notes.deleteUnredeemed(c, noteId, playerUuid);
+                    if (!deleted) {
+                        c.rollback();
+                        return false;
+                    }
+
+                    economy.ensureAccount(c, playerUuid);
+                    economy.addBalance(c, playerUuid, Math.max(0L, amount));
+
+                    long ledgerId = ledger.insertLedgerRow(
+                            c,
+                            now,
+                            "WITHDRAW_NOTE_REFUND",
+                            Math.max(0L, amount),
+                            null,
+                            playerUuid,
+                            MoneySource.SYSTEM.name(),
+                            noteId,
+                            "Refund undelivered bank note",
+                            "SYSTEM"
+                    );
+
+                    c.commit();
+
+                    core.events().publishAsync(new LedgerRecordedEvent(
+                            ledgerId,
+                            "WITHDRAW_NOTE_REFUND",
+                            Math.max(0L, amount),
+                            null,
+                            playerUuid,
+                            MoneySource.SYSTEM,
+                            noteId,
+                            "Refund undelivered bank note",
+                            "SYSTEM"
+                    ));
+                    return true;
+                } catch (SQLException ex) {
                     c.rollback();
-                    return false;
+                    throw ex;
+                } finally {
+                    c.setAutoCommit(oldAuto);
                 }
-
-                economy.ensureAccount(c, playerUuid);
-                economy.addBalance(c, playerUuid, Math.max(0L, amount));
-
-                long ledgerId = ledger.insertLedgerRow(
-                        c,
-                        now,
-                        "WITHDRAW_NOTE_REFUND",
-                        Math.max(0L, amount),
-                        null,
-                        playerUuid,
-                        MoneySource.SYSTEM.name(),
-                        noteId,
-                        "Refund undelivered bank note",
-                        "SYSTEM"
-                );
-
-                c.commit();
-
-                core.events().publishAsync(new LedgerRecordedEvent(
-                        ledgerId,
-                        "WITHDRAW_NOTE_REFUND",
-                        Math.max(0L, amount),
-                        null,
-                        playerUuid,
-                        MoneySource.SYSTEM,
-                        noteId,
-                        "Refund undelivered bank note",
-                        "SYSTEM"
-                ));
-                return true;
-            } catch (SQLException ex) {
-                c.rollback();
-                throw ex;
-            } finally {
-                c.setAutoCommit(oldAuto);
             }
-        }
+        });
     }
 
     /**
