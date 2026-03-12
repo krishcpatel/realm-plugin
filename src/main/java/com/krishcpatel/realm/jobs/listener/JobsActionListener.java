@@ -10,8 +10,13 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
+import org.bukkit.entity.ComplexEntityPart;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -19,6 +24,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFertilizeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.enchantment.EnchantItemEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.BrewEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
@@ -29,7 +35,11 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -39,11 +49,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * Converts Bukkit events into normalized job actions.
  */
 public final class JobsActionListener implements Listener {
+    private static final String GROUP_BOSS_DAMAGE_SHARE = "#BOSS_DAMAGE_SHARE";
+
     private final Core core;
     private final JobRewardService rewards;
     private final JobsRepository repo;
     private final Set<String> placedBreakGuards = ConcurrentHashMap.newKeySet();
     private final Map<String, BrewSession> brewSessions = new ConcurrentHashMap<>();
+    private final Map<UUID, Map<UUID, Double>> bossDamageByEntity = new ConcurrentHashMap<>();
 
     /**
      * Creates a listener that translates player activity into job rewards.
@@ -56,6 +69,33 @@ public final class JobsActionListener implements Listener {
         this.core = core;
         this.rewards = rewards;
         this.repo = repo;
+    }
+
+    /**
+     * Tracks player damage contribution on configured bosses so payouts can be split by contribution.
+     *
+     * @param event entity damage event
+     */
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void onBossDamage(EntityDamageByEntityEvent event) {
+        BossTarget bossTarget = resolveTrackedBoss(event.getEntity());
+        if (bossTarget == null) {
+            return;
+        }
+
+        Player damager = resolveDamagingPlayer(event);
+        if (damager == null || shouldIgnoreForBossPayout(damager)) {
+            return;
+        }
+
+        double damage = Math.max(0D, event.getFinalDamage());
+        if (damage <= 0D) {
+            return;
+        }
+
+        bossDamageByEntity
+                .computeIfAbsent(bossTarget.entityUuid(), ignored -> new ConcurrentHashMap<>())
+                .merge(damager.getUniqueId(), damage, Double::sum);
     }
 
     /**
@@ -189,6 +229,15 @@ public final class JobsActionListener implements Listener {
      */
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onEntityDeath(EntityDeathEvent event) {
+        EntityType entityType = event.getEntityType();
+        UUID entityUuid = event.getEntity().getUniqueId();
+        Map<UUID, Double> contributions = bossDamageByEntity.remove(entityUuid);
+
+        if (isTrackedBoss(entityType)) {
+            handleBossPayouts(event, entityType, contributions);
+            return;
+        }
+
         Player killer = event.getEntity().getKiller();
         if (killer == null || shouldIgnore(killer)) {
             return;
@@ -202,8 +251,8 @@ public final class JobsActionListener implements Listener {
         dispatch(buildContext(
                 killer,
                 JobActionType.KILL,
-                event.getEntityType().name(),
-                JobActionGroups.forEntity(event.getEntityType()),
+                entityType.name(),
+                JobActionGroups.forEntity(entityType),
                 1,
                 event.getEntity().getWorld().getName(),
                 event.getEntity().getChunk().getX(),
@@ -485,6 +534,157 @@ public final class JobsActionListener implements Listener {
             return false;
         }
         return player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR;
+    }
+
+    private boolean shouldIgnoreForBossPayout(Player player) {
+        if (core.jobsConfig().getBoolean("settings.boss-payouts.testing.allow-creative", false)) {
+            return false;
+        }
+        return shouldIgnore(player);
+    }
+
+    private void handleBossPayouts(EntityDeathEvent event, EntityType bossType, Map<UUID, Double> contributions) {
+        if (contributions == null || contributions.isEmpty()) {
+            Player killer = event.getEntity().getKiller();
+            if (killer == null || shouldIgnoreForBossPayout(killer)) {
+                return;
+            }
+
+            dispatchBossShare(event, bossType, killer, 10_000);
+            return;
+        }
+
+        Map<UUID, Player> eligiblePlayers = new HashMap<>();
+        Map<UUID, Double> eligibleDamage = new HashMap<>();
+        for (Map.Entry<UUID, Double> entry : contributions.entrySet()) {
+            Player player = core.getServer().getPlayer(entry.getKey());
+            if (player == null || shouldIgnoreForBossPayout(player)) {
+                continue;
+            }
+
+            double damage = Math.max(0D, entry.getValue());
+            if (damage <= 0D) {
+                continue;
+            }
+
+            eligiblePlayers.put(entry.getKey(), player);
+            eligibleDamage.put(entry.getKey(), damage);
+        }
+
+        if (eligibleDamage.isEmpty()) {
+            Player killer = event.getEntity().getKiller();
+            if (killer == null || shouldIgnoreForBossPayout(killer)) {
+                return;
+            }
+            dispatchBossShare(event, bossType, killer, 10_000);
+            return;
+        }
+
+        Map<UUID, Integer> shares = toShareBasisPoints(eligibleDamage);
+        for (Map.Entry<UUID, Integer> entry : shares.entrySet()) {
+            Player player = eligiblePlayers.get(entry.getKey());
+            if (player == null || shouldIgnoreForBossPayout(player)) {
+                continue;
+            }
+            dispatchBossShare(event, bossType, player, entry.getValue());
+        }
+    }
+
+    private void dispatchBossShare(EntityDeathEvent event, EntityType bossType, Player player, int shareBasisPoints) {
+        Set<String> groups = buildBossGroups(bossType);
+        int clampedShare = Math.max(1, Math.min(10_000, shareBasisPoints));
+
+        dispatch(buildContext(
+                player,
+                JobActionType.KILL,
+                bossType.name(),
+                groups,
+                clampedShare,
+                event.getEntity().getWorld().getName(),
+                event.getEntity().getChunk().getX(),
+                event.getEntity().getChunk().getZ()
+        ));
+    }
+
+    private Map<UUID, Integer> toShareBasisPoints(Map<UUID, Double> contributions) {
+        if (contributions.isEmpty()) {
+            return Map.of();
+        }
+
+        double totalDamage = contributions.values().stream()
+                .mapToDouble(value -> Math.max(0D, value))
+                .sum();
+        if (totalDamage <= 0D) {
+            return Map.of();
+        }
+
+        Map<UUID, Integer> shares = new HashMap<>();
+        List<ShareRemainder> remainders = new ArrayList<>(contributions.size());
+        int allocated = 0;
+
+        for (Map.Entry<UUID, Double> entry : contributions.entrySet()) {
+            double exactShare = (Math.max(0D, entry.getValue()) / totalDamage) * 10_000D;
+            int baseShare = (int) Math.floor(exactShare);
+            shares.put(entry.getKey(), baseShare);
+            remainders.add(new ShareRemainder(entry.getKey(), exactShare - baseShare));
+            allocated += baseShare;
+        }
+
+        int remainder = Math.max(0, 10_000 - allocated);
+        remainders.sort(Comparator.comparingDouble(ShareRemainder::fractional).reversed());
+        for (int i = 0; i < remainder && !remainders.isEmpty(); i++) {
+            ShareRemainder target = remainders.get(i % remainders.size());
+            shares.merge(target.playerUuid(), 1, Integer::sum);
+        }
+
+        shares.entrySet().removeIf(entry -> entry.getValue() <= 0);
+        return shares;
+    }
+
+    private Set<String> buildBossGroups(EntityType bossType) {
+        Set<String> groups = new HashSet<>(JobActionGroups.forEntity(bossType));
+        groups.add(GROUP_BOSS_DAMAGE_SHARE);
+        return Set.copyOf(groups);
+    }
+
+    private Player resolveDamagingPlayer(EntityDamageByEntityEvent event) {
+        if (event.getDamager() instanceof Player player) {
+            return player;
+        }
+
+        if (event.getDamager() instanceof Projectile projectile && projectile.getShooter() instanceof Player player) {
+            return player;
+        }
+
+        return null;
+    }
+
+    private BossTarget resolveTrackedBoss(Entity entity) {
+        if (entity instanceof LivingEntity livingEntity && isTrackedBoss(livingEntity.getType())) {
+            return new BossTarget(livingEntity.getUniqueId());
+        }
+
+        if (entity instanceof ComplexEntityPart part) {
+            Entity parent = part.getParent();
+            if (parent instanceof LivingEntity livingParent && isTrackedBoss(livingParent.getType())) {
+                return new BossTarget(livingParent.getUniqueId());
+            }
+        }
+
+        return null;
+    }
+
+    private boolean isTrackedBoss(EntityType type) {
+        return type == EntityType.WARDEN
+                || type == EntityType.ELDER_GUARDIAN
+                || type == EntityType.WITHER
+                || type == EntityType.ENDER_DRAGON;
+    }
+
+    private record BossTarget(UUID entityUuid) {
+    }
+
+    private record ShareRemainder(UUID playerUuid, double fractional) {
     }
 
     private record BrewSession(UUID playerUuid, long lastTouchedAt) {

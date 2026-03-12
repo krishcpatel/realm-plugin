@@ -96,7 +96,18 @@ public final class JobDefinitionLoader {
                 }
             }
 
-            out.put(jobId, new JobDefinition(jobId, displayName, description, leveling, rewards));
+            long dailyMoneyCap = resolveDailyMoneyCap(jobSection, rewards);
+            long dailyXpCap = resolveDailyXpCap(jobSection, rewards);
+
+            out.put(jobId, new JobDefinition(
+                    jobId,
+                    displayName,
+                    description,
+                    leveling,
+                    dailyMoneyCap,
+                    dailyXpCap,
+                    rewards
+            ));
         }
 
         return Map.copyOf(out);
@@ -154,6 +165,40 @@ public final class JobDefinitionLoader {
 
     private long normalizeBound(long value) {
         return Math.max(0L, value);
+    }
+
+    private long resolveDailyMoneyCap(ConfigurationSection jobSection, Map<JobActionType, List<RewardRule>> rewards) {
+        if (jobSection.contains("caps.daily-money-cap")) {
+            return normalizeBound(jobSection.getLong("caps.daily-money-cap", 0L));
+        }
+        if (jobSection.contains("daily-money-cap")) {
+            return normalizeBound(jobSection.getLong("daily-money-cap", 0L));
+        }
+
+        long fallback = 0L;
+        for (List<RewardRule> rules : rewards.values()) {
+            for (RewardRule rule : rules) {
+                fallback += Math.max(0L, rule.dailyMoneyCap());
+            }
+        }
+        return fallback;
+    }
+
+    private long resolveDailyXpCap(ConfigurationSection jobSection, Map<JobActionType, List<RewardRule>> rewards) {
+        if (jobSection.contains("caps.daily-xp-cap")) {
+            return normalizeBound(jobSection.getLong("caps.daily-xp-cap", 0L));
+        }
+        if (jobSection.contains("daily-xp-cap")) {
+            return normalizeBound(jobSection.getLong("daily-xp-cap", 0L));
+        }
+
+        long fallback = 0L;
+        for (List<RewardRule> rules : rewards.values()) {
+            for (RewardRule rule : rules) {
+                fallback += Math.max(0L, rule.dailyXpCap());
+            }
+        }
+        return fallback;
     }
 
     private String prettifyJobId(String jobId) {

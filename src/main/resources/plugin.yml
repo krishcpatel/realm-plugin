@@ -28,7 +28,7 @@ commands:
     usage: /ledger <player> [n]
   job:
     description: Join, leave, and inspect jobs
-    usage: /job <list|stats|join|leave> [job]
+    usage: /job <list|stats|caps|join|leave> [job]
   skills:
     description: View your realm skill levels
     usage: /skills [category|skill]

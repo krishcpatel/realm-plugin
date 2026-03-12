@@ -1,6 +1,7 @@
 package com.krishcpatel.realm.jobs.manager;
 
 import com.krishcpatel.realm.core.Core;
+import com.krishcpatel.realm.jobs.model.JobCapState;
 import com.krishcpatel.realm.jobs.model.JobDefinition;
 import com.krishcpatel.realm.jobs.model.JobMembershipResult;
 import com.krishcpatel.realm.jobs.model.PlayerJob;
@@ -55,6 +56,25 @@ public final class JobManager {
      */
     public List<PlayerJob> getJobs(UUID playerUuid) throws SQLException {
         return repo.getJobs(playerUuid.toString());
+    }
+
+    /**
+     * Returns a player's current daily cap usage for the given job.
+     *
+     * @param playerUuid player UUID
+     * @param jobId job id
+     * @param dayKey UTC epoch day
+     * @return current earned amounts for the day's job cap bucket
+     * @throws SQLException if the lookup fails
+     */
+    public JobCapState getDailyCapState(UUID playerUuid, String jobId, long dayKey) throws SQLException {
+        String normalizedJobId = normalizeJobId(jobId);
+        return repo.getCapState(
+                playerUuid.toString(),
+                normalizedJobId,
+                dailyCapKey(normalizedJobId),
+                dayKey
+        );
     }
 
     /**
@@ -140,5 +160,15 @@ public final class JobManager {
      */
     public static String normalizeJobId(String jobId) {
         return jobId == null ? "" : jobId.trim().toLowerCase(Locale.ROOT);
+    }
+
+    /**
+     * Returns the canonical cap-tracking key used for a job's daily cap bucket.
+     *
+     * @param jobId raw or normalized job id
+     * @return normalized daily cap key
+     */
+    public static String dailyCapKey(String jobId) {
+        return normalizeJobId(jobId) + ":DAILY";
     }
 }

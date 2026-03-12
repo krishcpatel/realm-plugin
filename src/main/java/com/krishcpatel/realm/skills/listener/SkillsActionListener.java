@@ -191,7 +191,7 @@ public final class SkillsActionListener implements Listener {
         boolean miningStone = isMiningStone(type);
         boolean woodcutting = Tag.LOGS.isTagged(type);
         boolean herbalism = isHerbalismHarvest(event.getBlock());
-        boolean excavation = isUsingShovel(player.getInventory().getItemInMainHand().getType()) && isExcavationMaterial(type);
+        boolean excavation = isExcavationMaterial(type);
 
         if (!(miningOre || miningStone || woodcutting || herbalism || excavation)) {
             return;
@@ -577,10 +577,6 @@ public final class SkillsActionListener implements Listener {
                     NETHER_GOLD_ORE, NETHER_QUARTZ_ORE, ANCIENT_DEBRIS -> true;
             default -> false;
         };
-    }
-
-    private boolean isUsingShovel(Material material) {
-        return material.name().endsWith("_SHOVEL");
     }
 
     private boolean isExcavationMaterial(Material material) {

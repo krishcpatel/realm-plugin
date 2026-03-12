@@ -51,13 +51,16 @@ ledger:
   empty: "&7No ledger entries found."
 
 jobs:
-  usage: "&7Usage: &f/job <list|stats|join|leave> [job]"
+  usage: "&7Usage: &f/job <list|stats|caps|join|leave> [job]"
   list-header: "&7--- &fAvailable Jobs &7---"
   list-item: "&e%job% &8(%id%) &7- %description%"
   list-none: "&7Use &f/job join none &7if you want no active jobs."
   stats-header: "&7--- &fYour Jobs &7---"
   stats-empty: "&7You do not currently have any jobs."
   stats-item: "&e%job% &7Level &f%level% &8| &7XP &f%xp% &8| &7Total XP &f%total_xp%"
+  caps-header: "&7--- &fYour Job Daily Caps &7---"
+  caps-empty: "&7You do not currently have any jobs."
+  caps-item: "&e%job% &8| &7$ &f%money_earned%&7/&f%money_cap% &8(&a%money_left% left&8) &8| &7XP &f%xp_earned%&7/&f%xp_cap% &8(&b%xp_left% left&8)"
   join-success: "&a%message%"
   join-failed: "&cCould not join job: &f%reason%"
   leave-success: "&a%message%"

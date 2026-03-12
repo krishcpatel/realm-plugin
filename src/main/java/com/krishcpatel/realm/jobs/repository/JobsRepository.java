@@ -74,6 +74,15 @@ public final class JobsRepository {
                 );
             """);
             st.execute("""
+                CREATE TABLE IF NOT EXISTS jobs_global_boss_claims (
+                    player_uuid TEXT NOT NULL,
+                    boss_type TEXT NOT NULL,
+                    day_key INTEGER NOT NULL,
+                    claimed_at INTEGER NOT NULL,
+                    PRIMARY KEY (player_uuid, boss_type, day_key)
+                );
+            """);
+            st.execute("""
                 CREATE TABLE IF NOT EXISTS jobs_placed_block_guards (
                     world TEXT NOT NULL,
                     x INTEGER NOT NULL,
@@ -88,6 +97,7 @@ public final class JobsRepository {
             st.execute("CREATE INDEX IF NOT EXISTS idx_jobs_memberships_player ON jobs_memberships(player_uuid);");
             st.execute("CREATE INDEX IF NOT EXISTS idx_jobs_progress_player ON jobs_progress(player_uuid);");
             st.execute("CREATE INDEX IF NOT EXISTS idx_jobs_caps_day ON jobs_reward_caps(day_key);");
+            st.execute("CREATE INDEX IF NOT EXISTS idx_jobs_global_boss_claims_day ON jobs_global_boss_claims(day_key);");
             st.execute("CREATE INDEX IF NOT EXISTS idx_jobs_placed_blocks_player ON jobs_placed_block_guards(player_uuid);");
             st.execute("CREATE INDEX IF NOT EXISTS idx_jobs_placed_blocks_placed_at ON jobs_placed_block_guards(placed_at);");
         }
@@ -324,6 +334,22 @@ public final class JobsRepository {
     /**
      * Returns the current daily cap usage for a reward rule.
      *
+     * @param playerUuid player UUID as a string
+     * @param jobId normalized job identifier
+     * @param rewardKey unique rule reward key
+     * @param dayKey UTC epoch day
+     * @return current cap state, or {@link JobCapState#EMPTY} if none exists yet
+     * @throws SQLException if the query fails
+     */
+    public JobCapState getCapState(String playerUuid, String jobId, String rewardKey, long dayKey) throws SQLException {
+        try (Connection c = db.getConnection()) {
+            return getCapState(c, playerUuid, jobId, rewardKey, dayKey);
+        }
+    }
+
+    /**
+     * Returns the current daily cap usage for a reward rule.
+     *
      * @param c active database connection
      * @param playerUuid player UUID as a string
      * @param jobId normalized job identifier
@@ -443,6 +469,37 @@ public final class JobsRepository {
             ps.setInt(4, chunkX);
             ps.setInt(5, chunkZ);
             ps.setLong(6, visitedAt);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    /**
+     * Marks a global boss payout as claimed for a player/day combination.
+     *
+     * @param c active database connection
+     * @param playerUuid player UUID as a string
+     * @param bossType normalized boss type key
+     * @param dayKey UTC epoch day
+     * @param claimedAt claim timestamp
+     * @return true if this is the first claim for that player/boss/day
+     * @throws SQLException if the write fails
+     */
+    public boolean markGlobalBossPayoutClaimed(
+            Connection c,
+            String playerUuid,
+            String bossType,
+            long dayKey,
+            long claimedAt
+    ) throws SQLException {
+        try (PreparedStatement ps = c.prepareStatement("""
+            INSERT INTO jobs_global_boss_claims (player_uuid, boss_type, day_key, claimed_at)
+            VALUES (?, ?, ?, ?)
+            ON CONFLICT(player_uuid, boss_type, day_key) DO NOTHING
+        """)) {
+            ps.setString(1, playerUuid);
+            ps.setString(2, bossType);
+            ps.setLong(3, dayKey);
+            ps.setLong(4, claimedAt);
             return ps.executeUpdate() > 0;
         }
     }

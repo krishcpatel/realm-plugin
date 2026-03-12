@@ -6,24 +6,22 @@ import com.krishcpatel.realm.economy.model.MoneySource;
 import com.krishcpatel.realm.economy.repository.EconomyRepository;
 import com.krishcpatel.realm.economy.repository.LedgerRepository;
 import com.krishcpatel.realm.jobs.event.JobLevelUpEvent;
-import com.krishcpatel.realm.jobs.model.JobActionContext;
-import com.krishcpatel.realm.jobs.model.JobCapState;
-import com.krishcpatel.realm.jobs.model.JobDefinition;
-import com.krishcpatel.realm.jobs.model.LevelingSettings;
-import com.krishcpatel.realm.jobs.model.PlayerJob;
-import com.krishcpatel.realm.jobs.model.RewardRule;
+import com.krishcpatel.realm.jobs.model.*;
 import com.krishcpatel.realm.jobs.notify.JobPayoutNotifier;
 import com.krishcpatel.realm.jobs.registry.JobDefinitionRegistry;
 import com.krishcpatel.realm.jobs.repository.JobsRepository;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.Bukkit;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.util.Locale;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -31,6 +29,8 @@ import java.util.concurrent.ThreadLocalRandom;
  * Converts normalized job actions into xp, levels, and money payouts.
  */
 public final class JobRewardService {
+    private static final String GROUP_BOSS_DAMAGE_SHARE = "#BOSS_DAMAGE_SHARE";
+
     private final Core core;
     private final JobsRepository repo;
     private final JobDefinitionRegistry registry;
@@ -72,6 +72,11 @@ public final class JobRewardService {
      */
     public void handleAction(JobActionContext action) {
         try {
+            if (isBossDamageShareAction(action)) {
+                processGlobalBossPayout(action);
+                return;
+            }
+
             List<PlayerJob> jobs = repo.getJobs(action.playerUuid().toString());
             for (PlayerJob playerJob : jobs) {
                 processActionForJob(action, playerJob);
@@ -103,6 +108,7 @@ public final class JobRewardService {
         long now = System.currentTimeMillis();
         long dayKey = LocalDate.now(ZoneOffset.UTC).toEpochDay();
         String rewardKey = playerJob.jobId() + ":" + action.type().name() + ":" + rule.selector();
+        String dailyCapKey = JobManager.dailyCapKey(playerJob.jobId());
         String rewardReason = "Job reward: " + definition.displayName() + " " + action.type().name();
 
         JobWriteResult writeResult = core.getDatabase().executeWrite(() -> {
@@ -134,12 +140,14 @@ public final class JobRewardService {
                         return null;
                     }
 
-                    long money = scaleMoneyReward(rule, definition.leveling(), current.level(), action.amount());
-                    long xp = scaleXpReward(rule, definition.leveling(), current.level(), action.amount());
+                    long money;
+                    long xp;
+                    money = scaleMoneyReward(rule, definition.leveling(), current.level(), action.amount());
+                    xp = scaleXpReward(rule, definition.leveling(), current.level(), action.amount());
 
-                    JobCapState capState = repo.getCapState(c, playerUuid, playerJob.jobId(), rewardKey, dayKey);
-                    money = clampToCap(money, capState.moneyEarned(), rule.dailyMoneyCap());
-                    xp = clampToCap(xp, capState.xpEarned(), rule.dailyXpCap());
+                    JobCapState capState = repo.getCapState(c, playerUuid, playerJob.jobId(), dailyCapKey, dayKey);
+                    money = clampToCap(money, capState.moneyEarned(), definition.dailyMoneyCap());
+                    xp = clampToCap(xp, capState.xpEarned(), definition.dailyXpCap());
 
                     if (money <= 0 && xp <= 0) {
                         c.rollback();
@@ -165,7 +173,7 @@ public final class JobRewardService {
                     }
 
                     repo.updateProgress(c, playerUuid, playerJob.jobId(), update.level(), update.xp(), update.totalXp());
-                    repo.addCapEarnings(c, playerUuid, playerJob.jobId(), rewardKey, dayKey, money, xp);
+                    repo.addCapEarnings(c, playerUuid, playerJob.jobId(), dailyCapKey, dayKey, money, xp);
                     c.commit();
 
                     return new JobWriteResult(money, xp, current.level(), update.level(), ledgerId);
@@ -241,6 +249,166 @@ public final class JobRewardService {
         return false;
     }
 
+    private void processGlobalBossPayout(JobActionContext action) throws SQLException {
+        if (!core.jobsConfig().getBoolean("settings.boss-payouts.enabled", true)) {
+            return;
+        }
+
+        BossPayoutRule rule = resolveBossPayoutRule(action.target());
+        if (rule == null) {
+            return;
+        }
+
+        String playerUuid = action.playerUuid().toString();
+        long now = System.currentTimeMillis();
+        long dayKey = LocalDate.now(ZoneOffset.UTC).toEpochDay();
+        double share = bossDamageShare(action.amount());
+        if (share <= 0D) {
+            return;
+        }
+
+        String rewardKey = "boss:" + rule.bossType();
+        String rewardReason = "Boss payout: " + prettifyBossType(rule.bossType());
+
+        GlobalBossWriteResult writeResult = core.getDatabase().executeWrite(() -> {
+            try (Connection c = core.getDatabase().getConnection()) {
+                boolean oldAuto = c.getAutoCommit();
+                c.setAutoCommit(false);
+                long ledgerId = -1L;
+
+                try {
+                    boolean bypassDailyClaim = core.jobsConfig().getBoolean(
+                            "settings.boss-payouts.testing.bypass-daily-claim",
+                            false
+                    );
+                    if (!bypassDailyClaim) {
+                        boolean firstClaimToday = repo.markGlobalBossPayoutClaimed(
+                                c,
+                                playerUuid,
+                                rule.bossType(),
+                                dayKey,
+                                now
+                        );
+                        if (!firstClaimToday) {
+                            c.rollback();
+                            return null;
+                        }
+                    }
+
+                    long baseMoney = randomBetween(rule.moneyMin(), rule.moneyMax());
+                    long money = Math.max(0L, Math.round(baseMoney * share));
+                    if (money <= 0L && baseMoney > 0L && share > 0D) {
+                        money = 1L;
+                    }
+                    if (money <= 0L) {
+                        c.rollback();
+                        return null;
+                    }
+
+                    economy.ensureAccount(c, playerUuid);
+                    economy.addBalance(c, playerUuid, money);
+                    ledgerId = ledger.insertLedgerRow(
+                            c,
+                            now,
+                            "MINT",
+                            money,
+                            null,
+                            playerUuid,
+                            MoneySource.JOBS.name(),
+                            rewardKey,
+                            rewardReason,
+                            "SYSTEM"
+                    );
+
+                    c.commit();
+                    return new GlobalBossWriteResult(money, ledgerId, rule.bossType());
+                } catch (SQLException ex) {
+                    c.rollback();
+                    throw ex;
+                } finally {
+                    c.setAutoCommit(oldAuto);
+                }
+            }
+        });
+
+        if (writeResult == null) {
+            return;
+        }
+
+        if (writeResult.ledgerId() > 0) {
+            core.events().publishAsync(new LedgerRecordedEvent(
+                    writeResult.ledgerId(),
+                    "MINT",
+                    writeResult.money(),
+                    null,
+                    playerUuid,
+                    MoneySource.JOBS,
+                    rewardKey,
+                    rewardReason,
+                    "SYSTEM"
+            ));
+        }
+
+        notifier.notifyPayout(action.playerUuid(), "Boss Bounty", writeResult.money(), 0L);
+    }
+
+    private boolean isBossDamageShareAction(JobActionContext action) {
+        return action.groups().contains(GROUP_BOSS_DAMAGE_SHARE);
+    }
+
+    private BossPayoutRule resolveBossPayoutRule(String rawBossType) {
+        String bossType = normalizeBossType(rawBossType);
+        ConfigurationSection rewardsSection = core.jobsConfig().getConfigurationSection("settings.boss-payouts.rewards");
+        if (rewardsSection == null) {
+            return null;
+        }
+
+        String matchedKey = rewardsSection.getKeys(false).stream()
+                .filter(key -> key.equalsIgnoreCase(bossType))
+                .findFirst()
+                .orElse(null);
+        if (matchedKey == null) {
+            return null;
+        }
+
+        String basePath = "settings.boss-payouts.rewards." + matchedKey;
+        long min = Math.max(0L, core.jobsConfig().getLong(basePath + ".money-min", 0L));
+        long max = Math.max(min, core.jobsConfig().getLong(basePath + ".money-max", min));
+        return new BossPayoutRule(normalizeBossType(matchedKey), min, max);
+    }
+
+    private String normalizeBossType(String rawBossType) {
+        if (rawBossType == null || rawBossType.isBlank()) {
+            return "UNKNOWN";
+        }
+        return rawBossType.trim().toUpperCase(Locale.ROOT);
+    }
+
+    private String prettifyBossType(String bossType) {
+        String[] parts = bossType.toLowerCase(Locale.ROOT).split("_");
+        StringBuilder out = new StringBuilder();
+        for (String part : parts) {
+            if (part.isEmpty()) {
+                continue;
+            }
+            if (!out.isEmpty()) {
+                out.append(' ');
+            }
+            out.append(Character.toUpperCase(part.charAt(0)));
+            if (part.length() > 1) {
+                out.append(part.substring(1));
+            }
+        }
+        return out.isEmpty() ? bossType : out.toString();
+    }
+
+    private double bossDamageShare(int amount) {
+        if (amount <= 0) {
+            return 0D;
+        }
+        return Math.max(0D, Math.min(1D, amount / 10_000D));
+    }
+
     private long scaleMoneyReward(RewardRule rule, LevelingSettings leveling, int level, int amount) {
         long base = randomBetween(rule.moneyMin(), rule.moneyMax());
         return Math.max(0L, Math.round(base * Math.max(1, amount) * leveling.moneyMultiplier(level)));
@@ -295,6 +463,12 @@ public final class JobRewardService {
     }
 
     private record ProgressUpdate(int level, long xp, long totalXp) {
+    }
+
+    private record BossPayoutRule(String bossType, long moneyMin, long moneyMax) {
+    }
+
+    private record GlobalBossWriteResult(long money, long ledgerId, String bossType) {
     }
 
     private record JobWriteResult(long money, long xp, int oldLevel, int newLevel, long ledgerId) {

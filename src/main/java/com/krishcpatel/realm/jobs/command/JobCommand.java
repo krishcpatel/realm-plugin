@@ -2,6 +2,7 @@ package com.krishcpatel.realm.jobs.command;
 
 import com.krishcpatel.realm.core.Core;
 import com.krishcpatel.realm.jobs.manager.JobManager;
+import com.krishcpatel.realm.jobs.model.JobCapState;
 import com.krishcpatel.realm.jobs.model.JobDefinition;
 import com.krishcpatel.realm.jobs.model.JobMembershipResult;
 import com.krishcpatel.realm.jobs.model.PlayerJob;
@@ -11,6 +12,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +62,7 @@ public final class JobCommand implements CommandExecutor {
         switch (args[0].toLowerCase()) {
             case "list" -> showJobsList(player);
             case "stats" -> showStats(player);
+            case "caps" -> showCaps(player);
             case "join" -> {
                 if (args.length != 2) {
                     player.sendMessage(core.msg("jobs.usage"));
@@ -121,6 +126,62 @@ public final class JobCommand implements CommandExecutor {
                 });
             } catch (Exception e) {
                 core.getLogger().severe("[jobs] Failed to load /job stats for " + player.getName());
+                e.printStackTrace();
+                core.getServer().getScheduler().runTask(core, () ->
+                        player.sendMessage(core.msg("general.command-failed"))
+                );
+            }
+        });
+    }
+
+    private void showCaps(Player player) {
+        core.getServer().getScheduler().runTaskAsynchronously(core, () -> {
+            try {
+                List<PlayerJob> jobs = manager.getJobs(player.getUniqueId());
+                if (jobs.isEmpty()) {
+                    core.getServer().getScheduler().runTask(core, () ->
+                            player.sendMessage(core.msg("jobs.caps-empty"))
+                    );
+                    return;
+                }
+
+                long dayKey = LocalDate.now(ZoneOffset.UTC).toEpochDay();
+                List<JobCapLine> lines = new ArrayList<>();
+
+                for (PlayerJob job : jobs) {
+                    String jobId = job.jobId();
+                    JobCapState capState = manager.getDailyCapState(player.getUniqueId(), jobId, dayKey);
+                    JobDefinition definition = registry.get(jobId).orElse(null);
+
+                    String displayName = definition == null ? jobId : definition.displayName();
+                    long moneyCap = definition == null ? 0L : definition.dailyMoneyCap();
+                    long xpCap = definition == null ? 0L : definition.dailyXpCap();
+
+                    lines.add(new JobCapLine(
+                            displayName,
+                            capState.moneyEarned(),
+                            moneyCap,
+                            capState.xpEarned(),
+                            xpCap
+                    ));
+                }
+
+                core.getServer().getScheduler().runTask(core, () -> {
+                    player.sendMessage(core.msg("jobs.caps-header"));
+                    lines.stream()
+                            .sorted(Comparator.comparing(JobCapLine::jobName, String.CASE_INSENSITIVE_ORDER))
+                            .forEach(line -> player.sendMessage(core.msg("jobs.caps-item", Map.of(
+                                    "%job%", line.jobName(),
+                                    "%money_earned%", String.valueOf(line.moneyEarned()),
+                                    "%money_cap%", formatCap(line.moneyCap()),
+                                    "%money_left%", formatRemaining(line.moneyEarned(), line.moneyCap()),
+                                    "%xp_earned%", String.valueOf(line.xpEarned()),
+                                    "%xp_cap%", formatCap(line.xpCap()),
+                                    "%xp_left%", formatRemaining(line.xpEarned(), line.xpCap())
+                            ))));
+                });
+            } catch (Exception e) {
+                core.getLogger().severe("[jobs] Failed to load /job caps for " + player.getName());
                 e.printStackTrace();
                 core.getServer().getScheduler().runTask(core, () ->
                         player.sendMessage(core.msg("general.command-failed"))
@@ -193,5 +254,19 @@ public final class JobCommand implements CommandExecutor {
 
     private boolean isNoJobSelection(String value) {
         return List.of("none", "nojob", "no-job").contains(value.toLowerCase());
+    }
+
+    private String formatCap(long cap) {
+        return cap <= 0L ? "unlimited" : String.valueOf(cap);
+    }
+
+    private String formatRemaining(long earned, long cap) {
+        if (cap <= 0L) {
+            return "unlimited";
+        }
+        return String.valueOf(Math.max(0L, cap - Math.max(0L, earned)));
+    }
+
+    private record JobCapLine(String jobName, long moneyEarned, long moneyCap, long xpEarned, long xpCap) {
     }
 }

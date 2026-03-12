@@ -13,6 +13,8 @@ public final class JobDefinition {
     private final String displayName;
     private final String description;
     private final LevelingSettings leveling;
+    private final long dailyMoneyCap;
+    private final long dailyXpCap;
     private final Map<JobActionType, List<RewardRule>> rewards;
 
     /**
@@ -22,6 +24,8 @@ public final class JobDefinition {
      * @param displayName player-facing display name
      * @param description short description shown in listings
      * @param leveling progression settings for the job
+     * @param dailyMoneyCap max money this job can pay per day, {@code 0} for unlimited
+     * @param dailyXpCap max xp this job can grant per day, {@code 0} for unlimited
      * @param rewards reward rules keyed by action type
      */
     public JobDefinition(
@@ -29,12 +33,16 @@ public final class JobDefinition {
             String displayName,
             String description,
             LevelingSettings leveling,
+            long dailyMoneyCap,
+            long dailyXpCap,
             Map<JobActionType, List<RewardRule>> rewards
     ) {
         this.id = id;
         this.displayName = displayName;
         this.description = description;
         this.leveling = leveling;
+        this.dailyMoneyCap = Math.max(0L, dailyMoneyCap);
+        this.dailyXpCap = Math.max(0L, dailyXpCap);
         EnumMap<JobActionType, List<RewardRule>> copy = new EnumMap<>(JobActionType.class);
         rewards.forEach((key, value) -> copy.put(key, List.copyOf(value)));
         this.rewards = Map.copyOf(copy);
@@ -74,6 +82,24 @@ public final class JobDefinition {
      */
     public LevelingSettings leveling() {
         return leveling;
+    }
+
+    /**
+     * Returns the max money this job can pay in a UTC day.
+     *
+     * @return daily money cap, or {@code 0} for unlimited
+     */
+    public long dailyMoneyCap() {
+        return dailyMoneyCap;
+    }
+
+    /**
+     * Returns the max xp this job can grant in a UTC day.
+     *
+     * @return daily xp cap, or {@code 0} for unlimited
+     */
+    public long dailyXpCap() {
+        return dailyXpCap;
     }
 
     /**

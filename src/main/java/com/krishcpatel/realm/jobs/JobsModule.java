@@ -61,6 +61,10 @@ public final class JobsModule implements Module {
         core.getCommand("job").setExecutor(new JobCommand(core, manager, registry));
 
         core.getLogger().info("[jobs] enabled with " + registry.all().size() + " configured jobs.");
+        if (core.jobsConfig().getBoolean("settings.boss-payouts.testing.bypass-daily-claim", false)
+                || core.jobsConfig().getBoolean("settings.boss-payouts.testing.allow-creative", false)) {
+            core.getLogger().warning("[jobs] Boss payout testing toggles are enabled. Disable before production.");
+        }
     }
 
     /** {@inheritDoc} */
@@ -77,6 +81,14 @@ public final class JobsModule implements Module {
         }
 
         if (registry != null) {
+            if (jobsRepo != null) {
+                try {
+                    jobsRepo.initSchema();
+                } catch (SQLException e) {
+                    core.getLogger().severe("[jobs] Failed to refresh jobs schema during reload.");
+                    e.printStackTrace();
+                }
+            }
             registry.reload();
             purgeStalePlacedGuards();
             core.getLogger().info("[jobs] reloaded with " + registry.all().size() + " configured jobs.");

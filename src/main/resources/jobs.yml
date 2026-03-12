@@ -12,6 +12,25 @@ settings:
     sound-volume: 0.35
     sound-pitch: 1.35
 
+  boss-payouts:
+    enabled: true
+    testing:
+      bypass-daily-claim: false
+      allow-creative: false
+    rewards:
+      WARDEN:
+        money-min: 800
+        money-max: 1000
+      WITHER:
+        money-min: 650
+        money-max: 820
+      ENDER_DRAGON:
+        money-min: 670
+        money-max: 840
+      ELDER_GUARDIAN:
+        money-min: 260
+        money-max: 360
+
   anti-farm:
     ignore-player-placed-breaks: true
     ignore-spawner-kills: true
@@ -42,6 +61,9 @@ jobs:
     enabled: true
     display-name: "Brewer"
     description: "Brew potions and keep alchemy moving."
+    caps:
+      daily-money-cap: 300
+      daily-xp-cap: 350
     rewards:
       brew:
         "#potions":
@@ -49,13 +71,14 @@ jobs:
           money-max: 6
           xp-min: 4
           xp-max: 7
-          daily-money-cap: 300
-          daily-xp-cap: 350
 
   builder:
     enabled: true
     display-name: "Builder"
     description: "Place building blocks and shape the world."
+    caps:
+      daily-money-cap: 150
+      daily-xp-cap: 250
     rewards:
       place:
         "#building_blocks":
@@ -63,13 +86,14 @@ jobs:
           money-max: 1
           xp-min: 1
           xp-max: 2
-          daily-money-cap: 150
-          daily-xp-cap: 250
 
   crafter:
     enabled: true
     display-name: "Crafter"
     description: "Craft useful items for the server economy."
+    caps:
+      daily-money-cap: 300
+      daily-xp-cap: 350
     rewards:
       craft:
         "#utility_stations":
@@ -77,13 +101,14 @@ jobs:
           money-max: 7
           xp-min: 4
           xp-max: 7
-          daily-money-cap: 300
-          daily-xp-cap: 350
 
   digger:
     enabled: true
     display-name: "Digger"
     description: "Excavate dirt, sand, gravel, and other soft blocks."
+    caps:
+      daily-money-cap: 250
+      daily-xp-cap: 350
     rewards:
       break:
         "#diggable":
@@ -91,13 +116,14 @@ jobs:
           money-max: 2
           xp-min: 1
           xp-max: 2
-          daily-money-cap: 250
-          daily-xp-cap: 350
 
   enchanter:
     enabled: true
     display-name: "Enchanter"
     description: "Enchant gear and empower crafted equipment."
+    caps:
+      daily-money-cap: 350
+      daily-xp-cap: 450
     rewards:
       enchant:
         "#quality_gear":
@@ -105,13 +131,14 @@ jobs:
           money-max: 8
           xp-min: 6
           xp-max: 9
-          daily-money-cap: 350
-          daily-xp-cap: 450
 
   explorer:
     enabled: true
     display-name: "Explorer"
     description: "Discover new chunks and map the world."
+    caps:
+      daily-money-cap: 200
+      daily-xp-cap: 300
     rewards:
       explore:
         ANY:
@@ -119,13 +146,14 @@ jobs:
           money-max: 2
           xp-min: 2
           xp-max: 3
-          daily-money-cap: 200
-          daily-xp-cap: 300
 
   farmer:
     enabled: true
     display-name: "Farmer"
     description: "Harvest crops and work the land."
+    caps:
+      daily-money-cap: 450
+      daily-xp-cap: 600
     rewards:
       break:
         "#crops":
@@ -133,13 +161,14 @@ jobs:
           money-max: 3
           xp-min: 2
           xp-max: 4
-          daily-money-cap: 450
-          daily-xp-cap: 600
 
   fisherman:
     enabled: true
     display-name: "Fisherman"
     description: "Catch fish and keep the food chain going."
+    caps:
+      daily-money-cap: 500
+      daily-xp-cap: 600
     rewards:
       fish:
         "#fish":
@@ -147,13 +176,14 @@ jobs:
           money-max: 5
           xp-min: 4
           xp-max: 6
-          daily-money-cap: 500
-          daily-xp-cap: 600
 
   hunter:
     enabled: true
     display-name: "Hunter"
     description: "Hunt hostile mobs for profit."
+    caps:
+      daily-money-cap: 650
+      daily-xp-cap: 750
     rewards:
       kill:
         "#hostile":
@@ -161,27 +191,124 @@ jobs:
           money-max: 5
           xp-min: 3
           xp-max: 6
-          daily-money-cap: 650
-          daily-xp-cap: 750
 
   miner:
     enabled: true
     display-name: "Miner"
     description: "Mine ores and valuable underground resources."
+    caps:
+      daily-money-cap: 1200
+      daily-xp-cap: 1500
     rewards:
       break:
+        COAL_ORE:
+          money-min: 1
+          money-max: 2
+          xp-min: 2
+          xp-max: 3
+        DEEPSLATE_COAL_ORE:
+          money-min: 1
+          money-max: 2
+          xp-min: 2
+          xp-max: 3
+        COPPER_ORE:
+          money-min: 2
+          money-max: 3
+          xp-min: 3
+          xp-max: 4
+        DEEPSLATE_COPPER_ORE:
+          money-min: 2
+          money-max: 3
+          xp-min: 3
+          xp-max: 4
+        IRON_ORE:
+          money-min: 3
+          money-max: 5
+          xp-min: 4
+          xp-max: 6
+        DEEPSLATE_IRON_ORE:
+          money-min: 3
+          money-max: 5
+          xp-min: 4
+          xp-max: 6
+        GOLD_ORE:
+          money-min: 4
+          money-max: 6
+          xp-min: 5
+          xp-max: 7
+        DEEPSLATE_GOLD_ORE:
+          money-min: 4
+          money-max: 6
+          xp-min: 5
+          xp-max: 7
+        REDSTONE_ORE:
+          money-min: 3
+          money-max: 5
+          xp-min: 4
+          xp-max: 6
+        DEEPSLATE_REDSTONE_ORE:
+          money-min: 3
+          money-max: 5
+          xp-min: 4
+          xp-max: 6
+        LAPIS_ORE:
+          money-min: 4
+          money-max: 6
+          xp-min: 5
+          xp-max: 7
+        DEEPSLATE_LAPIS_ORE:
+          money-min: 4
+          money-max: 6
+          xp-min: 5
+          xp-max: 7
+        DIAMOND_ORE:
+          money-min: 7
+          money-max: 10
+          xp-min: 8
+          xp-max: 11
+        DEEPSLATE_DIAMOND_ORE:
+          money-min: 7
+          money-max: 10
+          xp-min: 8
+          xp-max: 11
+        EMERALD_ORE:
+          money-min: 8
+          money-max: 12
+          xp-min: 9
+          xp-max: 13
+        DEEPSLATE_EMERALD_ORE:
+          money-min: 8
+          money-max: 12
+          xp-min: 9
+          xp-max: 13
+        NETHER_GOLD_ORE:
+          money-min: 4
+          money-max: 6
+          xp-min: 5
+          xp-max: 7
+        NETHER_QUARTZ_ORE:
+          money-min: 3
+          money-max: 4
+          xp-min: 4
+          xp-max: 5
+        ANCIENT_DEBRIS:
+          money-min: 18
+          money-max: 26
+          xp-min: 20
+          xp-max: 30
         "#ores":
           money-min: 3
-          money-max: 7
-          xp-min: 4
-          xp-max: 8
-          daily-money-cap: 800
-          daily-xp-cap: 900
+          money-max: 5
+          xp-min: 3
+          xp-max: 6
 
   weaponsmith:
     enabled: true
     display-name: "Weaponsmith"
     description: "Craft and improve weapons."
+    caps:
+      daily-money-cap: 250
+      daily-xp-cap: 300
     rewards:
       craft:
         "#quality_weapons":
@@ -189,21 +316,14 @@ jobs:
           money-max: 7
           xp-min: 4
           xp-max: 7
-          daily-money-cap: 250
-          daily-xp-cap: 300
-      enchant:
-        "#quality_weapons":
-          money-min: 4
-          money-max: 7
-          xp-min: 5
-          xp-max: 8
-          daily-money-cap: 250
-          daily-xp-cap: 325
 
   woodcutter:
     enabled: true
     display-name: "Woodcutter"
     description: "Harvest logs and keep lumber flowing."
+    caps:
+      daily-money-cap: 450
+      daily-xp-cap: 550
     rewards:
       break:
         "#logs":
@@ -211,5 +331,3 @@ jobs:
           money-max: 3
           xp-min: 2
           xp-max: 4
-          daily-money-cap: 450
-          daily-xp-cap: 550
