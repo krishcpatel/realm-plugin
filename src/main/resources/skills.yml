@@ -1,0 +1,122 @@
+settings:
+  starting-level: 1
+  ignore-creative: true
+  brew-owner-expiry-ms: 300000
+  notifications:
+    enabled: true
+    xp-action-bar-enabled: true
+    xp-sound-enabled: true
+    xp-sound: ENTITY_EXPERIENCE_ORB_PICKUP
+    xp-sound-volume: 0.2
+    xp-sound-pitch: 1.4
+    levelup-action-bar-enabled: true
+    levelup-sound-enabled: false
+    levelup-sound: UI_TOAST_CHALLENGE_COMPLETE
+    levelup-sound-volume: 0.55
+    levelup-sound-pitch: 1.0
+
+  acrobatics:
+    dodge-chance: 0.07
+    roll-chance: 0.15
+    roll-damage-multiplier: 0.5
+    min-roll-fall-distance: 4.0
+
+  progression:
+    max-level: 100
+    required-xp-base: 100
+    required-xp-growth: 1.12
+
+skills:
+  unarmed:
+    enabled: true
+    display-name: "Unarmed"
+    category: "combat"
+    xp:
+      melee-hit: 5
+
+  archery:
+    enabled: true
+    display-name: "Archery"
+    category: "combat"
+    xp:
+      ranged-hit: 7
+
+  swords:
+    enabled: true
+    display-name: "Swords"
+    category: "combat"
+    xp:
+      melee-hit: 6
+
+  axes:
+    enabled: true
+    display-name: "Axes"
+    category: "combat"
+    xp:
+      melee-hit: 6
+
+  mining:
+    enabled: true
+    display-name: "Mining"
+    category: "gather"
+    xp:
+      ore-break: 9
+      stone-break: 2
+
+  woodcutting:
+    enabled: true
+    display-name: "Woodcutting"
+    category: "gather"
+    xp:
+      log-break: 6
+
+  herbalism:
+    enabled: true
+    display-name: "Herbalism"
+    category: "gather"
+    xp:
+      crop-harvest: 5
+
+  excavation:
+    enabled: true
+    display-name: "Excavation"
+    category: "gather"
+    xp:
+      shovel-dig: 4
+
+  fishing:
+    enabled: true
+    display-name: "Fishing"
+    category: "gather"
+    xp:
+      catch-fish: 8
+
+  repair:
+    enabled: true
+    display-name: "Repair"
+    category: "other"
+    xp:
+      anvil-use: 10
+
+  acrobatics:
+    enabled: true
+    display-name: "Acrobatics"
+    category: "other"
+    xp:
+      fall-damage-half-heart: 120
+      roll-success: 220
+      dodge-success: 240
+
+  alchemy:
+    enabled: true
+    display-name: "Alchemy"
+    category: "other"
+    xp:
+      brew: 10
+
+  taming:
+    enabled: true
+    display-name: "Taming"
+    category: "combat"
+    xp:
+      tame-entity: 180
