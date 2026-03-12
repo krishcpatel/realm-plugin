@@ -363,6 +363,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Logs a debug message if <code>debug: true</code> is enabled in <code>config.yml</code>.</div>
 </dd>
+<dt><a href="com/krishcpatel/realm/economy/repository/BankNoteRepository.html#deleteUnredeemed(java.sql.Connection,java.lang.String,java.lang.String)" class="member-name-link">deleteUnredeemed(Connection, String, String)</a> - Method in class com.krishcpatel.realm.economy.repository.<a href="com/krishcpatel/realm/economy/repository/BankNoteRepository.html" title="class in com.krishcpatel.realm.economy.repository">BankNoteRepository</a></dt>
+<dd>
+<div class="block">Deletes an unredeemed note row.</div>
+</dd>
 <dt><a href="com/krishcpatel/realm/jobs/model/JobDefinition.html#description()" class="member-name-link">description()</a> - Method in class com.krishcpatel.realm.jobs.model.<a href="com/krishcpatel/realm/jobs/model/JobDefinition.html" title="class in com.krishcpatel.realm.jobs.model">JobDefinition</a></dt>
 <dd>
 <div class="block">Returns the short description for this job.</div>
@@ -1246,9 +1250,21 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Handles block breaking actions for gathering skills.</div>
 </dd>
+<dt><a href="com/krishcpatel/realm/jobs/listener/JobsActionListener.html#onBlockFertilize(org.bukkit.event.block.BlockFertilizeEvent)" class="member-name-link">onBlockFertilize(BlockFertilizeEvent)</a> - Method in class com.krishcpatel.realm.jobs.listener.<a href="com/krishcpatel/realm/jobs/listener/JobsActionListener.html" title="class in com.krishcpatel.realm.jobs.listener">JobsActionListener</a></dt>
+<dd>
+<div class="block">Marks fertilized blocks as player-generated to prevent bonemeal farm loops.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/skills/listener/SkillsActionListener.html#onBlockFertilize(org.bukkit.event.block.BlockFertilizeEvent)" class="member-name-link">onBlockFertilize(BlockFertilizeEvent)</a> - Method in class com.krishcpatel.realm.skills.listener.<a href="com/krishcpatel/realm/skills/listener/SkillsActionListener.html" title="class in com.krishcpatel.realm.skills.listener">SkillsActionListener</a></dt>
+<dd>
+<div class="block">Marks fertilized blocks as player-generated to prevent bonemeal farm loops.</div>
+</dd>
 <dt><a href="com/krishcpatel/realm/jobs/listener/JobsActionListener.html#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)" class="member-name-link">onBlockPlace(BlockPlaceEvent)</a> - Method in class com.krishcpatel.realm.jobs.listener.<a href="com/krishcpatel/realm/jobs/listener/JobsActionListener.html" title="class in com.krishcpatel.realm.jobs.listener">JobsActionListener</a></dt>
 <dd>
 <div class="block">Handles block placement, persisting anti-farm guards and dispatching place rewards.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/skills/listener/SkillsActionListener.html#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)" class="member-name-link">onBlockPlace(BlockPlaceEvent)</a> - Method in class com.krishcpatel.realm.skills.listener.<a href="com/krishcpatel/realm/skills/listener/SkillsActionListener.html" title="class in com.krishcpatel.realm.skills.listener">SkillsActionListener</a></dt>
+<dd>
+<div class="block">Persists anti-farm placement guards for break-rewarded blocks.</div>
 </dd>
 <dt><a href="com/krishcpatel/realm/jobs/listener/JobsActionListener.html#onBrew(org.bukkit.event.inventory.BrewEvent)" class="member-name-link">onBrew(BrewEvent)</a> - Method in class com.krishcpatel.realm.jobs.listener.<a href="com/krishcpatel/realm/jobs/listener/JobsActionListener.html" title="class in com.krishcpatel.realm.jobs.listener">JobsActionListener</a></dt>
 <dd>
@@ -1298,6 +1314,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Handles player combat and projectile damage actions for combat skills.</div>
 </dd>
+<dt><a href="com/krishcpatel/realm/skills/listener/SkillsActionListener.html#onEntityDamageDefensive(org.bukkit.event.entity.EntityDamageByEntityEvent)" class="member-name-link">onEntityDamageDefensive(EntityDamageByEntityEvent)</a> - Method in class com.krishcpatel.realm.skills.listener.<a href="com/krishcpatel/realm/skills/listener/SkillsActionListener.html" title="class in com.krishcpatel.realm.skills.listener">SkillsActionListener</a></dt>
+<dd>
+<div class="block">Applies acrobatics dodge before other monitor listeners finalize combat damage.</div>
+</dd>
 <dt><a href="com/krishcpatel/realm/jobs/listener/JobsActionListener.html#onEntityDeath(org.bukkit.event.entity.EntityDeathEvent)" class="member-name-link">onEntityDeath(EntityDeathEvent)</a> - Method in class com.krishcpatel.realm.jobs.listener.<a href="com/krishcpatel/realm/jobs/listener/JobsActionListener.html" title="class in com.krishcpatel.realm.jobs.listener">JobsActionListener</a></dt>
 <dd>
 <div class="block">Handles entity kills and dispatches job kill actions for valid player kills.</div>
@@ -1308,7 +1328,11 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/krishcpatel/realm/skills/listener/SkillsActionListener.html#onFallDamage(org.bukkit.event.entity.EntityDamageEvent)" class="member-name-link">onFallDamage(EntityDamageEvent)</a> - Method in class com.krishcpatel.realm.skills.listener.<a href="com/krishcpatel/realm/skills/listener/SkillsActionListener.html" title="class in com.krishcpatel.realm.skills.listener">SkillsActionListener</a></dt>
 <dd>
-<div class="block">Handles acrobatics xp on fall damage and successful roll outcomes.</div>
+<div class="block">Handles acrobatics xp on fall damage using final post-modifier damage.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/skills/listener/SkillsActionListener.html#onFallDamageDefensive(org.bukkit.event.entity.EntityDamageEvent)" class="member-name-link">onFallDamageDefensive(EntityDamageEvent)</a> - Method in class com.krishcpatel.realm.skills.listener.<a href="com/krishcpatel/realm/skills/listener/SkillsActionListener.html" title="class in com.krishcpatel.realm.skills.listener">SkillsActionListener</a></dt>
+<dd>
+<div class="block">Applies acrobatics roll before monitor listeners read final damage.</div>
 </dd>
 <dt><a href="com/krishcpatel/realm/jobs/listener/JobsActionListener.html#onFish(org.bukkit.event.player.PlayerFishEvent)" class="member-name-link">onFish(PlayerFishEvent)</a> - Method in class com.krishcpatel.realm.jobs.listener.<a href="com/krishcpatel/realm/jobs/listener/JobsActionListener.html" title="class in com.krishcpatel.realm.jobs.listener">JobsActionListener</a></dt>
 <dd>
@@ -1329,6 +1353,14 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/krishcpatel/realm/jobs/listener/JobsActionListener.html#onMove(org.bukkit.event.player.PlayerMoveEvent)" class="member-name-link">onMove(PlayerMoveEvent)</a> - Method in class com.krishcpatel.realm.jobs.listener.<a href="com/krishcpatel/realm/jobs/listener/JobsActionListener.html" title="class in com.krishcpatel.realm.jobs.listener">JobsActionListener</a></dt>
 <dd>
 <div class="block">Handles chunk-to-chunk movement and dispatches explorer actions for newly entered chunks.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/jobs/listener/JobsActionListener.html#onStructureGrow(org.bukkit.event.world.StructureGrowEvent)" class="member-name-link">onStructureGrow(StructureGrowEvent)</a> - Method in class com.krishcpatel.realm.jobs.listener.<a href="com/krishcpatel/realm/jobs/listener/JobsActionListener.html" title="class in com.krishcpatel.realm.jobs.listener">JobsActionListener</a></dt>
+<dd>
+<div class="block">Marks bonemeal-grown structure blocks (for example trees) as player-generated.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/skills/listener/SkillsActionListener.html#onStructureGrow(org.bukkit.event.world.StructureGrowEvent)" class="member-name-link">onStructureGrow(StructureGrowEvent)</a> - Method in class com.krishcpatel.realm.skills.listener.<a href="com/krishcpatel/realm/skills/listener/SkillsActionListener.html" title="class in com.krishcpatel.realm.skills.listener">SkillsActionListener</a></dt>
+<dd>
+<div class="block">Marks bonemeal-grown structure blocks (for example trees) as player-generated.</div>
 </dd>
 <dt><a href="com/krishcpatel/realm/skills/listener/SkillsActionListener.html#onTame(org.bukkit.event.entity.EntityTameEvent)" class="member-name-link">onTame(EntityTameEvent)</a> - Method in class com.krishcpatel.realm.skills.listener.<a href="com/krishcpatel/realm/skills/listener/SkillsActionListener.html" title="class in com.krishcpatel.realm.skills.listener">SkillsActionListener</a></dt>
 <dd>
@@ -1437,6 +1469,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Publishes an event asynchronously using the server scheduler.</div>
 </dd>
+<dt><a href="com/krishcpatel/realm/jobs/repository/JobsRepository.html#purgePlacedBlockGuardsOlderThan(long)" class="member-name-link">purgePlacedBlockGuardsOlderThan(long)</a> - Method in class com.krishcpatel.realm.jobs.repository.<a href="com/krishcpatel/realm/jobs/repository/JobsRepository.html" title="class in com.krishcpatel.realm.jobs.repository">JobsRepository</a></dt>
+<dd>
+<div class="block">Purges stale placed-block guard rows older than the provided cutoff.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:R">R</h2>
 <dl class="index">
@@ -1495,6 +1531,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/krishcpatel/realm/economy/event/LedgerRecordedEvent.html#reference()" class="member-name-link">reference()</a> - Method in class com.krishcpatel.realm.economy.event.<a href="com/krishcpatel/realm/economy/event/LedgerRecordedEvent.html" title="class in com.krishcpatel.realm.economy.event">LedgerRecordedEvent</a></dt>
 <dd>
 <div class="block">Returns an optional external reference id (shop id, team id, plot id, etc.).</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/economy/manager/BankNoteManager.html#refundIssuedNote(java.lang.String,java.lang.String,long)" class="member-name-link">refundIssuedNote(String, String, long)</a> - Method in class com.krishcpatel.realm.economy.manager.<a href="com/krishcpatel/realm/economy/manager/BankNoteManager.html" title="class in com.krishcpatel.realm.economy.manager">BankNoteManager</a></dt>
+<dd>
+<div class="block">Reverses an issued note when delivery to the player cannot be completed.</div>
 </dd>
 <dt><a href="com/krishcpatel/realm/core/module/Module.html#reload()" class="member-name-link">reload()</a> - Method in interface com.krishcpatel.realm.core.module.<a href="com/krishcpatel/realm/core/module/Module.html" title="interface in com.krishcpatel.realm.core.module">Module</a></dt>
 <dd>
@@ -1685,7 +1725,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Converts Bukkit actions into normalized skill actions.</div>
 </dd>
-<dt><a href="com/krishcpatel/realm/skills/listener/SkillsActionListener.html#%3Cinit%3E(com.krishcpatel.realm.core.Core,com.krishcpatel.realm.skills.manager.SkillProgressService)" class="member-name-link">SkillsActionListener(Core, SkillProgressService)</a> - Constructor for class com.krishcpatel.realm.skills.listener.<a href="com/krishcpatel/realm/skills/listener/SkillsActionListener.html" title="class in com.krishcpatel.realm.skills.listener">SkillsActionListener</a></dt>
+<dt><a href="com/krishcpatel/realm/skills/listener/SkillsActionListener.html#%3Cinit%3E(com.krishcpatel.realm.core.Core,com.krishcpatel.realm.skills.manager.SkillProgressService,com.krishcpatel.realm.jobs.repository.JobsRepository)" class="member-name-link">SkillsActionListener(Core, SkillProgressService, JobsRepository)</a> - Constructor for class com.krishcpatel.realm.skills.listener.<a href="com/krishcpatel/realm/skills/listener/SkillsActionListener.html" title="class in com.krishcpatel.realm.skills.listener">SkillsActionListener</a></dt>
 <dd>
 <div class="block">Creates the skill action listener.</div>
 </dd>

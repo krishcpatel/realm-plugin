@@ -108,8 +108,9 @@ implements org.bukkit.event.Listener</span></div>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.krishcpatel.realm.core.Core,com.krishcpatel.realm.skills.manager.SkillProgressService)" class="member-name-link">SkillsActionListener</a><wbr>(<a href="../../core/Core.html" title="class in com.krishcpatel.realm.core">Core</a>&nbsp;core,
- <a href="../manager/SkillProgressService.html" title="class in com.krishcpatel.realm.skills.manager">SkillProgressService</a>&nbsp;progress)</code></div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.krishcpatel.realm.core.Core,com.krishcpatel.realm.skills.manager.SkillProgressService,com.krishcpatel.realm.jobs.repository.JobsRepository)" class="member-name-link">SkillsActionListener</a><wbr>(<a href="../../core/Core.html" title="class in com.krishcpatel.realm.core">Core</a>&nbsp;core,
+ <a href="../manager/SkillProgressService.html" title="class in com.krishcpatel.realm.skills.manager">SkillProgressService</a>&nbsp;progress,
+ <a href="../../jobs/repository/JobsRepository.html" title="class in com.krishcpatel.realm.jobs.repository">JobsRepository</a>&nbsp;guardRepo)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Creates the skill action listener.</div>
 </div>
@@ -138,6 +139,16 @@ implements org.bukkit.event.Listener</span></div>
 <div class="block">Handles block breaking actions for gathering skills.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onBlockFertilize(org.bukkit.event.block.BlockFertilizeEvent)" class="member-name-link">onBlockFertilize</a><wbr>(org.bukkit.event.block.BlockFertilizeEvent&nbsp;event)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Marks fertilized blocks as player-generated to prevent bonemeal farm loops.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)" class="member-name-link">onBlockPlace</a><wbr>(org.bukkit.event.block.BlockPlaceEvent&nbsp;event)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Persists anti-farm placement guards for break-rewarded blocks.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onBrew(org.bukkit.event.inventory.BrewEvent)" class="member-name-link">onBrew</a><wbr>(org.bukkit.event.inventory.BrewEvent&nbsp;event)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Handles completed brew actions for the alchemy skill.</div>
@@ -153,9 +164,19 @@ implements org.bukkit.event.Listener</span></div>
 <div class="block">Handles player combat and projectile damage actions for combat skills.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onFallDamage(org.bukkit.event.entity.EntityDamageEvent)" class="member-name-link">onFallDamage</a><wbr>(org.bukkit.event.entity.EntityDamageEvent&nbsp;event)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onEntityDamageDefensive(org.bukkit.event.entity.EntityDamageByEntityEvent)" class="member-name-link">onEntityDamageDefensive</a><wbr>(org.bukkit.event.entity.EntityDamageByEntityEvent&nbsp;event)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Handles acrobatics xp on fall damage and successful roll outcomes.</div>
+<div class="block">Applies acrobatics dodge before other monitor listeners finalize combat damage.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onFallDamage(org.bukkit.event.entity.EntityDamageEvent)" class="member-name-link">onFallDamage</a><wbr>(org.bukkit.event.entity.EntityDamageEvent&nbsp;event)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Handles acrobatics xp on fall damage using final post-modifier damage.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onFallDamageDefensive(org.bukkit.event.entity.EntityDamageEvent)" class="member-name-link">onFallDamageDefensive</a><wbr>(org.bukkit.event.entity.EntityDamageEvent&nbsp;event)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Applies acrobatics roll before monitor listeners read final damage.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onFish(org.bukkit.event.player.PlayerFishEvent)" class="member-name-link">onFish</a><wbr>(org.bukkit.event.player.PlayerFishEvent&nbsp;event)</code></div>
@@ -163,8 +184,13 @@ implements org.bukkit.event.Listener</span></div>
 <div class="block">Handles successful fishing catches for the fishing skill.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onTame(org.bukkit.event.entity.EntityTameEvent)" class="member-name-link">onTame</a><wbr>(org.bukkit.event.entity.EntityTameEvent&nbsp;event)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onStructureGrow(org.bukkit.event.world.StructureGrowEvent)" class="member-name-link">onStructureGrow</a><wbr>(org.bukkit.event.world.StructureGrowEvent&nbsp;event)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Marks bonemeal-grown structure blocks (for example trees) as player-generated.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onTame(org.bukkit.event.entity.EntityTameEvent)" class="member-name-link">onTame</a><wbr>(org.bukkit.event.entity.EntityTameEvent&nbsp;event)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Handles successful taming for the taming skill.</div>
 </div>
 </div>
@@ -185,15 +211,17 @@ implements org.bukkit.event.Listener</span></div>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(com.krishcpatel.realm.core.Core,com.krishcpatel.realm.skills.manager.SkillProgressService)">
+<section class="detail" id="&lt;init&gt;(com.krishcpatel.realm.core.Core,com.krishcpatel.realm.skills.manager.SkillProgressService,com.krishcpatel.realm.jobs.repository.JobsRepository)">
 <h3>SkillsActionListener</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">SkillsActionListener</span><wbr><span class="parameters">(<a href="../../core/Core.html" title="class in com.krishcpatel.realm.core">Core</a>&nbsp;core,
- <a href="../manager/SkillProgressService.html" title="class in com.krishcpatel.realm.skills.manager">SkillProgressService</a>&nbsp;progress)</span></div>
+ <a href="../manager/SkillProgressService.html" title="class in com.krishcpatel.realm.skills.manager">SkillProgressService</a>&nbsp;progress,
+ <a href="../../jobs/repository/JobsRepository.html" title="class in com.krishcpatel.realm.jobs.repository">JobsRepository</a>&nbsp;guardRepo)</span></div>
 <div class="block">Creates the skill action listener.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>core</code> - plugin instance</dd>
 <dd><code>progress</code> - skill progression service</dd>
+<dd><code>guardRepo</code> - shared placed-block guard repository</dd>
 </dl>
 </section>
 </li>
@@ -205,6 +233,17 @@ implements org.bukkit.event.Listener</span></div>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="onEntityDamageDefensive(org.bukkit.event.entity.EntityDamageByEntityEvent)">
+<h3>onEntityDamageDefensive</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onEntityDamageDefensive</span><wbr><span class="parameters">(org.bukkit.event.entity.EntityDamageByEntityEvent&nbsp;event)</span></div>
+<div class="block">Applies acrobatics dodge before other monitor listeners finalize combat damage.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>event</code> - damage event</dd>
+</dl>
+</section>
+</li>
 <li>
 <section class="detail" id="onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)">
 <h3>onEntityDamage</h3>
@@ -228,10 +267,21 @@ implements org.bukkit.event.Listener</span></div>
 </section>
 </li>
 <li>
+<section class="detail" id="onFallDamageDefensive(org.bukkit.event.entity.EntityDamageEvent)">
+<h3>onFallDamageDefensive</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onFallDamageDefensive</span><wbr><span class="parameters">(org.bukkit.event.entity.EntityDamageEvent&nbsp;event)</span></div>
+<div class="block">Applies acrobatics roll before monitor listeners read final damage.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>event</code> - damage event</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="onFallDamage(org.bukkit.event.entity.EntityDamageEvent)">
 <h3>onFallDamage</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onFallDamage</span><wbr><span class="parameters">(org.bukkit.event.entity.EntityDamageEvent&nbsp;event)</span></div>
-<div class="block">Handles acrobatics xp on fall damage and successful roll outcomes.</div>
+<div class="block">Handles acrobatics xp on fall damage using final post-modifier damage.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>event</code> - damage event</dd>
@@ -246,6 +296,39 @@ implements org.bukkit.event.Listener</span></div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>event</code> - block break event</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)">
+<h3>onBlockPlace</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onBlockPlace</span><wbr><span class="parameters">(org.bukkit.event.block.BlockPlaceEvent&nbsp;event)</span></div>
+<div class="block">Persists anti-farm placement guards for break-rewarded blocks.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>event</code> - block place event</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="onBlockFertilize(org.bukkit.event.block.BlockFertilizeEvent)">
+<h3>onBlockFertilize</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onBlockFertilize</span><wbr><span class="parameters">(org.bukkit.event.block.BlockFertilizeEvent&nbsp;event)</span></div>
+<div class="block">Marks fertilized blocks as player-generated to prevent bonemeal farm loops.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>event</code> - fertilize event</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="onStructureGrow(org.bukkit.event.world.StructureGrowEvent)">
+<h3>onStructureGrow</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onStructureGrow</span><wbr><span class="parameters">(org.bukkit.event.world.StructureGrowEvent&nbsp;event)</span></div>
+<div class="block">Marks bonemeal-grown structure blocks (for example trees) as player-generated.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>event</code> - structure grow event</dd>
 </dl>
 </section>
 </li>

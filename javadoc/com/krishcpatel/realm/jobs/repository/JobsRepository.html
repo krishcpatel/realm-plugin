@@ -235,14 +235,19 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Persists a placed block guard so the block cannot later be farmed for break rewards.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#updateProgress(java.sql.Connection,java.lang.String,java.lang.String,int,long,long)" class="member-name-link">updateProgress</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/Connection.html" title="class or interface in java.sql" class="external-link">Connection</a>&nbsp;c,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#purgePlacedBlockGuardsOlderThan(long)" class="member-name-link">purgePlacedBlockGuardsOlderThan</a><wbr>(long&nbsp;cutoffMillis)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Purges stale placed-block guard rows older than the provided cutoff.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#updateProgress(java.sql.Connection,java.lang.String,java.lang.String,int,long,long)" class="member-name-link">updateProgress</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/Connection.html" title="class or interface in java.sql" class="external-link">Connection</a>&nbsp;c,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;playerUuid,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;jobId,
  int&nbsp;level,
  long&nbsp;xp,
  long&nbsp;totalXp)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Updates a player's stored level and xp totals for a job.</div>
 </div>
 </div>
@@ -611,6 +616,22 @@ loadScripts(document, 'script');</script>
 <dd><code>z</code> - block z</dd>
 <dt>Returns:</dt>
 <dd>true if the block was known to be player-placed</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/SQLException.html" title="class or interface in java.sql" class="external-link">SQLException</a></code> - if the delete fails</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="purgePlacedBlockGuardsOlderThan(long)">
+<h3>purgePlacedBlockGuardsOlderThan</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">purgePlacedBlockGuardsOlderThan</span><wbr><span class="parameters">(long&nbsp;cutoffMillis)</span>
+                                    throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/SQLException.html" title="class or interface in java.sql" class="external-link">SQLException</a></span></div>
+<div class="block">Purges stale placed-block guard rows older than the provided cutoff.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>cutoffMillis</code> - epoch millis cutoff (rows older than this are deleted)</dd>
+<dt>Returns:</dt>
+<dd>deleted row count</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/SQLException.html" title="class or interface in java.sql" class="external-link">SQLException</a></code> - if the delete fails</dd>
 </dl>

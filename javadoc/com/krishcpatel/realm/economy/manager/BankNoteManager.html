@@ -156,6 +156,13 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Redeems the banknote currently held in the player's main hand.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#refundIssuedNote(java.lang.String,java.lang.String,long)" class="member-name-link">refundIssuedNote</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;playerUuid,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;noteId,
+ long&nbsp;amount)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Reverses an issued note when delivery to the player cannot be completed.</div>
+</div>
 </div>
 </div>
 </div>
@@ -238,6 +245,29 @@ loadScripts(document, 'script');</script>
 <dd>result describing whether the redemption succeeded</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Exception.html" title="class or interface in java.lang" class="external-link">Exception</a></code> - if database or sync inventory operations fail</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="refundIssuedNote(java.lang.String,java.lang.String,long)">
+<h3>refundIssuedNote</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">refundIssuedNote</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;playerUuid,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;noteId,
+ long&nbsp;amount)</span>
+                         throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/SQLException.html" title="class or interface in java.sql" class="external-link">SQLException</a></span></div>
+<div class="block">Reverses an issued note when delivery to the player cannot be completed.
+
+ <p>The note row is deleted (if still unredeemed) and the amount is refunded
+ to the player's balance in one transaction.</p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>playerUuid</code> - player to refund</dd>
+<dd><code>noteId</code> - issued note id</dd>
+<dd><code>amount</code> - expected note amount</dd>
+<dt>Returns:</dt>
+<dd>true when a refund was applied</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.sql/java/sql/SQLException.html" title="class or interface in java.sql" class="external-link">SQLException</a></code> - if database access fails</dd>
 </dl>
 </section>
 </li>

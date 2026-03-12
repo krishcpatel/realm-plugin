@@ -134,44 +134,54 @@ implements org.bukkit.event.Listener</span></div>
 <div class="block">Handles block breaks and awards break rewards when the block is not protected by anti-farm guards.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)" class="member-name-link">onBlockPlace</a><wbr>(org.bukkit.event.block.BlockPlaceEvent&nbsp;event)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onBlockFertilize(org.bukkit.event.block.BlockFertilizeEvent)" class="member-name-link">onBlockFertilize</a><wbr>(org.bukkit.event.block.BlockFertilizeEvent&nbsp;event)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Marks fertilized blocks as player-generated to prevent bonemeal farm loops.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onBlockPlace(org.bukkit.event.block.BlockPlaceEvent)" class="member-name-link">onBlockPlace</a><wbr>(org.bukkit.event.block.BlockPlaceEvent&nbsp;event)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Handles block placement, persisting anti-farm guards and dispatching place rewards.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onBrew(org.bukkit.event.inventory.BrewEvent)" class="member-name-link">onBrew</a><wbr>(org.bukkit.event.inventory.BrewEvent&nbsp;event)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onBrew(org.bukkit.event.inventory.BrewEvent)" class="member-name-link">onBrew</a><wbr>(org.bukkit.event.inventory.BrewEvent&nbsp;event)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Handles brewing completion and dispatches brew rewards to the most recent valid brewing stand user.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onBrewingInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)" class="member-name-link">onBrewingInventoryClick</a><wbr>(org.bukkit.event.inventory.InventoryClickEvent&nbsp;event)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onBrewingInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)" class="member-name-link">onBrewingInventoryClick</a><wbr>(org.bukkit.event.inventory.InventoryClickEvent&nbsp;event)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Tracks the last player to interact with a brewing stand so completed brews can be attributed safely.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onCraft(org.bukkit.event.inventory.CraftItemEvent)" class="member-name-link">onCraft</a><wbr>(org.bukkit.event.inventory.CraftItemEvent&nbsp;event)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onCraft(org.bukkit.event.inventory.CraftItemEvent)" class="member-name-link">onCraft</a><wbr>(org.bukkit.event.inventory.CraftItemEvent&nbsp;event)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Handles completed crafting actions and dispatches a normalized craft reward action.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onEnchant(org.bukkit.event.enchantment.EnchantItemEvent)" class="member-name-link">onEnchant</a><wbr>(org.bukkit.event.enchantment.EnchantItemEvent&nbsp;event)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onEnchant(org.bukkit.event.enchantment.EnchantItemEvent)" class="member-name-link">onEnchant</a><wbr>(org.bukkit.event.enchantment.EnchantItemEvent&nbsp;event)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Handles enchanting actions and dispatches a normalized enchant reward action.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onEntityDeath(org.bukkit.event.entity.EntityDeathEvent)" class="member-name-link">onEntityDeath</a><wbr>(org.bukkit.event.entity.EntityDeathEvent&nbsp;event)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onEntityDeath(org.bukkit.event.entity.EntityDeathEvent)" class="member-name-link">onEntityDeath</a><wbr>(org.bukkit.event.entity.EntityDeathEvent&nbsp;event)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Handles entity kills and dispatches job kill actions for valid player kills.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onFish(org.bukkit.event.player.PlayerFishEvent)" class="member-name-link">onFish</a><wbr>(org.bukkit.event.player.PlayerFishEvent&nbsp;event)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onFish(org.bukkit.event.player.PlayerFishEvent)" class="member-name-link">onFish</a><wbr>(org.bukkit.event.player.PlayerFishEvent&nbsp;event)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Handles successful fishing catches and dispatches a normalized fishing reward action.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onMove(org.bukkit.event.player.PlayerMoveEvent)" class="member-name-link">onMove</a><wbr>(org.bukkit.event.player.PlayerMoveEvent&nbsp;event)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onMove(org.bukkit.event.player.PlayerMoveEvent)" class="member-name-link">onMove</a><wbr>(org.bukkit.event.player.PlayerMoveEvent&nbsp;event)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Handles chunk-to-chunk movement and dispatches explorer actions for newly entered chunks.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onStructureGrow(org.bukkit.event.world.StructureGrowEvent)" class="member-name-link">onStructureGrow</a><wbr>(org.bukkit.event.world.StructureGrowEvent&nbsp;event)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Marks bonemeal-grown structure blocks (for example trees) as player-generated.</div>
 </div>
 </div>
 </div>
@@ -232,6 +242,28 @@ implements org.bukkit.event.Listener</span></div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>event</code> - block place event</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="onBlockFertilize(org.bukkit.event.block.BlockFertilizeEvent)">
+<h3>onBlockFertilize</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onBlockFertilize</span><wbr><span class="parameters">(org.bukkit.event.block.BlockFertilizeEvent&nbsp;event)</span></div>
+<div class="block">Marks fertilized blocks as player-generated to prevent bonemeal farm loops.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>event</code> - fertilize event</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="onStructureGrow(org.bukkit.event.world.StructureGrowEvent)">
+<h3>onStructureGrow</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onStructureGrow</span><wbr><span class="parameters">(org.bukkit.event.world.StructureGrowEvent&nbsp;event)</span></div>
+<div class="block">Marks bonemeal-grown structure blocks (for example trees) as player-generated.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>event</code> - structure grow event</dd>
 </dl>
 </section>
 </li>
