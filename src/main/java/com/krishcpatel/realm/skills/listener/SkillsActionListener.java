@@ -1,6 +1,7 @@
 package com.krishcpatel.realm.skills.listener;
 
 import com.krishcpatel.realm.core.Core;
+import com.krishcpatel.realm.core.guard.PlacedBlockGuardObservationCache;
 import com.krishcpatel.realm.jobs.repository.JobsRepository;
 import com.krishcpatel.realm.skills.manager.SkillProgressService;
 import com.krishcpatel.realm.skills.model.SkillActionContext;
@@ -214,10 +215,18 @@ public final class SkillsActionListener implements Listener {
 
         core.getServer().getScheduler().runTaskAsynchronously(core, () -> {
             try {
-                boolean playerPlaced = guardRepo.consumePlacedBlockGuard(world, x, y, z);
-                if (!playerPlaced) {
-                    dispatchBreakRewards(uuid, name, miningOre, miningStone, woodcutting, herbalism, excavation);
+                boolean playerPlaced = guardRepo.hasPlacedBlockGuard(world, x, y, z);
+                if (playerPlaced) {
+                    PlacedBlockGuardObservationCache.markObserved(world, x, y, z);
+                    clearStoredPlacedBreakGuard(world, x, y, z);
+                    return;
                 }
+
+                if (PlacedBlockGuardObservationCache.wasRecentlyObserved(world, x, y, z)) {
+                    return;
+                }
+
+                dispatchBreakRewards(uuid, name, miningOre, miningStone, woodcutting, herbalism, excavation);
             } catch (Exception e) {
                 core.getLogger().severe("[skills] Failed to check placed-block guard for "
                         + world + " " + x + "," + y + "," + z);
@@ -480,6 +489,18 @@ public final class SkillsActionListener implements Listener {
                 placedBreakGuards.remove(key);
             } catch (Exception e) {
                 core.getLogger().severe("[skills] Failed to persist placed-block guard for "
+                        + world + " " + x + "," + y + "," + z);
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void clearStoredPlacedBreakGuard(String world, int x, int y, int z) {
+        core.getServer().getScheduler().runTaskAsynchronously(core, () -> {
+            try {
+                guardRepo.deletePlacedBlockGuard(world, x, y, z);
+            } catch (Exception e) {
+                core.getLogger().severe("[skills] Failed to clear placed-block guard for "
                         + world + " " + x + "," + y + "," + z);
                 e.printStackTrace();
             }

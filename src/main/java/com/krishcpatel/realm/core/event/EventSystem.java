@@ -35,7 +35,7 @@ public class EventSystem {
      */
     public <T extends RealmEvent> void subscribe(Class<T> type, RealmEventListener<T> listener) {
         listeners.computeIfAbsent(type, k -> new CopyOnWriteArrayList<>()).add(listener);
-        if (plugin.getConfig().getBoolean("debug", false)) {
+        if (plugin.getConfig().getBoolean("plugin.debug", false)) {
             plugin.getLogger().info("[DEBUG] Subscribed to " + type.getSimpleName());
         }
     }
@@ -51,7 +51,7 @@ public class EventSystem {
     @SuppressWarnings("unchecked")
     public <T extends RealmEvent> void publish(T event) {
         List<RealmEventListener<?>> list = listeners.get(event.getClass());
-        if (plugin.getConfig().getBoolean("debug", false)) {
+        if (plugin.getConfig().getBoolean("plugin.debug", false)) {
             plugin.getLogger().info("[DEBUG] Published " + event.getClass().getSimpleName()
                     + " listeners=" + (list == null ? 0 : list.size()));
         }

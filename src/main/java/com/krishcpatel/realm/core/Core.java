@@ -113,7 +113,7 @@ public final class Core extends JavaPlugin {
             try {
                 module.disable();
             } catch (Exception e) {
-                getLogger().severe("Failed to enable module");
+                getLogger().severe("Failed to disable module");
                 e.printStackTrace();
             }
         }
@@ -194,7 +194,7 @@ public final class Core extends JavaPlugin {
      * @param msg debug message
      */
     public void debug(String msg) {
-        if (getConfig().getBoolean("debug", false)) {
+        if (config().getBoolean("plugin.debug", false)) {
             getLogger().info("[DEBUG] " + msg);
         }
     }

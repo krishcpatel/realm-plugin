@@ -548,19 +548,50 @@ public final class JobsRepository {
     }
 
     /**
-     * Consumes a placed block guard if one exists for the given location.
+     * Returns whether a placed-block anti-farm guard exists for the location.
      *
-     * <p>This is used on block break to suppress rewards for player-placed blocks
-     * while also removing the guard row once it has served its purpose.</p>
+     * <p>This is used on block break to suppress rewards for player-placed blocks.
+     * Callers may clear the guard afterward once all interested subsystems have observed it.</p>
      *
      * @param world world name
      * @param x block x
      * @param y block y
      * @param z block z
      * @return true if the block was known to be player-placed
+     * @throws SQLException if the query fails
+     */
+    public boolean hasPlacedBlockGuard(String world, int x, int y, int z) throws SQLException {
+        try (Connection c = db.getConnection();
+             PreparedStatement ps = c.prepareStatement("""
+            SELECT 1
+            FROM jobs_placed_block_guards
+            WHERE world = ?
+              AND x = ?
+              AND y = ?
+              AND z = ?
+            LIMIT 1
+        """)) {
+            ps.setString(1, world);
+            ps.setInt(2, x);
+            ps.setInt(3, y);
+            ps.setInt(4, z);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    /**
+     * Deletes a placed-block anti-farm guard if one exists for the location.
+     *
+     * @param world world name
+     * @param x block x
+     * @param y block y
+     * @param z block z
+     * @return true if a guard row was deleted
      * @throws SQLException if the delete fails
      */
-    public boolean consumePlacedBlockGuard(String world, int x, int y, int z) throws SQLException {
+    public boolean deletePlacedBlockGuard(String world, int x, int y, int z) throws SQLException {
         return db.executeWrite(() -> {
             try (Connection c = db.getConnection();
                  PreparedStatement ps = c.prepareStatement("""

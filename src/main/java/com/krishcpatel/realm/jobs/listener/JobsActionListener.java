@@ -1,6 +1,7 @@
 package com.krishcpatel.realm.jobs.listener;
 
 import com.krishcpatel.realm.core.Core;
+import com.krishcpatel.realm.core.guard.PlacedBlockGuardObservationCache;
 import com.krishcpatel.realm.jobs.manager.JobRewardService;
 import com.krishcpatel.realm.jobs.model.JobActionContext;
 import com.krishcpatel.realm.jobs.model.JobActionType;
@@ -138,10 +139,18 @@ public final class JobsActionListener implements Listener {
 
         core.getServer().getScheduler().runTaskAsynchronously(core, () -> {
             try {
-                boolean playerPlaced = repo.consumePlacedBlockGuard(world, x, y, z);
-                if (!playerPlaced) {
-                    rewards.handleAction(context);
+                boolean playerPlaced = repo.hasPlacedBlockGuard(world, x, y, z);
+                if (playerPlaced) {
+                    PlacedBlockGuardObservationCache.markObserved(world, x, y, z);
+                    clearStoredPlacedBreakGuard(world, x, y, z);
+                    return;
                 }
+
+                if (PlacedBlockGuardObservationCache.wasRecentlyObserved(world, x, y, z)) {
+                    return;
+                }
+
+                rewards.handleAction(context);
             } catch (Exception e) {
                 core.getLogger().severe("[jobs] Failed to check placed-block guard for "
                         + world + " " + x + "," + y + "," + z);
@@ -508,6 +517,18 @@ public final class JobsActionListener implements Listener {
                 placedBreakGuards.remove(key);
             } catch (Exception e) {
                 core.getLogger().severe("[jobs] Failed to persist placed-block guard for "
+                        + world + " " + x + "," + y + "," + z);
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void clearStoredPlacedBreakGuard(String world, int x, int y, int z) {
+        core.getServer().getScheduler().runTaskAsynchronously(core, () -> {
+            try {
+                repo.deletePlacedBlockGuard(world, x, y, z);
+            } catch (Exception e) {
+                core.getLogger().severe("[jobs] Failed to clear placed-block guard for "
                         + world + " " + x + "," + y + "," + z);
                 e.printStackTrace();
             }

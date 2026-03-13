@@ -127,6 +127,13 @@ public class EconomyModule implements Module {
 
     @Override
     public void reload() {
+        if (!core.config().getBoolean("modules.economy", true)) {
+            return;
+        }
+        if (economyRepo == null || ledgerRepo == null || bankNoteRepo == null || tx == null || bankNoteManager == null) {
+            core.getLogger().warning("[economy] Reload requested before the module was initialized. Restart required.");
+            return;
+        }
         registerEventSubscriptions();
         core.logger.info("[economy] reloaded");
     }
