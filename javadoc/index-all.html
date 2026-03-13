@@ -218,6 +218,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/krishcpatel/realm/core/event/player/package-summary.html">com.krishcpatel.realm.core.event.player</a> - package com.krishcpatel.realm.core.event.player</dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/krishcpatel/realm/core/guard/package-summary.html">com.krishcpatel.realm.core.guard</a> - package com.krishcpatel.realm.core.guard</dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/krishcpatel/realm/core/listener/package-summary.html">com.krishcpatel.realm.core.listener</a> - package com.krishcpatel.realm.core.listener</dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/krishcpatel/realm/core/module/package-summary.html">com.krishcpatel.realm.core.module</a> - package com.krishcpatel.realm.core.module</dt>
@@ -302,10 +304,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Opens the database connection and initializes schema/migrations.</div>
 </dd>
-<dt><a href="com/krishcpatel/realm/jobs/repository/JobsRepository.html#consumePlacedBlockGuard(java.lang.String,int,int,int)" class="member-name-link">consumePlacedBlockGuard(String, int, int, int)</a> - Method in class com.krishcpatel.realm.jobs.repository.<a href="com/krishcpatel/realm/jobs/repository/JobsRepository.html" title="class in com.krishcpatel.realm.jobs.repository">JobsRepository</a></dt>
-<dd>
-<div class="block">Consumes a placed block guard if one exists for the given location.</div>
-</dd>
 <dt><a href="com/krishcpatel/realm/core/Core.html" class="type-name-link" title="class in com.krishcpatel.realm.core">Core</a> - Class in <a href="com/krishcpatel/realm/core/package-summary.html">com.krishcpatel.realm.core</a></dt>
 <dd>
 <div class="block">Main entry point for the Realm plugin.</div>
@@ -384,6 +382,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/krishcpatel/realm/core/Core.html#debug(java.lang.String)" class="member-name-link">debug(String)</a> - Method in class com.krishcpatel.realm.core.<a href="com/krishcpatel/realm/core/Core.html" title="class in com.krishcpatel.realm.core">Core</a></dt>
 <dd>
 <div class="block">Logs a debug message if <code>debug: true</code> is enabled in <code>config.yml</code>.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/jobs/repository/JobsRepository.html#deletePlacedBlockGuard(java.lang.String,int,int,int)" class="member-name-link">deletePlacedBlockGuard(String, int, int, int)</a> - Method in class com.krishcpatel.realm.jobs.repository.<a href="com/krishcpatel/realm/jobs/repository/JobsRepository.html" title="class in com.krishcpatel.realm.jobs.repository">JobsRepository</a></dt>
+<dd>
+<div class="block">Deletes a placed-block anti-farm guard if one exists for the location.</div>
 </dd>
 <dt><a href="com/krishcpatel/realm/economy/repository/BankNoteRepository.html#deleteUnredeemed(java.sql.Connection,java.lang.String,java.lang.String)" class="member-name-link">deleteUnredeemed(Connection, String, String)</a> - Method in class com.krishcpatel.realm.economy.repository.<a href="com/krishcpatel/realm/economy/repository/BankNoteRepository.html" title="class in com.krishcpatel.realm.economy.repository">BankNoteRepository</a></dt>
 <dd>
@@ -787,6 +789,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns a hash code value for this object.</div>
 </dd>
+<dt><a href="com/krishcpatel/realm/jobs/repository/JobsRepository.html#hasPlacedBlockGuard(java.lang.String,int,int,int)" class="member-name-link">hasPlacedBlockGuard(String, int, int, int)</a> - Method in class com.krishcpatel.realm.jobs.repository.<a href="com/krishcpatel/realm/jobs/repository/JobsRepository.html" title="class in com.krishcpatel.realm.jobs.repository">JobsRepository</a></dt>
+<dd>
+<div class="block">Returns whether a placed-block anti-farm guard exists for the location.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:I">I</h2>
 <dl class="index">
@@ -1127,6 +1133,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Marks a global boss payout as claimed for a player/day combination.</div>
 </dd>
+<dt><a href="com/krishcpatel/realm/core/guard/PlacedBlockGuardObservationCache.html#markObserved(java.lang.String,int,int,int)" class="member-name-link">markObserved(String, int, int, int)</a> - Static method in class com.krishcpatel.realm.core.guard.<a href="com/krishcpatel/realm/core/guard/PlacedBlockGuardObservationCache.html" title="class in com.krishcpatel.realm.core.guard">PlacedBlockGuardObservationCache</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/krishcpatel/realm/jobs/repository/JobsRepository.html#markPlacedBlockGuard(java.lang.String,int,int,int,java.lang.String,java.lang.String,long)" class="member-name-link">markPlacedBlockGuard(String, int, int, int, String, String, long)</a> - Method in class com.krishcpatel.realm.jobs.repository.<a href="com/krishcpatel/realm/jobs/repository/JobsRepository.html" title="class in com.krishcpatel.realm.jobs.repository">JobsRepository</a></dt>
 <dd>
 <div class="block">Persists a placed block guard so the block cannot later be farmed for break rewards.</div>
@@ -1440,6 +1448,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/krishcpatel/realm/jobs/model/JobActionType.html#PLACE" class="member-name-link">PLACE</a> - Enum constant in enum class com.krishcpatel.realm.jobs.model.<a href="com/krishcpatel/realm/jobs/model/JobActionType.html" title="enum class in com.krishcpatel.realm.jobs.model">JobActionType</a></dt>
 <dd>
 <div class="block">Placing a block.</div>
+</dd>
+<dt><a href="com/krishcpatel/realm/core/guard/PlacedBlockGuardObservationCache.html" class="type-name-link" title="class in com.krishcpatel.realm.core.guard">PlacedBlockGuardObservationCache</a> - Class in <a href="com/krishcpatel/realm/core/guard/package-summary.html">com.krishcpatel.realm.core.guard</a></dt>
+<dd>
+<div class="block">Short-lived cross-module cache for placed-block anti-farm observations.</div>
 </dd>
 <dt><a href="com/krishcpatel/realm/jobs/model/PlayerJob.html" class="type-name-link" title="class in com.krishcpatel.realm.jobs.model">PlayerJob</a> - Record Class in <a href="com/krishcpatel/realm/jobs/model/package-summary.html">com.krishcpatel.realm.jobs.model</a></dt>
 <dd>
@@ -2022,6 +2034,8 @@ the order they are declared.</div>
 </dl>
 <h2 class="title" id="I:W">W</h2>
 <dl class="index">
+<dt><a href="com/krishcpatel/realm/core/guard/PlacedBlockGuardObservationCache.html#wasRecentlyObserved(java.lang.String,int,int,int)" class="member-name-link">wasRecentlyObserved(String, int, int, int)</a> - Static method in class com.krishcpatel.realm.core.guard.<a href="com/krishcpatel/realm/core/guard/PlacedBlockGuardObservationCache.html" title="class in com.krishcpatel.realm.core.guard">PlacedBlockGuardObservationCache</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/krishcpatel/realm/economy/command/WithdrawCommand.html" class="type-name-link" title="class in com.krishcpatel.realm.economy.command">WithdrawCommand</a> - Class in <a href="com/krishcpatel/realm/economy/command/package-summary.html">com.krishcpatel.realm.economy.command</a></dt>
 <dd>
 <div class="block">Handles the <code>/withdraw &lt;amount&gt;</code> command.</div>

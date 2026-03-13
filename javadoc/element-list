@@ -4,6 +4,7 @@ com.krishcpatel.realm.core.config
 com.krishcpatel.realm.core.database
 com.krishcpatel.realm.core.event
 com.krishcpatel.realm.core.event.player
+com.krishcpatel.realm.core.guard
 com.krishcpatel.realm.core.listener
 com.krishcpatel.realm.core.module
 com.krishcpatel.realm.core.player
