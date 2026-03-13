@@ -10,7 +10,10 @@ import com.krishcpatel.realm.jobs.util.JobActionGroups;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Tag;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.Ageable;
 import org.bukkit.entity.ComplexEntityPart;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -110,28 +113,45 @@ public final class JobsActionListener implements Listener {
             return;
         }
 
-        Material type = event.getBlock().getType();
+        Block block = event.getBlock();
+        Material type = block.getType();
+        Set<String> groups = JobActionGroups.forMaterial(type);
+        boolean cropBreak = groups.contains("#CROPS");
+        boolean matureCropHarvest = cropBreak && isHarvestableCrop(block);
+        if (cropBreak && !matureCropHarvest) {
+            return;
+        }
+
         JobActionContext context = buildContext(
                 event.getPlayer(),
                 JobActionType.BREAK,
                 type.name(),
-                JobActionGroups.forMaterial(type),
+                groups,
                 1,
-                event.getBlock().getWorld().getName(),
-                event.getBlock().getChunk().getX(),
-                event.getBlock().getChunk().getZ()
+                block.getWorld().getName(),
+                block.getChunk().getX(),
+                block.getChunk().getZ()
         );
+
+        Location location = block.getLocation();
+        String world = location.getWorld().getName();
+        int x = location.getBlockX();
+        int y = location.getBlockY();
+        int z = location.getBlockZ();
+
+        if (matureCropHarvest) {
+            placedBreakGuards.remove(blockKey(location));
+            if (antiFarmPlacedBreakEnabled()) {
+                clearStoredPlacedBreakGuard(world, x, y, z);
+            }
+            dispatch(context);
+            return;
+        }
 
         if (!antiFarmPlacedBreakEnabled()) {
             dispatch(context);
             return;
         }
-
-        Location location = event.getBlock().getLocation();
-        String world = location.getWorld().getName();
-        int x = location.getBlockX();
-        int y = location.getBlockY();
-        int z = location.getBlockZ();
 
         if (shouldIgnorePlayerPlacedBreak(location)) {
             return;
@@ -541,6 +561,17 @@ public final class JobsActionListener implements Listener {
                 || groups.contains("#ORES")
                 || groups.contains("#DIGGABLE")
                 || groups.contains("#CROPS");
+    }
+
+    private boolean isHarvestableCrop(Block block) {
+        Material type = block.getType();
+        if (!Tag.CROPS.isTagged(type)) {
+            return false;
+        }
+        if (!(block.getBlockData() instanceof Ageable ageable)) {
+            return true;
+        }
+        return ageable.getAge() >= ageable.getMaximumAge();
     }
 
     private String blockKey(Location location) {
