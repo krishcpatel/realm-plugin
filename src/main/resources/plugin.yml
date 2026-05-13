@@ -1,7 +1,7 @@
 name: realm
 version: '0.1'
 main: com.krishcpatel.realm.core.Core
-api-version: '1.21.11'
+api-version: '26.1.2'
 
 commands:
   realm:
