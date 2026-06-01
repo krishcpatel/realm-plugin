@@ -8,6 +8,7 @@ import com.krishcpatel.realm.economy.repository.LedgerRepository;
 import com.krishcpatel.realm.economy.model.MoneySource;
 import com.krishcpatel.realm.economy.data.BankNoteRecord;
 import com.krishcpatel.realm.economy.data.BankNoteIssueResult;
+import com.krishcpatel.realm.economy.data.BankNoteRedeemResult;
 import com.krishcpatel.realm.economy.data.TransactionResult;
 import com.krishcpatel.realm.economy.event.LedgerRecordedEvent;
 import org.bukkit.Bukkit;
@@ -21,8 +22,11 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.concurrent.Callable;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -341,6 +345,133 @@ public final class BankNoteManager {
     public String getNoteId(ItemStack item) {
         if (!isBankNote(item)) return null;
         return item.getItemMeta().getPersistentDataContainer().get(noteIdKey, PersistentDataType.STRING);
+    }
+
+    /**
+     * Looks up an unredeemed bank note amount by note id.
+     *
+     * @param noteId note id
+     * @return positive note value, or {@code -1} when missing/redeemed/invalid
+     * @throws SQLException if database access fails
+     */
+    public long getUnredeemedNoteAmount(String noteId) throws SQLException {
+        if (noteId == null || noteId.isBlank()) {
+            return -1L;
+        }
+
+        try (Connection c = db.getConnection()) {
+            BankNoteRecord note = notes.findById(c, noteId);
+            if (note == null || note.redeemed() || note.amount() <= 0L) {
+                return -1L;
+            }
+            return note.amount();
+        }
+    }
+
+    /**
+     * Redeems multiple note ids and credits their value to the target player's bank balance.
+     *
+     * <p>The operation is atomic: if any note is missing/redeemed/invalid, no note is redeemed.</p>
+     *
+     * @param playerUuid destination player UUID string
+     * @param noteIds note ids to redeem
+     * @param reason ledger reason text
+     * @param actor action actor id (player UUID, CONSOLE, SYSTEM)
+     * @return redemption result with total credited amount
+     * @throws SQLException if database access fails
+     */
+    public BankNoteRedeemResult redeemNotesToBalance(
+            String playerUuid,
+            List<String> noteIds,
+            String reason,
+            String actor
+    ) throws SQLException {
+        if (playerUuid == null || playerUuid.isBlank()) {
+            return BankNoteRedeemResult.fail("Invalid player");
+        }
+        if (noteIds == null || noteIds.isEmpty()) {
+            return BankNoteRedeemResult.fail("No bank notes provided");
+        }
+
+        Set<String> unique = new LinkedHashSet<>();
+        for (String noteId : noteIds) {
+            if (noteId != null && !noteId.isBlank()) {
+                unique.add(noteId);
+            }
+        }
+        if (unique.isEmpty()) {
+            return BankNoteRedeemResult.fail("No valid bank note ids were provided");
+        }
+
+        long now = System.currentTimeMillis();
+        List<LedgerRecordedEvent> events = new ArrayList<>();
+
+        return db.executeWrite(() -> {
+            try (Connection c = db.getConnection()) {
+                boolean oldAuto = c.getAutoCommit();
+                c.setAutoCommit(false);
+
+                try {
+                    economy.ensureAccount(c, playerUuid);
+
+                    long total = 0L;
+                    for (String noteId : unique) {
+                        BankNoteRecord note = notes.findById(c, noteId);
+                        if (note == null) {
+                            c.rollback();
+                            return BankNoteRedeemResult.fail("Bank note not found");
+                        }
+                        if (note.redeemed() || note.amount() <= 0L) {
+                            c.rollback();
+                            return BankNoteRedeemResult.fail("A bank note was already redeemed");
+                        }
+
+                        boolean marked = notes.markRedeemed(c, noteId, now, playerUuid);
+                        if (!marked) {
+                            c.rollback();
+                            return BankNoteRedeemResult.fail("A bank note was already redeemed");
+                        }
+
+                        economy.addBalance(c, playerUuid, note.amount());
+
+                        long ledgerId = ledger.insertLedgerRow(
+                                c,
+                                now,
+                                "REDEEM_NOTE",
+                                note.amount(),
+                                null,
+                                playerUuid,
+                                MoneySource.SYSTEM.name(),
+                                noteId,
+                                reason,
+                                actor
+                        );
+
+                        events.add(new LedgerRecordedEvent(
+                                ledgerId,
+                                "REDEEM_NOTE",
+                                note.amount(),
+                                null,
+                                playerUuid,
+                                MoneySource.SYSTEM,
+                                noteId,
+                                reason,
+                                actor
+                        ));
+                        total += note.amount();
+                    }
+
+                    c.commit();
+                    events.forEach(core.events()::publishAsync);
+                    return BankNoteRedeemResult.ok(total);
+                } catch (SQLException ex) {
+                    c.rollback();
+                    throw ex;
+                } finally {
+                    c.setAutoCommit(oldAuto);
+                }
+            }
+        });
     }
 
     private ItemStack createNoteItem(String noteId, long amount) {

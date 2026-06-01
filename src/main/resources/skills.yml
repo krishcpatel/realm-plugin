@@ -20,6 +20,21 @@ settings:
     levelup-sound-volume: 0.55
     levelup-sound-pitch: 1.0
 
+  rewards:
+    skill-level-up:
+      swords:
+        5:
+          nexo-items:
+            - id: sword_of_the_realm
+              amount: 1
+
+  usage-gates:
+    nexo-items:
+      sword_of_the_realm:
+        enabled: true
+        skill: swords
+        min-level: 5
+
   acrobatics:
     dodge-chance: 0.07
     dodge-cooldown-ms: 1000

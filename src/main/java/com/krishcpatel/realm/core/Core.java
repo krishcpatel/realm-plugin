@@ -9,8 +9,12 @@ import com.krishcpatel.realm.core.event.player.PlayerUpsertedEvent;
 import com.krishcpatel.realm.core.listener.PlayerJoinListener;
 import com.krishcpatel.realm.core.module.Module;
 import com.krishcpatel.realm.core.player.PlayerRepository;
+import com.krishcpatel.realm.clans.ClansModule;
 import com.krishcpatel.realm.economy.EconomyModule;
+import com.krishcpatel.realm.gui.GuiModule;
 import com.krishcpatel.realm.jobs.JobsModule;
+import com.krishcpatel.realm.nexo.NexoHook;
+import com.krishcpatel.realm.shop.ShopModule;
 import com.krishcpatel.realm.skills.SkillsModule;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -55,6 +59,8 @@ public final class Core extends JavaPlugin {
     private ConfigManager configManager;
     private PlayerRepository playerRepo;
     private EventSystem eventSystem;
+    private NexoHook nexoHook;
+    private GuiModule guiModule;
 
     private final List<com.krishcpatel.realm.core.module.Module> modules = new ArrayList<>();
 
@@ -66,11 +72,16 @@ public final class Core extends JavaPlugin {
         configManager = new ConfigManager(this);
         playerRepo = new PlayerRepository(database, this);
         eventSystem = new EventSystem(this);
+        nexoHook = new NexoHook(this);
 
         // create modules
+        guiModule = new GuiModule(this);
         modules.add(new EconomyModule(this));
+        modules.add(new ClansModule(this));
+        modules.add(new ShopModule(this));
         modules.add(new JobsModule(this));
         modules.add(new SkillsModule(this));
+        modules.add(guiModule);
 
         try {
             database.connect();
@@ -86,10 +97,11 @@ public final class Core extends JavaPlugin {
         configManager.loadAll();
 
         // load realm command
-        getCommand("realm").setExecutor(new RealmCommand(this));
+        getCommand("realm").setExecutor(new RealmCommand(this, guiModule, nexoHook));
 
         // load event system and subscribe to player upserted to db event
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(this, playerRepo), this);
+        getServer().getPluginManager().registerEvents(nexoHook, this);
 
         registerCoreEventSubscriptions();
 
@@ -264,5 +276,23 @@ public final class Core extends JavaPlugin {
      */
     public EventSystem events() {
         return eventSystem;
+    }
+
+    /**
+     * Returns the Nexo integration hook.
+     *
+     * @return Nexo hook
+     */
+    public NexoHook nexo() {
+        return nexoHook;
+    }
+
+    /**
+     * Returns the GUI module instance.
+     *
+     * @return GUI module
+     */
+    public GuiModule gui() {
+        return guiModule;
     }
 }

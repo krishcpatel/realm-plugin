@@ -7,11 +7,13 @@ database:
     file: database.db
 
 modules:
+  gui: true
   economy: true
+  clans: true
   teams: false
   jobs: true
   skills: true
-  shops: false
+  shops: true
   plots: false
 
 economy:
@@ -46,3 +48,63 @@ economy:
     max-query-limit: 50
     large-transaction-threshold: 50000
     log-large-transactions: true
+
+clans:
+  create-fee: 5000
+
+  claim:
+    min-distance-from-spawn: 128
+    proximity-radius: 96
+    notify-radius: 64
+    storage-radius: 24
+    max-claims-per-clan: 1
+
+  upkeep:
+    base-cost: 250
+    per-member-cost: 25
+    interval-hours: 24
+
+  fees:
+    exclude-leader: true
+
+  billing:
+    tick-minutes: 5
+
+  levels:
+    max-level: 6
+    data:
+      1:
+        member-cap: 10
+        protected-storage-cap: 4
+        upgrade-cost: 0
+      2:
+        member-cap: 15
+        protected-storage-cap: 6
+        upgrade-cost: 7500
+      3:
+        member-cap: 20
+        protected-storage-cap: 8
+        upgrade-cost: 12000
+      4:
+        member-cap: 25
+        protected-storage-cap: 10
+        upgrade-cost: 17000
+      5:
+        member-cap: 30
+        protected-storage-cap: 12
+        upgrade-cost: 23000
+      6:
+        member-cap: 36
+        protected-storage-cap: 14
+        upgrade-cost: 30000
+
+shops:
+  claim:
+    max-owned-areas: 1
+
+  upkeep:
+    interval-hours: 24
+    tick-minutes: 5
+
+  setup:
+    price-presets: [10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000]

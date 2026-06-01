@@ -78,3 +78,5 @@ skills:
   xp-action-bar: "&b+%xp% %skill% XP &8| &7Lvl &f%level% &8| &7%current%&8/&f%required%"
   level-up: "&bYour &f%skill% &bskill reached level &f%level%&b."
   level-up-action-bar: "&6Level Up! &b%skill% &7-> &f%level%"
+  nexo-reward: "&aReward unlocked: &f%amount%x %item%&a."
+  nexo-gated: "&cYou need &f%skill% level %level% &cto use &f%item%&c."

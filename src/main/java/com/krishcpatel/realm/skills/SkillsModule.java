@@ -4,8 +4,10 @@ import com.krishcpatel.realm.core.Core;
 import com.krishcpatel.realm.core.module.Module;
 import com.krishcpatel.realm.jobs.repository.JobsRepository;
 import com.krishcpatel.realm.skills.command.SkillsCommand;
+import com.krishcpatel.realm.skills.listener.SkillNexoUsageGateListener;
 import com.krishcpatel.realm.skills.listener.SkillsActionListener;
 import com.krishcpatel.realm.skills.manager.SkillManager;
+import com.krishcpatel.realm.skills.manager.SkillNexoRewardService;
 import com.krishcpatel.realm.skills.manager.SkillProgressService;
 import com.krishcpatel.realm.skills.notify.SkillNotifier;
 import com.krishcpatel.realm.skills.registry.SkillDefinitionRegistry;
@@ -54,6 +56,8 @@ public final class SkillsModule implements Module {
         SkillProgressService progress = new SkillProgressService(core, repo, registry, notifier);
 
         core.getServer().getPluginManager().registerEvents(new SkillsActionListener(core, progress, guardRepo), core);
+        core.getServer().getPluginManager().registerEvents(new SkillNexoUsageGateListener(core, core.nexo(), manager), core);
+        new SkillNexoRewardService(core, core.nexo()).register();
         if (core.getCommand("skills") != null) {
             core.getCommand("skills").setExecutor(new SkillsCommand(core, manager, registry));
         }

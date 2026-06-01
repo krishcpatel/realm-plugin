@@ -6,7 +6,7 @@ api-version: '26.1.2'
 commands:
   realm:
     description: Realm core command
-    usage: /realm reload
+    usage: /realm [reload|giveitem]
   balance:
     description: Check a bank balance
     usage: /balance [player]
@@ -32,6 +32,12 @@ commands:
   skills:
     description: View your realm skill levels
     usage: /skills [category|skill]
+  clan:
+    description: Create and manage clans
+    usage: /clan <create|join|leave|disband|info|flag|protect|fee|bank|upgrade|claims|admin>
+  shop:
+    description: Claim and manage shop areas and chest listings
+    usage: /shop <menu|list|claim|myareas|payupkeep|setup|setprice|removelisting|listing|listings|admin>
 
 permissions:
   realm.admin:
@@ -44,3 +50,16 @@ permissions:
     default: true
   realm.skills.use:
     default: true
+  realm.clans.use:
+    default: true
+  realm.clans.admin:
+    default: op
+  realm.shop.use:
+    default: true
+  realm.shop.admin:
+    default: op
+  realm.nexo.bypass-gates:
+    default: op
+
+depend:
+  - Nexo
